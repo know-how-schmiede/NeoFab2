@@ -304,3 +304,51 @@ def test_missing_cookie_explains_session_error_without_bypassing_csrf(app, admin
         assert not connection.execute(select(sessions)).first()
     app.config["SESSION_COOKIE_SECURE"] = False
     assert login(app.test_client()).status_code == 302
+
+
+@pytest.mark.parametrize("secure", [True, False])
+@pytest.mark.parametrize("credentials", ["correct", "wrong_password", "unknown_email"])
+def test_login_over_http_with_cookie_policy(app, admin, secure, credentials):
+    """Echte HTTP-Anfragen: der Flask-Testclient erzwingt Secure nicht."""
+    from http.cookiejar import CookieJar
+    from threading import Thread
+    from urllib.error import HTTPError
+    from urllib.parse import urlencode
+    from urllib.request import build_opener, HTTPCookieProcessor, ProxyHandler
+    from werkzeug.serving import make_server
+
+    app.config["SESSION_COOKIE_SECURE"] = secure
+    server = make_server("127.0.0.1", 0, app)
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        opener = build_opener(ProxyHandler({}), HTTPCookieProcessor(CookieJar()))
+        url = f"http://127.0.0.1:{server.server_port}/login"
+        with opener.open(url, timeout=5) as response:
+            page = response.read().decode()
+        token = re.search(r'name="csrf_token" value="([^"]+)"', page).group(1)
+        data = urlencode({
+            "csrf_token": token,
+            "email": "unknown@example.org" if credentials == "unknown_email" else "admin@example.org",
+            "password": "Wrong123!" if credentials == "wrong_password" else PASSWORD,
+        }).encode()
+        try:
+            response = opener.open(url, data=data, timeout=5)
+        except HTTPError as error:
+            response = error
+        with response:
+            body = response.read().decode()
+            if secure:
+                assert response.status == 400
+                assert "Die Sitzung zum Formular fehlt" in body
+            elif credentials == "correct":
+                assert response.status == 200
+                assert response.url.endswith("/profile")
+            else:
+                assert response.status == 401
+                assert "Zugangsdaten" in body
+                assert "Die Sitzung zum Formular fehlt" not in body
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+        server.server_close()

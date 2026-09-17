@@ -195,6 +195,31 @@ Aufruf und Absenden nicht wechseln. Bei anhaltendem Fehler Cookies dieser
 Website löschen und `/login` erneut öffnen. Der CSRF-Schutz bleibt eingeschaltet.
 Die überarbeitete Meldung weist eine fehlende Formularsitzung gesondert aus.
 
+**Fehler bleibt trotz `false` bestehen:** Entscheidend ist auch das Cookie,
+das der laufende Dienst tatsächlich ausliefert. Als **root im Container**
+die Antwort auf eine frische Loginseite prüfen (Standardport 8080 anpassen):
+
+```bash
+curl --max-time 10 -sS -D - -o /dev/null http://127.0.0.1:8080/login | sed -E 's/^(Set-Cookie: [^=]+=)[^;]*/\1<ausgeblendet>/I'
+```
+
+Erwartet: HTTP 200 und `Set-Cookie: neofab2_session=<ausgeblendet>; ...`.
+Für HTTP darf diese Zeile kein `Secure` enthalten. Der Cookie-Wert wird für
+die Weitergabe ausgeblendet. Erscheint dennoch `Secure`, verwendet der
+angesprochene Prozess noch eine andere Einstellung: Dienstneustart, gewählten
+Port und den `NEOFAB2_CONFIG`-Pfad in der systemd-Unit lokal prüfen.
+Keine vollständige Konfiguration oder Sitzungscookies weitergeben.
+
+Fehlt `Secure` und der Browser meldet weiterhin eine fehlende Sitzung,
+denselben Zugang in einem privaten Browserfenster öffnen. Funktioniert das,
+Website-Cookies im ursprünglichen Fenster entfernen. Andernfalls in den
+Browser-Netzwerkwerkzeugen prüfen, ob beim POST auf `/login` das Cookie
+`neofab2_session` gesendet wird (nur ja/nein weitergeben). Wird es gesendet,
+sind unter anderem abweichende Signaturschlüssel zwischen Prozessen oder
+mehrere gleichnamige Cookies zu untersuchen. Den `SECRET_KEY` nicht auf
+Verdacht ändern. Richtige und falsche Zugangsdaten führen bei diesem
+Sitzungsfehler gleichermaßen zu HTTP 400, weil ihre Prüfung noch nicht beginnt.
+
 ### Admin-Passwort nachträglich ändern oder wiederherstellen
 
 Der lokale Admin-Zugang funktioniert laut Nutzerrückmeldung. Für ein neues,

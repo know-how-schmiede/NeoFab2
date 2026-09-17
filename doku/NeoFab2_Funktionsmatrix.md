@@ -200,6 +200,13 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U01 | geprüft (Teilumfang) | `src/neofab2/__init__.py`, `src/neofab2/templates/error.html`, `tests/core/test_accounts.py` | Fehlendes Sitzungscookie reproduziert; eigener Cookie-/HTTPS-Hinweis und Link zur Anmeldung; CSRF bleibt aktiv | Secure-Cookie bei HTTP ist eine mögliche Ursache im Nutzercontainer, dort nicht selbst geprüft |
 | X01, X04, X05 | implementiert (Dokumentation) | `doku/SETUP.md`, `doku/Core_Zugang.md`, `script/README.md` | Automatische Erstadmin-Abfrage, erste Anmeldung, lokaler Passwort-Reset und HTTP-Cookie-Fehlerhilfe dokumentiert; Nutzer bestätigt funktionierendes Admin-Skript | Neuer Stand nicht selbst im LXC geprüft; frühere Aussage zum offenen Skriptlauf durch Nutzerrückmeldung ergänzt |
 
+### Weitere Eingrenzung des Loginfehlers (17.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| U01, U08 | geprüft | `tests/core/test_accounts.py` | Sechs zusätzliche Fälle mit echtem HTTP-Server und CookieJar: Secure bei HTTP führt mit richtigen/falschen Passwörtern und unbekannter E-Mail zu 400; ohne Secure erfolgreiche Anmeldung bzw. 401. Alle 34 Tests dieser Datei bestanden | Teilnachweis; konkrete Ursache im Nutzercontainer weiterhin unbestätigt, keine Änderung der Authentifizierung auf Verdacht |
+| X05 | implementiert | `doku/SETUP.md` | Diagnose des ausgelieferten Cookie-Attributs mit ausgeblendetem Wert, Prüfung von Browser und Dienstkonfiguration dokumentiert | Antwortheader des betroffenen Dienstes zur weiteren Eingrenzung erforderlich |
+
 Alle übrigen IDs bleiben geplant. Version 0.1.2 ergänzt Benutzerzugang und
 lokalen Admin-Reset gegenüber dem Grundsystem v0.1.1.
 U02–U04 (Registrierung/E-Mail-Verfahren), Benutzerlöschung und Plugin-Vertrag
