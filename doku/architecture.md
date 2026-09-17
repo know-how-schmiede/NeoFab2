@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.3
+# Architektur – Stand v0.1.4
 
 ## Erster Core-Schritt
 
@@ -33,8 +33,9 @@ oder produktive Last. Die endgültige produktive Datenbankentscheidung bleibt of
 | `.github/workflows/core.yml` | Vorbereitete Linux-CI für Python 3.12/3.13 |
 
 Revision `0001_core_settings` legt nur die leere Core-Einstellungstabelle an.
-Noch keine Einstellungsoberfläche; Secrets liegen ausschließlich in der
-geschützten TOML-Datei. Migrationen laufen nur über `neofab2 migrate`,
+Die Einstellungsoberfläche verwendet ausschließlich die vier freigegebenen
+Schlüssel unter `core.presentation.*`; Secrets bleiben in der geschützten
+TOML-Datei. Migrationen laufen nur über `neofab2 migrate`,
 niemals über `create_all()` oder HTTP-Routen.
 
 `0002_core_users` ergänzt Benutzer, serverseitige Sitzungen und zeitlich
@@ -42,6 +43,12 @@ begrenzte Loginversuchszähler. SQLAlchemy Core verwendet explizite Transaktione
 `BEGIN IMMEDIATE` serialisiert Erstadmin-Anlage und Letzter-Admin-Prüfung in
 SQLite. Fremdschlüssel sind aktiviert. Es werden keine Benutzer migriert oder
 automatisch mit einer Migration angelegt.
+
+`0003_user_theme` ergänzt die persönliche Darstellung mit Standard `system`.
+`core/settings.py` speichert öffentliche Texte und die Standarddarstellung
+transaktional in der bestehenden Einstellungstabelle; jede Speicherung prüft
+den Administrator erneut. Keine globalen veraltenden Einstellungscaches:
+HTML-Anfragen laden aktuelle Werte. Gemeinsame CSS-Variablen gelten auch für Plugins.
 
 Passwörter werden über Werkzeug/scrypt gehasht, Formulare durch Flask-WTF
 gegen CSRF geschützt. Das signierte Flask-Cookie enthält einen zufälligen
@@ -60,8 +67,9 @@ S12 zeigt Core-Version sowie Plugin-Versionen in der Admin-Übersicht.
 U01, U08 und die lokale Wiederherstellung X04 sind umgesetzt. U05 umfasst
 Anlegen/Bearbeiten/Aktivieren/Deaktivieren, noch kein Löschen. U06 verwendet die
 festen Rollen Benutzer/Mitarbeiter/Administrator sowie explizite Plugin-Zugriffsrechte;
-Importzuordnung und Rollenpflege folgen. U07 umfasst Anzeigename und Passwortwechsel;
-Sprache/Design folgen. U02–U04, S02–S11, N04 und N05 bleiben offen.
+Importzuordnung und Rollenpflege folgen. U07 umfasst Anzeigename, Passwortwechsel
+und persönliche Darstellung; Sprache folgt. S04 umfasst öffentliche Darstellungseinstellungen,
+noch keinen Import/Export oder SMTP. U02–U04, S02/S03, S05–S11, N04 und N05 bleiben offen.
 N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Aktivierung beim Neustart,
 Seiten, Rechte, Navigation und lokale Aufgaben. Weitere Dienstverträge fehlen.
 [Plugin-Vertrag und Betriebsprüfung](plugin-development.md).
@@ -74,7 +82,7 @@ laufende Skriptdatei selbst aktualisiert werden kann.
 
 ## Nächste Arbeitspakete
 
-1. Profileinstellungen für Sprache/Design sowie Systemeinstellungen ausbauen.
+1. Sprachübersetzungen und weitere Systemeinstellungen ausbauen.
 2. Selbstregistrierung und E-Mail-Verfahren mit dem Versanddienst umsetzen.
 3. Plugin-Vertrag um technische Dienste und persistente Aufgaben erweitern.
 4. Technische Dienste und Benutzerimport mit abgestimmten Konfliktregeln.
@@ -82,7 +90,7 @@ laufende Skriptdatei selbst aktualisiert werden kann.
    vollständige Core-Abnahme vor Fachplugins.
 
 Offen: Registrierungsregeln, Rollen-/Konfliktzuordnung beim Import, produktive
-Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.3.
+Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.4.
 
 ## Referenzen
 

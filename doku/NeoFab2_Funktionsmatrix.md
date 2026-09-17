@@ -176,7 +176,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.3 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.4 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
 | S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `core/plugins.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Core-/Plugin-Navigation per HTTP-Test geprüft | Infoseite und interaktive visuelle Browserprüfung offen |
 | S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html`, `templates/plugins.html` | Core-Versionsanzeige, Paketmetadaten und separate Plugin-Versionen geprüft | Weiterer Ausbau der Systeminformationen offen |
@@ -188,7 +188,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U01 | geprüft | `src/neofab2/core/auth.py`, `accounts.py`, `tests/core/test_accounts.py` | Gültige/falsche/unbekannte/deaktivierte Logins, Logout, scrypt-Hashing, CSRF und serverseitige Anmeldebegrenzung geprüft | Keine Selbstregistrierung/E-Mail-Verfahren in diesem Teilumfang |
 | U05 | in Arbeit | `src/neofab2/core/users.py`, `accounts.py`, `tests/core/test_accounts.py` | Anlegen/Bearbeiten/Aktivieren/Deaktivieren, doppelte E-Mail, serverseitige Rechte und paralleler Letzter-Admin-Schutz geprüft | Benutzerlöschung mit Auswirkungen auf Plugins bleibt offen |
 | U06 | in Arbeit | `src/neofab2/core/users.py`, `auth.py`, `plugins.py`, `plugin_api/` | Rollen Benutzer/Mitarbeiter/Administrator, explizite Plugin-Rechte, Direktzugriff und Profil-Eskalation geprüft | Rollenpflege, feinere Plugin-Rechte und Altrollen-Zuordnung folgen |
-| U07 | in Arbeit | `src/neofab2/core/accounts.py`, `templates/profile.html` | Eigener Anzeigename, Passwortwechsel mit altem Passwort und Sitzungswiderruf geprüft | Sprache und Darstellungseinstellungen folgen |
+| U07 | in Arbeit | `src/neofab2/core/accounts.py`, `core/users.py`, `templates/profile.html`, `static/core.css` | Eigener Anzeigename, Passwortwechsel und dauerhafte persönliche Darstellung Hell/Dunkel/Systemvorgabe geprüft | Sprache folgt |
 | U08 | geprüft | `src/neofab2/core/auth.py`, `config.py`, `tests/core/test_accounts.py` | Server-Inaktivitätsfrist, absolute Laufzeit, Cookie-Replay nach Logout und unveränderte Frist bei Health-/Static-Anfragen geprüft | Keine dauerhaften Remember-me-Sitzungen vorgesehen |
 | N01 | in Arbeit | `src/neofab2/plugin_api/`, `src/neofab2/core/plugins.py`, `src/neofab2/plugins/`, `tests/plugin_contract/test_plugins.py` | API 1: Metadaten, Abhängigkeiten, API-Kompatibilität, Rechte, Navigation, Aktivierung nach Neustart, direkte Zugriffe und lokale Aufgaben geprüft | Weitere Dienstverträge, Plugin-Einstellungen und persistente Aufgaben offen; synthetische Zusatzplugins als Test-Fixtures in der Testdatei |
 
@@ -216,8 +216,18 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U01, U07, X05 | geprüft (Teilumfang) | `doku/Core_Zugang.md`, `doku/SETUP.md` | Nutzer bestätigt Login und Passwortwechsel im Container; ausgelieferter Secure-Cookie und HTTP-Zugang belegten Ursache; Umstellung auf false erfolgreich | Gilt für diese Zugangsfunktionen, keine vollständige LXC-/Core-Abnahme; ersetzt vorherige offene Ursacheneingrenzung |
 | X05, X06 | geprüft (Teilumfang) | `doku/plugin-development.md`, `script/README.md`, `doku/Version_Timeline.md`, `src/neofab2/version.py` | Version 0.1.3, Betriebsablauf und Commit-Texte ergänzt; 73 Gesamttests, danach 14 Plugin-Tests erneut; Wheel/sdist und installiertes Wheel geprüft | Keine neue Schema-Revision, kein Commit/Push |
 
+### Systemeinstellungen und Darstellung 0.1.4 (17.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| S04, S01 | in Arbeit | `src/neofab2/core/settings.py`, `templates/settings.html`, `templates/index.html`, `tests/core/test_settings.py` | Admin-Recht, CSRF, Textgrenzen, HTML-Maskierung, transaktionale Speicherung, Neustart-Persistenz und Isolation fremder Schlüssel geprüft | Öffentliche Darstellungseinstellungen; Import/Export, SMTP und weitere Einstellungen offen |
+| U07 | in Arbeit | `src/neofab2/core/users.py`, `core/accounts.py`, `templates/profile.html`, `static/core.css`, `tests/core/test_settings.py` | Persönliche Darstellung bleibt nach neuer Anmeldung erhalten, überschreibt Standard und verändert keine fremden Konten | Sprachwahl/Übersetzungen offen; kein Browser für visuelle Prüfung verbunden |
+| X07 | geprüft (Teilumfang) | `migrations/versions/0003_user_theme.py`, `src/neofab2/database.py`, `tests/core/test_settings.py` | Explizites Upgrade von 0002 mit Benutzer-/Hash-/Einstellungserhalt; Wiederholung und Ablehnung des alten Schemas geprüft | Nur Testdaten; keine produktive Migration durch Codex |
+| X05, X06 | geprüft (Teilumfang) | `doku/Core_Einstellungen.md`, `doku/SETUP.md`, `script/README.md`, `doku/Version_Timeline.md` | Version 0.1.4; 84 Tests bestanden, Wheel/sdist gebaut und installiertes Wheel geprüft; Update-/Prüfbefehle dokumentiert | Neuer Container-Test und visuelle Prüfung offen; kein Commit/Push |
+| N01, X03 | implementiert | `doku/plugin-development.md`, `doku/Version_Timeline.md` | Nutzer meldet Schritt 0.1.3 als erfolgreich | Rückmeldung ersetzt keinen vollständigen Einzeltest aller Abhängigkeiten oder einen Vollrestore-Test |
+
 Alle übrigen IDs bleiben geplant. U02–U04 (Registrierung/E-Mail-Verfahren),
-Benutzerlöschung, Sprache/Design und weitere Plugin-Dienste sind offen.
+Benutzerlöschung, Sprache und weitere Plugin-Dienste sind offen.
 Keine vollständige Core-Abnahme.
 
 Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsänderungen zusätzlich gemäß Projektbeschreibung in `doku/Version_Timeline.md` dokumentieren, einschließlich Commit-Titel und Commit-Beschreibung für den manuellen Commit. Diese Matrix allein ersetzt weder Tests noch die Versionshistorie.

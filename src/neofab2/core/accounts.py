@@ -43,7 +43,7 @@ def logout():
 def profile():
     if request.method == "POST":
         try:
-            update_profile(current_app, g.current_user["id"], request.form.get("display_name", ""))
+            update_profile(current_app, g.current_user["id"], request.form.get("display_name", ""), request.form.get("theme"))
         except ValueError as error:
             return render_template("profile.html", roles=ROLES, error=str(error)), 400
         flash("Profil gespeichert.")

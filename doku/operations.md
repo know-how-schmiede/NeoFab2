@@ -1,4 +1,4 @@
-# Betrieb und Wiederherstellung – v0.1.3
+# Betrieb und Wiederherstellung – v0.1.4
 
 Als **root im NeoFab2-Container** ausführen. Diese Fassung speichert nur die
 SQLite-Core-Datenbank. Mit späteren Dateidiensten muss der Sicherungsumfang

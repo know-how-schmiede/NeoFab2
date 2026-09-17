@@ -1,5 +1,69 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.4 – 2026-09-17
+
+Bereich: Core-Systemeinstellungen und Darstellung (S04, S01, U07, X05–X07).
+
+### Änderungen
+
+- Admin-Seite `/admin/settings` für Werkstattname, Kurzbeschreibung,
+  Begrüßungstext und Standarddarstellung Hell/Dunkel.
+- Vier ausdrücklich freigegebene öffentliche Werte in `core_settings`;
+  serverseitige Validierung, transaktionale Speicherung und erneute Rechteprüfung.
+  Keine Secrets oder fremden Einstellungsschlüssel im Formular.
+- Startseite und Kopfzeile verwenden gespeicherte Angaben mit HTML-Maskierung.
+  Änderungen wirken ab der nächsten Anfrage ohne Dienstneustart.
+- Persönliche Darstellung Hell/Dunkel/Systemvorgabe unter `/profile`, dauerhaft
+  im Konto gespeichert. Gemeinsame CSS-Farben gelten für Core und Testplugin.
+- Deutsche Bedienungs-/Updateanleitung und Umsetzungsnachweise ergänzt;
+  Nutzer meldet vorherigen Schritt 0.1.3 als erfolgreich getestet.
+
+### Betrieb und Migration
+
+Das reguläre Update-Skript erstellt Sicherungen und führt `0003_user_theme`
+nach `0002_core_users` aus. Vorhandene Konten erhalten `system` und folgen
+zunächst der unveränderten dunklen Standarddarstellung. Benutzer, Passwort-Hashes,
+Sitzungen und Einstellungen bleiben erhalten. Keine automatische Schemaänderung
+beim Start oder Seitenaufruf. Cookie-Konfiguration und Plugin-Aktivierung bleiben
+unverändert. Anleitung: `doku/Core_Einstellungen.md`.
+
+Sprachübersetzungen, Einstellungsimport/-export, SMTP, Impressum/Datenschutz und
+weitere Core-Dienste bleiben offen. Keine vollständige Core-Abnahme.
+
+### Prüfungen
+
+- 84 Tests unter Windows/Python 3.12 bestanden: Rechte/CSRF, Eingabegrenzen,
+  Maskierung, Isolation fremder Einstellungen/Konten, dauerhafte Speicherung,
+  persönliche Darstellung und Migration vom 0.1.3-Schema mit Datenerhalt.
+- Wheel und sdist 0.1.4 gebaut. Installiertes Wheel mit Migration, Login,
+  Profil, Benutzer-/Plugin-/Einstellungsseiten, Testplugin und hellem Layout geprüft.
+- CLI meldet 0.1.4; Git-Diff und lokale Dokumentationslinks geprüft.
+- Kein Browser verbunden: keine interaktive visuelle Prüfung. Eigener LXC-Test
+  dieses Schritts und Linux-CI nicht ausgeführt. Shell-Skripte unverändert.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+0.1.4: Systemeinstellungen und persönliche Darstellung ergänzen
+```
+
+Commit-Beschreibung:
+
+```text
+Admin-Einstellungen für Werkstattname, Begrüßung und Standarddarstellung einführen.
+Öffentliche Angaben validieren, maskieren und transaktional speichern.
+Persönliche helle/dunkle Darstellung mit Systemvorgabe im Profil ergänzen.
+Migration 0003_user_theme mit Erhalt bestehender Konten und Einstellungen hinzufügen.
+Gemeinsame CSS-Farben für Core und Testplugin verwenden.
+84 Tests sowie Paketbau und Prüfung des installierten Wheels bestanden.
+Version 0.1.4, Betriebsanleitungen und Funktionsnachweise aktualisieren.
+Interaktive Browserprüfung und Container-Abnahme dieses Schritts noch offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt. Kein Commit oder Push durch Codex.
+
 ## Version 0.1.3 – 2026-09-17
 
 Bereich: Core-Plugin-Vertrag und synthetisches Testplugin (N01, U06, S01,

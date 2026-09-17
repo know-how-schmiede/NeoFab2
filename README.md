@@ -2,12 +2,13 @@
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.3 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.4 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
-Profil, widerrufbare Sitzungen und lokalen Admin-Passwort-Reset. Version 0.1.3
-ergänzt Plugin-API 1, Rechte und Navigation, Admin-Übersicht und ein standardmäßig
-deaktiviertes synthetisches Testplugin.
+Profil, widerrufbare Sitzungen und lokalen Admin-Passwort-Reset. Plugin-API 1,
+Rechte und Navigation, Admin-Übersicht und ein standardmäßig deaktiviertes
+synthetisches Testplugin sind vorhanden. Version 0.1.4 ergänzt öffentliche
+Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 
 NeoFab2 ist eine modulare Webanwendung für Werkstätten und Makerspaces. Ein schlankes Core-System verwaltet Benutzer, Rechte und Systemfunktionen. Plugins ergänzen Workshops, 3D-Druck, Plotten, Transferdruck, CNC/Fräsen und Beschaffung.
 
@@ -29,3 +30,4 @@ die vollständige LXC-/systemd-Abnahme steht noch aus.
 - [Betrieb, Sicherung und Wiederherstellung](doku/operations.md)
 - [Benutzerzugang und Erstadministrator](doku/Core_Zugang.md)
 - [Plugin-Vertrag und Testplugin aktivieren](doku/plugin-development.md)
+- [Systemeinstellungen und Darstellung](doku/Core_Einstellungen.md)

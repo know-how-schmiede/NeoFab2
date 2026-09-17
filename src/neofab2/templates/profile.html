@@ -6,6 +6,12 @@
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label for="display_name">Anzeigename</label><input id="display_name" name="display_name" value="{{ current_user.display_name }}" autocomplete="name" maxlength="100" required>
+  <label for="theme">Darstellung</label>
+  <select id="theme" name="theme">
+    <option value="system" {% if current_user.theme == 'system' %}selected{% endif %}>Systemvorgabe</option>
+    <option value="dark" {% if current_user.theme == 'dark' %}selected{% endif %}>Dunkel</option>
+    <option value="light" {% if current_user.theme == 'light' %}selected{% endif %}>Hell</option>
+  </select>
   <button type="submit">Profil speichern</button>
 </form>
 <h2>Passwort ändern</h2>

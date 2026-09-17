@@ -13,6 +13,7 @@ def create_app(test_config=None, *, plugins=None):
     from .core.accounts import bp as accounts_bp
     from .core.auth import register_auth
     from .core.plugins import register_plugins
+    from .core.settings import register_presentation
     from .plugin_api import builtin_plugins
     from .plugin_api.registry import Registry
 
@@ -25,6 +26,7 @@ def create_app(test_config=None, *, plugins=None):
     app.register_blueprint(bp)
     app.register_blueprint(accounts_bp)
     register_plugins(app, registry)
+    register_presentation(app)
     app.context_processor(lambda: {"version": __version__})
 
     @app.errorhandler(CSRFError)

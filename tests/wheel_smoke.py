@@ -32,6 +32,10 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
         assert client.get("/admin/plugins").status_code == 200
+        assert client.get("/admin/settings").status_code == 200
+        from neofab2.core.settings import DEFAULTS, save_settings
+        save_settings(app, 1, {**DEFAULTS, "site_name": "Wheel Test", "default_theme": "light"})
+        assert 'data-theme="light"' in client.get("/").text
         assert client.get("/plugins/core_test/").status_code == 200
         assert "erfolgreich" in app.extensions["neofab2_plugins"].run_task("core_test", "self_check")
     finally:

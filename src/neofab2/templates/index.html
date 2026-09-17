@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <p class="eyebrow">GEMEINSAM IDEEN VERWIRKLICHEN</p>
-<h1>Willkommen bei NeoFab2.</h1>
-<p class="intro">Der neue Ausgangspunkt für unsere Werkstatt und unseren Makerspace.</p>
+<h1>Willkommen bei {{ site_settings.site_name }}.</h1>
+<p class="intro multiline">{{ site_settings.welcome_text }}</p>
 <section aria-labelledby="status-title">
   <span class="badge">{{ 'Grundsystem bereit' if ready else 'Einrichtung ausstehend' }}</span>
   <h2 id="status-title">Ein Fundament für die nächsten Schritte.</h2>

@@ -12,7 +12,8 @@ metadata = MetaData()
 users = Table("core_users", metadata,
     Column("id", Integer, primary_key=True), Column("email", String(254)),
     Column("display_name", String(100)), Column("password_hash", Text),
-    Column("role", String(20)), Column("active", Boolean), Column("created_at", BigInteger))
+    Column("role", String(20)), Column("active", Boolean), Column("created_at", BigInteger),
+    Column("theme", String(10), server_default="system"))
 sessions = Table("core_sessions", metadata,
     Column("token_hash", String(64), primary_key=True), Column("user_id", Integer),
     Column("created_at", BigInteger), Column("last_seen", BigInteger))
@@ -23,9 +24,9 @@ ROLES = {"user": "Benutzer", "staff": "Mitarbeiter", "admin": "Administrator"}
 ROLE_PERMISSIONS = {
     "user": frozenset({"core.profile"}),
     "staff": frozenset({"core.profile"}),
-    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view"}),
+    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.settings.manage"}),
 }
-PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at]
+PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme]
 
 
 def has_permission(user, permission):
@@ -123,13 +124,18 @@ def edit_user(app, user_id, email, display_name, role, active, *, actor_id):
         raise ValueError("Diese E-Mail-Adresse wird bereits verwendet.") from error
 
 
-def update_profile(app, user_id, display_name):
+def update_profile(app, user_id, display_name, theme=None):
     display_name = validate_name(display_name)
+    if theme is not None and theme not in {"system", "light", "dark"}:
+        raise ValueError("Bitte eine gültige Darstellung wählen.")
     with write_transaction(app) as connection:
         user = get_user(connection, user_id)
         if not user or not user["active"]:
             raise PermissionError("Konto nicht aktiv.")
-        connection.execute(update(users).where(users.c.id == user_id).values(display_name=display_name))
+        values = {"display_name": display_name}
+        if theme is not None:
+            values["theme"] = theme
+        connection.execute(update(users).where(users.c.id == user_id).values(**values))
 
 
 def change_password(app, user_id, old_password, new_password):

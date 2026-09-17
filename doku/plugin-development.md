@@ -1,4 +1,4 @@
-# Plugin-Vertrag – API 1, Core 0.1.3
+# Plugin-Vertrag – API 1, Core 0.1.4
 
 Dieses Arbeitspaket setzt N01 sowie Teile von S01, S12 und U06 um. Es enthält
 nur ein synthetisches Testplugin, keine produktiven Fachplugins.
@@ -86,7 +86,8 @@ Kennungen, Versionen und vollständige Aktivierungsliste korrigieren, danach
 Sicherheitsprüfungen umgehen. Bei Dienststartfehlern `journalctl -u neofab2.service
 -n 80 --no-pager` lokal prüfen.
 
-Keine neue Datenbankrevision in 0.1.3. Das Testplugin hat keine Tabellen.
+Das Plugin-Grundsystem in 0.1.3 benötigte keine neue Datenbankrevision.
+Core 0.1.4 ergänzt `0003_user_theme`; das Testplugin hat weiterhin keine Tabellen.
 Künftige Plugin-Schemata benötigen explizite versionierte Migrationen in der
 zentralen Migrationenkette. Plugin-Einstellungen, Benachrichtigungs-/Dateidienste,
 persistente Aufgaben und feinere Rechte

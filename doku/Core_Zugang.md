@@ -1,6 +1,6 @@
-# Core-Zugang – aktueller Arbeitsstand v0.1.3
+# Core-Zugang – aktueller Arbeitsstand v0.1.4
 
-Die zentrale Version dieses Arbeitspakets ist `0.1.3`.
+Die zentrale Version dieses Arbeitspakets ist `0.1.4`.
 Dieses Arbeitspaket erweitert U01, U05–U08 und X04. Es ist keine vollständige
 Core-Abnahme; insbesondere E-Mail-Verfahren und weitere technische Dienste fehlen noch.
 API 1 ist unter [Plugin-Vertrag](plugin-development.md) dokumentiert.
@@ -14,6 +14,7 @@ beim HTTP-Aufruf. Nach Umstellung auf `false` funktioniert der Zugang.
 - Benutzerverwaltung für Administratoren: anlegen, Anzeigename/E-Mail/Rolle
   bearbeiten, aktivieren und deaktivieren. Keine Benutzerlöschung in diesem Schritt.
 - Eigenes Profil: Anzeigename ändern; Passwortwechsel nur mit aktuellem Passwort.
+- Persönliche Darstellung Hell/Dunkel/Systemvorgabe, dauerhaft im Konto gespeichert.
 - Lokaler Erstadministrator und Notfall-Passwort-Reset ohne Webanmeldung.
 - Schutz des letzten aktiven Administrators, auch bei parallelen Änderungen.
 
@@ -154,7 +155,7 @@ für Benutzer und Mitarbeiter gehören noch zum offenen Self-Service-Arbeitspake
 
 ## Nachweise und Grenzen
 
-53 Tests unter Windows/Python 3.12 bestanden. Bash-Syntax und ShellCheck für
+84 Tests unter Windows/Python 3.12 bestanden. Bash-Syntax und ShellCheck für
 alle fünf Shell-Dateien bestanden; Wheel und sdist gebaut. Das installierte
 Wheel wurde einschließlich Migration, Login, Profil und Benutzerübersicht geprüft.
 
@@ -169,7 +170,8 @@ Passwortwechsel und CLI-Reset mit genau 8 Zeichen sowie fehlende Sitzungscookies
 mit verständlichem Fehlerhinweis bei weiterhin aktivem CSRF-Schutz.
 
 Die Benutzerverwaltung ergänzt die bereits vom Nutzer als laufend gemeldete
-Grundinstallation. Ein eigener LXC-Echttest dieses neuen Schritts und visuelle
+Grundinstallation. Nutzer bestätigt Anmeldung, Passwortwechsel und den Schritt
+0.1.3. Ein eigener LXC-Echttest der neuen Einstellungen und die visuelle
 Browserprüfung stehen noch aus. Benutzerlöschung, eigene Rollenverwaltung,
-Sprachen/Design, SMTP, Registrierung, E-Mail-Aktivierung, Self-Service-Reset,
+Sprachen, SMTP, Registrierung, E-Mail-Aktivierung, Self-Service-Reset,
 weitere Plugin-Dienste und Benutzerimport bleiben ausdrücklich offen.
