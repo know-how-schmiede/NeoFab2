@@ -44,8 +44,24 @@ def init_config(output, data_dir, http_test):
 def configured_app():
     try:
         return create_app()
-    except (OSError, ValueError) as error:
+    except OSError as error:
         raise click.ClickException("Konfiguration fehlt oder ist ungültig. NEOFAB2_CONFIG, DATA_DIR und SECRET_KEY prüfen.") from error
+    except ValueError as error:
+        raise click.ClickException(str(error)) from error
+
+
+@main.command("plugin-task")
+@click.argument("plugin_id")
+@click.argument("task_name")
+def plugin_task(plugin_id, task_name):
+    """Aufgabe eines aktivierten Plugins lokal ausführen (Betriebszugang)."""
+    app = ready_app()
+    try:
+        with app.app_context():
+            result = app.extensions["neofab2_plugins"].run_task(plugin_id, task_name)
+    except ValueError as error:
+        raise click.ClickException(str(error)) from error
+    click.echo(result)
 
 
 @main.command()

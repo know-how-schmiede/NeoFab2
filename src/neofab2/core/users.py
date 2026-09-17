@@ -23,13 +23,20 @@ ROLES = {"user": "Benutzer", "staff": "Mitarbeiter", "admin": "Administrator"}
 ROLE_PERMISSIONS = {
     "user": frozenset({"core.profile"}),
     "staff": frozenset({"core.profile"}),
-    "admin": frozenset({"core.profile", "core.users.manage"}),
+    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view"}),
 }
 PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at]
 
 
 def has_permission(user, permission):
-    return bool(user and user["active"] and permission in ROLE_PERMISSIONS.get(user["role"], ()))
+    from flask import current_app, has_app_context
+
+    if not user or not user["active"]:
+        return False
+    if permission in ROLE_PERMISSIONS.get(user["role"], ()):
+        return True
+    registry = current_app.extensions.get("neofab2_plugins") if has_app_context() else None
+    return bool(registry and registry.allows(user, permission))
 
 
 def normalize_email(value):

@@ -1,4 +1,4 @@
-# NeoFab2 – Installation und Wartung (v0.1.2)
+# NeoFab2 – Installation und Wartung (v0.1.3)
 
 Als **root in einem neuen Debian-13-Container**, nicht auf dem Proxmox-Host:
 
@@ -10,7 +10,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.2 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.3 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
@@ -42,6 +42,9 @@ Erwartet: aktiver Dienst und `{"status":"ok"}`. Browser:
 `http://<Container-IP>:8080`. Bei abweichendem Port den gewählten Wert verwenden.
 
 Späteres Update als root:
+
+Version 0.1.3 ergänzt die [Plugin-Übersicht und das Testplugin](../doku/plugin-development.md).
+Das Testplugin wird durch ein Update nicht automatisch aktiviert.
 
 ```bash
 bash /opt/neofab2/script/upDateNeoFabService

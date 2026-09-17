@@ -1,8 +1,12 @@
-# Core-Zugang – aktueller Arbeitsstand v0.1.2
+# Core-Zugang – aktueller Arbeitsstand v0.1.3
 
-Die zentrale Version dieses Arbeitspakets ist `0.1.2`.
+Die zentrale Version dieses Arbeitspakets ist `0.1.3`.
 Dieses Arbeitspaket erweitert U01, U05–U08 und X04. Es ist keine vollständige
-Core-Abnahme; insbesondere E-Mail-Verfahren und Plugin-Vertrag fehlen noch.
+Core-Abnahme; insbesondere E-Mail-Verfahren und weitere technische Dienste fehlen noch.
+API 1 ist unter [Plugin-Vertrag](plugin-development.md) dokumentiert.
+Anmeldung und Passwortwechsel wurden vom Nutzer im HTTP-Container bestätigt;
+die Ursache des vorherigen Sitzungsfehlers war `SESSION_COOKIE_SECURE = true`
+beim HTTP-Aufruf. Nach Umstellung auf `false` funktioniert der Zugang.
 
 ## Was bereits funktioniert
 
@@ -30,8 +34,8 @@ Standardkonten, Startpasswörter oder automatisch übernommenen Benutzer.
 Rechte werden serverseitig geprüft, nicht nur in der Navigation.
 Profilanfragen dürfen weder andere Konten bearbeiten noch Rolle/E-Mail ändern.
 Admin-Schreiboperationen prüfen den aktiven Administrator in ihrer Transaktion
-erneut. Plugins erhalten später explizite Rechte; derzeit kein pauschales
-Administrator-Wildcard-Recht für zukünftige Plugins.
+erneut. Plugins deklarieren in API 1 ihr Zugriffsrecht und die erlaubten Rollen;
+es gibt kein pauschales Administrator-Wildcard-Recht für Plugins.
 
 Der letzte aktive Administrator kann nicht deaktiviert oder herabgestuft werden.
 Ein Administrator darf sein eigenes Konto ändern, sofern diese Regel erhalten
@@ -168,4 +172,4 @@ Die Benutzerverwaltung ergänzt die bereits vom Nutzer als laufend gemeldete
 Grundinstallation. Ein eigener LXC-Echttest dieses neuen Schritts und visuelle
 Browserprüfung stehen noch aus. Benutzerlöschung, eigene Rollenverwaltung,
 Sprachen/Design, SMTP, Registrierung, E-Mail-Aktivierung, Self-Service-Reset,
-Plugin-Vertrag und Benutzerimport bleiben ausdrücklich offen.
+weitere Plugin-Dienste und Benutzerimport bleiben ausdrücklich offen.

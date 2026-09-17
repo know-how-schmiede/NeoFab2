@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Plugins · NeoFab2{% endblock %}
+{% block content %}
+<h1>Plugins</h1>
+<p>Aktivierung und Deaktivierung erfolgen durch die Administration in der Serverkonfiguration mit anschließendem Dienstneustart.</p>
+{% for plugin in registry.available.values() %}
+<section class="card-form">
+  <h2>{{ plugin.name }}</h2>
+  <p>{{ 'Aktiv' if plugin.plugin_id in registry.enabled else 'Deaktiviert' }} · Version {{ plugin.version }} · API {{ plugin.api_version }}</p>
+  <p>Kennung: {{ plugin.plugin_id }} · Recht: {{ plugin.permission }}</p>
+  <p>Abhängigkeiten: {% for dependency in plugin.dependencies %}{{ dependency.plugin_id }} ab {{ dependency.minimum_version }}{% if not loop.last %}, {% endif %}{% else %}keine{% endfor %}</p>
+</section>
+{% else %}<p>Keine Plugins installiert.</p>{% endfor %}
+{% endblock %}

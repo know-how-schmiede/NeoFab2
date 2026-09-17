@@ -15,7 +15,8 @@ from neofab2.core.users import create_user
 
 assert "site-packages" in neofab2.__file__ or "wheel-installed" in neofab2.__file__, neofab2.__file__
 with tempfile.TemporaryDirectory() as folder:
-    app = neofab2.create_app({"SECRET_KEY": "synthetic-test-key" * 4, "DATA_DIR": folder, "SESSION_COOKIE_SECURE": False})
+    app = neofab2.create_app({"SECRET_KEY": "synthetic-test-key" * 4, "DATA_DIR": folder, "SESSION_COOKIE_SECURE": False,
+                            "ENABLED_PLUGINS": ["core_test"]})
     try:
         upgrade_database(app)
         client = app.test_client()
@@ -30,6 +31,9 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
+        assert client.get("/admin/plugins").status_code == 200
+        assert client.get("/plugins/core_test/").status_code == 200
+        assert "erfolgreich" in app.extensions["neofab2_plugins"].run_task("core_test", "self_check")
     finally:
         app.extensions["neofab2_db"].dispose()
 print("Wheel: Migration, Templates, CSS und Logo erfolgreich geprüft.")

@@ -10,6 +10,7 @@ def load_config(overrides=None):
         "DATA_DIR": str(Path.cwd() / "instance"),
         "SECRET_KEY": None,
         "TESTING": False,
+        "ENABLED_PLUGINS": [],
         "SESSION_COOKIE_HTTPONLY": True,
         "SESSION_COOKIE_SAMESITE": "Lax",
         "SESSION_COOKIE_SECURE": True,

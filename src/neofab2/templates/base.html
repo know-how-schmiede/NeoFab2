@@ -13,6 +13,8 @@
     {% if current_user %}
       <a href="{{ url_for('accounts.profile') }}">Mein Profil</a>
       {% if has_permission(current_user, 'core.users.manage') %}<a href="{{ url_for('accounts.user_list') }}">Benutzerverwaltung</a>{% endif %}
+      {% if has_permission(current_user, 'core.plugins.view') %}<a href="{{ url_for('plugins.overview') }}">Plugins</a>{% endif %}
+      {% for plugin in plugin_navigation %}<a href="{{ url_for('plugin_' ~ plugin.plugin_id ~ '.index') }}">{{ plugin.name }}</a>{% endfor %}
       <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">Abmelden</button></form>
     {% else %}<a href="{{ url_for('accounts.login') }}">Anmelden</a>{% endif %}
   </nav>

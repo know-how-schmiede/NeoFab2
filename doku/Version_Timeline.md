@@ -1,5 +1,74 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.3 – 2026-09-17
+
+Bereich: Core-Plugin-Vertrag und synthetisches Testplugin (N01, U06, S01,
+S12, X05/X06); bestätigter Container-Zugang (U01/U07).
+
+### Änderungen
+
+- Plugin-API 1 mit Kennung, Version, API-Version, explizitem Zugriffsrecht,
+  Rollen, Blueprint-Factory, Mindestversionen von Abhängigkeiten und lokalen Aufgaben.
+- Prüfung auf fehlende/zu alte Abhängigkeiten, Zyklen, doppelte Kennungen und
+  inkompatible aktive API; Fehler verhindern den Start.
+- Gemeinsame Navigation und serverseitiger Zugriffsschutz; kein pauschales
+  Administratorrecht auf alle Plugins. Zentrale CSRF-Prüfung bleibt aktiv.
+- Admin-Übersicht `/admin/plugins` zeigt Versionen, API, Status und Abhängigkeiten.
+- Synthetisches `core_test` 0.1.0 mit eigener Vorlage und lokaler Testaufgabe;
+  standardmäßig deaktiviert. Keine Fachfunktion und keine neuen Tabellen.
+- CLI `plugin-task` führt nur Aufgaben aktivierter Plugins aus.
+- Anleitung für Aktivierung, Deaktivierung, Ergebnisprüfung und Fehlerhilfe ergänzt.
+- Anmeldung und Passwortwechsel im HTTP-Container vom Nutzer bestätigt:
+  Secure-Cookie bei HTTP war die Ursache, Korrektur auf `false` erfolgreich.
+
+### Betrieb und Migration
+
+Reguläres Update mit `script/upDateNeoFabService`; keine neue Schema-Revision.
+Bestehende Daten, Konten und Cookie-Konfiguration bleiben erhalten. Standard:
+`ENABLED_PLUGINS = []`. Zur Prüfung ausdrücklich `["core_test"]` setzen,
+`neofab2 check` ausführen und alle Web-/Aufgabenprozesse neu starten.
+Deaktivierung entfernt keine Daten; direkter Zugriff liefert danach 404 und
+lokale Aufgaben werden abgewiesen. Anleitung: `doku/plugin-development.md`.
+
+API 1 umfasst ein Zugriffsrecht je Plugin und lokale Aufgaben ohne Scheduler.
+Plugin-Einstellungen, persistente Jobs und weitere technische Dienstverträge
+bleiben offen. Sprache/Design, E-Mail-Verfahren und Benutzerimport sind weiterhin
+offen; keine vollständige Core-Abnahme und keine produktiven Fachplugins.
+
+### Prüfungen
+
+- 73 Tests unter Windows/Python 3.12 bestanden, einschließlich 14 neuer
+  Plugin-Vertragstests zu Rechten, CSRF, Abhängigkeiten, Aufgaben und Deaktivierung.
+- Nach Kapselung der Plugin-Vorlage erneut alle 14 Plugin-Tests bestanden.
+- Wheel und sdist 0.1.3 gebaut; installiertes Wheel mit Migration, Anmeldung,
+  Profil, Benutzer-/Plugin-Übersicht, Plugin-Vorlage und Testaufgabe geprüft.
+- CLI meldet Version 0.1.3; Git-Diff auf Formatfehler geprüft.
+- Keine Änderungen an Shell-Skripten. Kein eigener LXC-Test des neuen Plugin-Schritts,
+  keine ausgeführte Linux-CI oder interaktive Browserprüfung.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+0.1.3: Plugin-Vertrag und geschütztes Core-Testplugin ergänzen
+```
+
+Commit-Beschreibung:
+
+```text
+Plugin-API 1 mit Versionen, Abhängigkeiten, Rechten und lokalen Aufgaben einführen.
+Plugin-Navigation, Admin-Übersicht und synthetisches Core-Testplugin ergänzen.
+Aktivierung per Konfiguration und Neustart; deaktivierte Seiten und Aufgaben sperren.
+Fehlende, inkompatible und zyklische Abhängigkeiten beim Start ablehnen.
+73 Tests sowie Paketbau und Prüfung des installierten Wheels bestanden.
+Version, Betriebsanleitungen und Funktionsnachweise aktualisieren.
+Bestätigten HTTP-Login und Passwortwechsel dokumentieren.
+Keine neue Schema-Revision; weitere Core-Dienste und LXC-Plugin-Abnahme offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt. Kein Commit oder Push durch Codex.
+
 ## Version 0.1.2 – 2026-09-17
 
 Bereich: Core-Benutzerzugang / Installation und Wiederherstellung (U01,

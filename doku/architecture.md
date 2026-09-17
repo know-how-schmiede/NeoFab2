@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.2
+# Architektur – Stand v0.1.3
 
 ## Erster Core-Schritt
 
@@ -25,7 +25,9 @@ oder produktive Last. Die endgültige produktive Datenbankentscheidung bleibt of
 | `src/neofab2/core/` | Startseite, Health, Benutzerregeln, Anmeldung und Rechte |
 | `src/neofab2/templates/`, `static/` | Layout, CSS, Logo |
 | `migrations/` | Zentrale Revisionen; als `neofab2.migrations` im Wheel |
-| `src/neofab2/services/`, `plugin_api/`, `plugins/` | Vorbereitete Zielbereiche |
+| `src/neofab2/plugin_api/` | API-1-Vertrag, Katalog und Abhängigkeitsprüfung |
+| `src/neofab2/plugins/` | Synthetisches Core-Testplugin, standardmäßig deaktiviert |
+| `src/neofab2/services/` | Vorbereiteter Zielbereich |
 | `tests/` | Core, CLI, Restore, simulierte Update-Steuerung |
 | `script/` | Debian-Installation und Wartung |
 | `.github/workflows/core.yml` | Vorbereitete Linux-CI für Python 3.12/3.13 |
@@ -53,13 +55,16 @@ Antworten enthalten keine internen Pfade oder SQL-Fehler.
 
 ## Grenzen und Abweichungen
 
-S01 umfasst Startseite, Profil und Benutzerverwaltung; Plugin-Navigation folgt.
-S12 für die Core-Version umgesetzt; Plugin-Versionen folgen mit N01.
+S01 umfasst Startseite, Profil, Benutzerverwaltung und Plugin-Navigation.
+S12 zeigt Core-Version sowie Plugin-Versionen in der Admin-Übersicht.
 U01, U08 und die lokale Wiederherstellung X04 sind umgesetzt. U05 umfasst
 Anlegen/Bearbeiten/Aktivieren/Deaktivieren, noch kein Löschen. U06 verwendet die
-festen Rollen Benutzer/Mitarbeiter/Administrator; Plugin-Rechte und Importzuordnung
-folgen. U07 umfasst Anzeigename und Passwortwechsel; Sprache/Design folgen.
-U02–U04, S02–S11, N01, N04 und N05 bleiben offen.
+festen Rollen Benutzer/Mitarbeiter/Administrator sowie explizite Plugin-Zugriffsrechte;
+Importzuordnung und Rollenpflege folgen. U07 umfasst Anzeigename und Passwortwechsel;
+Sprache/Design folgen. U02–U04, S02–S11, N04 und N05 bleiben offen.
+N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Aktivierung beim Neustart,
+Seiten, Rechte, Navigation und lokale Aufgaben. Weitere Dienstverträge fehlen.
+[Plugin-Vertrag und Betriebsprüfung](plugin-development.md).
 
 Die drei vertrauten Betriebsskriptnamen und interaktive Bedienung bleiben.
 Bewusste Abweichung: Benutzer/Pfade für die erste neue Installation fest auf
@@ -71,13 +76,13 @@ laufende Skriptdatei selbst aktualisiert werden kann.
 
 1. Profileinstellungen für Sprache/Design sowie Systemeinstellungen ausbauen.
 2. Selbstregistrierung und E-Mail-Verfahren mit dem Versanddienst umsetzen.
-3. Versionierter Plugin-Vertrag und synthetisches Testplugin.
+3. Plugin-Vertrag um technische Dienste und persistente Aufgaben erweitern.
 4. Technische Dienste und Benutzerimport mit abgestimmten Konfliktregeln.
 5. Echter Debian-/Proxmox-Installations-, Update- und Wiederherstellungstest;
    vollständige Core-Abnahme vor Fachplugins.
 
 Offen: Registrierungsregeln, Rollen-/Konfliktzuordnung beim Import, produktive
-Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.2.
+Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.3.
 
 ## Referenzen
 

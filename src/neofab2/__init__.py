@@ -3,7 +3,7 @@
 from .version import __version__
 
 
-def create_app(test_config=None):
+def create_app(test_config=None, *, plugins=None):
     from flask import Flask, render_template, request
     from flask_wtf.csrf import CSRFProtect, CSRFError
 
@@ -12,14 +12,19 @@ def create_app(test_config=None):
     from .core.routes import bp
     from .core.accounts import bp as accounts_bp
     from .core.auth import register_auth
+    from .core.plugins import register_plugins
+    from .plugin_api import builtin_plugins
+    from .plugin_api.registry import Registry
 
     app = Flask(__name__)
     app.config.from_mapping(load_config(test_config))
+    registry = Registry(builtin_plugins() if plugins is None else plugins, app.config["ENABLED_PLUGINS"])
     init_database(app)
     register_auth(app)
     CSRFProtect(app)
     app.register_blueprint(bp)
     app.register_blueprint(accounts_bp)
+    register_plugins(app, registry)
     app.context_processor(lambda: {"version": __version__})
 
     @app.errorhandler(CSRFError)

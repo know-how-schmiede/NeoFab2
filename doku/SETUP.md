@@ -1,4 +1,4 @@
-# NeoFab2 v0.1.2 – Installation und Entwicklung
+# NeoFab2 v0.1.3 – Installation und Entwicklung
 
 ## Umfang und Prüfstand
 
@@ -35,7 +35,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.2 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.3 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -149,7 +149,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.2`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.3`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:
@@ -166,6 +166,14 @@ weiteren; zusätzliche Benutzer und Administratoren werden angemeldet über
 die Benutzerverwaltung angelegt. [Details und Notfallzugang](Core_Zugang.md).
 
 ## 5. Fehlerhilfe
+
+### Neu in 0.1.3: Plugin-Grundsystem
+
+Das reguläre Update ergänzt die Admin-Seite `/admin/plugins`. Alle Plugins
+sind standardmäßig deaktiviert. [Testplugin aktivieren und prüfen](plugin-development.md).
+Keine neue Schemaänderung; bestehende Benutzer und HTTP-Cookie-Konfiguration
+bleiben erhalten. Anmeldung und Passwortwechsel im HTTP-Container wurden nach
+Korrektur von `SESSION_COOKIE_SECURE` durch den Nutzer bestätigt.
 
 ### Anmeldung: „Formularsitzung abgelaufen oder ungültig“
 

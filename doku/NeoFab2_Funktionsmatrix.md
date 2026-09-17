@@ -176,10 +176,10 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.2 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.3 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
-| S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Navigation per HTTP-Test geprüft | Plugin-Navigation, Infoseite und visuelle Browserprüfung offen |
-| S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html` | Core-Versionsanzeige und Paketmetadaten geprüft | Separate Plugin-Versionen folgen mit N01 |
+| S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `core/plugins.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Core-/Plugin-Navigation per HTTP-Test geprüft | Infoseite und interaktive visuelle Browserprüfung offen |
+| S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html`, `templates/plugins.html` | Core-Versionsanzeige, Paketmetadaten und separate Plugin-Versionen geprüft | Weiterer Ausbau der Systeminformationen offen |
 | X07 | in Arbeit | `src/neofab2/database.py`, `migrations/versions/0001_core_settings.py`, `0002_core_users.py`, `tests/integration/test_accounts_cli.py` | Migration vom vorherigen Schema mit Erhalt der Einstellungen, Wiederholung, fehlendes Schema und Start ohne implizite Migration geprüft | Weitere Core-/Plugin-Schemata folgen |
 | X01 | implementiert | `script/setupNeoFab`, `tests/integration/test_setup_teststart.py` | Nutzer meldet laufendes Grundsystem; Teststart-CWD korrigiert. HTTPS-Auswahl und interaktiven Erstadmin ergänzt; CLI und Shell-Syntax geprüft | Kein eigener LXC-Erstlauf des neuen Benutzer-Schritts; feste NeoFab2-Pfade/Benutzer |
 | X02 | implementiert | `script/setupNeoFabService` | Bash-Syntax und ShellCheck bestanden | systemd-Echttest offen; noch keine Hintergrundaufgaben |
@@ -187,10 +187,10 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | X04 | implementiert | `script/resetAdminPassword`, `src/neofab2/cli.py`, `core/users.py`, `tests/integration/test_accounts_cli.py` | Admin-Auswahl, verdeckte Eingabe, Sperrstatus, explizite Reaktivierung und Sitzungswiderruf per CLI geprüft | Echter Skriptlauf im LXC noch offen |
 | U01 | geprüft | `src/neofab2/core/auth.py`, `accounts.py`, `tests/core/test_accounts.py` | Gültige/falsche/unbekannte/deaktivierte Logins, Logout, scrypt-Hashing, CSRF und serverseitige Anmeldebegrenzung geprüft | Keine Selbstregistrierung/E-Mail-Verfahren in diesem Teilumfang |
 | U05 | in Arbeit | `src/neofab2/core/users.py`, `accounts.py`, `tests/core/test_accounts.py` | Anlegen/Bearbeiten/Aktivieren/Deaktivieren, doppelte E-Mail, serverseitige Rechte und paralleler Letzter-Admin-Schutz geprüft | Benutzerlöschung mit Auswirkungen auf Plugins bleibt offen |
-| U06 | in Arbeit | `src/neofab2/core/users.py`, `auth.py` | Rollen Benutzer/Mitarbeiter/Administrator als Rechtebündel; Direktzugriff und Profil-Eskalation geprüft | Plugin-Rechte, Rollenpflege und Altrollen-Zuordnung folgen |
+| U06 | in Arbeit | `src/neofab2/core/users.py`, `auth.py`, `plugins.py`, `plugin_api/` | Rollen Benutzer/Mitarbeiter/Administrator, explizite Plugin-Rechte, Direktzugriff und Profil-Eskalation geprüft | Rollenpflege, feinere Plugin-Rechte und Altrollen-Zuordnung folgen |
 | U07 | in Arbeit | `src/neofab2/core/accounts.py`, `templates/profile.html` | Eigener Anzeigename, Passwortwechsel mit altem Passwort und Sitzungswiderruf geprüft | Sprache und Darstellungseinstellungen folgen |
 | U08 | geprüft | `src/neofab2/core/auth.py`, `config.py`, `tests/core/test_accounts.py` | Server-Inaktivitätsfrist, absolute Laufzeit, Cookie-Replay nach Logout und unveränderte Frist bei Health-/Static-Anfragen geprüft | Keine dauerhaften Remember-me-Sitzungen vorgesehen |
-| N01 | geplant | `src/neofab2/plugin_api/`, `tests/fixtures/plugins/` | Zielverzeichnisse vorhanden | Plugin-Vertrag und Testplugin folgen |
+| N01 | in Arbeit | `src/neofab2/plugin_api/`, `src/neofab2/core/plugins.py`, `src/neofab2/plugins/`, `tests/plugin_contract/test_plugins.py` | API 1: Metadaten, Abhängigkeiten, API-Kompatibilität, Rechte, Navigation, Aktivierung nach Neustart, direkte Zugriffe und lokale Aufgaben geprüft | Weitere Dienstverträge, Plugin-Einstellungen und persistente Aufgaben offen; synthetische Zusatzplugins als Test-Fixtures in der Testdatei |
 
 ### Nachbesserung Anmeldung und Erstadmin (17.09.2026, weiterhin 0.1.2)
 
@@ -207,9 +207,17 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U01, U08 | geprüft | `tests/core/test_accounts.py` | Sechs zusätzliche Fälle mit echtem HTTP-Server und CookieJar: Secure bei HTTP führt mit richtigen/falschen Passwörtern und unbekannter E-Mail zu 400; ohne Secure erfolgreiche Anmeldung bzw. 401. Alle 34 Tests dieser Datei bestanden | Teilnachweis; konkrete Ursache im Nutzercontainer weiterhin unbestätigt, keine Änderung der Authentifizierung auf Verdacht |
 | X05 | implementiert | `doku/SETUP.md` | Diagnose des ausgelieferten Cookie-Attributs mit ausgeblendetem Wert, Prüfung von Browser und Dienstkonfiguration dokumentiert | Antwortheader des betroffenen Dienstes zur weiteren Eingrenzung erforderlich |
 
-Alle übrigen IDs bleiben geplant. Version 0.1.2 ergänzt Benutzerzugang und
-lokalen Admin-Reset gegenüber dem Grundsystem v0.1.1.
-U02–U04 (Registrierung/E-Mail-Verfahren), Benutzerlöschung und Plugin-Vertrag
-sind nicht Teil dieses Arbeitspakets. Keine vollständige Core-Abnahme.
+### Plugin-Grundsystem 0.1.3 und bestätigter Container-Zugang (17.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| N01 | in Arbeit | `src/neofab2/plugin_api/`, `src/neofab2/plugins/`, `tests/plugin_contract/test_plugins.py` | 14 Vertragstests: Aktivierung/Deaktivierung, Abhängigkeiten inklusive Zyklen und Mindestversionen, API-Kompatibilität und Aufgaben; alle bestanden | Ein Recht je Plugin, keine persistenten Jobs oder weiteren Dienstverträge; kein eigener LXC-Test dieses Schritts |
+| U06, S01, S12 | in Arbeit | `src/neofab2/core/plugins.py`, `core/users.py`, `templates/base.html`, `templates/plugins.html` | Rollenabhängige Navigation, direkte Zugriffe mit Benutzer/Mitarbeiter/Admin, CSRF und Plugin-Versionen geprüft | Rollenpflege, weitere Oberfläche und interaktive Browserprüfung offen |
+| U01, U07, X05 | geprüft (Teilumfang) | `doku/Core_Zugang.md`, `doku/SETUP.md` | Nutzer bestätigt Login und Passwortwechsel im Container; ausgelieferter Secure-Cookie und HTTP-Zugang belegten Ursache; Umstellung auf false erfolgreich | Gilt für diese Zugangsfunktionen, keine vollständige LXC-/Core-Abnahme; ersetzt vorherige offene Ursacheneingrenzung |
+| X05, X06 | geprüft (Teilumfang) | `doku/plugin-development.md`, `script/README.md`, `doku/Version_Timeline.md`, `src/neofab2/version.py` | Version 0.1.3, Betriebsablauf und Commit-Texte ergänzt; 73 Gesamttests, danach 14 Plugin-Tests erneut; Wheel/sdist und installiertes Wheel geprüft | Keine neue Schema-Revision, kein Commit/Push |
+
+Alle übrigen IDs bleiben geplant. U02–U04 (Registrierung/E-Mail-Verfahren),
+Benutzerlöschung, Sprache/Design und weitere Plugin-Dienste sind offen.
+Keine vollständige Core-Abnahme.
 
 Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsänderungen zusätzlich gemäß Projektbeschreibung in `doku/Version_Timeline.md` dokumentieren, einschließlich Commit-Titel und Commit-Beschreibung für den manuellen Commit. Diese Matrix allein ersetzt weder Tests noch die Versionshistorie.
