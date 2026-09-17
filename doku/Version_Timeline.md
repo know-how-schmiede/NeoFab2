@@ -1,5 +1,80 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.5 – 2026-09-17
+
+Bereich: Plugin-Verwaltung im Backend, Neustartablauf und zweites Testplugin
+(N01, U06, S01/S12, X05/X06).
+
+### Änderungen
+
+- Aktivierung/Deaktivierung unter `/admin/plugins` als gewünschte Auswahl vormerken.
+  Eigenes Admin-Recht `core.plugins.manage`, POST/CSRF und erneute Rechteprüfung
+  innerhalb der Speichertransaktion.
+- Persistenter Zielzustand in `core_settings`; vorhandene TOML-Auswahl gilt bis
+  zur ersten Backend-Speicherung. Danach hat die Datenbank Vorrang, auch bei `[]`.
+- Anzeige des laufenden Webprozesses getrennt von gespeicherter Auswahl;
+  Neustarthinweis bei Abweichung. Kein automatischer Container-/Dienstneustart.
+- Abhängigkeiten vor Speicherung validieren; benötigte Plugins nicht einzeln
+  deaktivierbar. Parallele Aktionen arbeiten auf dem aktuellen Datenbankstand.
+- Neues synthetisches `management_test` 0.1.0 (API 1), abhängig von `core_test`
+  ab 0.1.0. Eigene Testseite, CSRF-geschütztes Testformular und lokale Testaufgabe.
+  Das bestehende Core-Testplugin bleibt Version 0.1.0.
+- Lokale bestätigte Wiederherstellung `plugins-restore-config` übernimmt eine
+  geprüfte TOML-Auswahl, falls die gespeicherte Auswahl den Start verhindert.
+- Update-/Prüfanleitungen, Versionsangaben und Funktionsnachweise aktualisiert.
+  Nutzer meldet den vorherigen Schritt 0.1.4 als lauffähig.
+
+### Betrieb und Migration
+
+Reguläres Update mit `script/upDateNeoFabService`, keine neue Schema-Revision
+gegenüber 0.1.4. Neue Plugin-Auswahl wird mit der Datenbank gesichert; keine
+Plugin-Deinstallation oder Datenlöschung. Das neue Testplugin wird nicht automatisch
+aktiviert. Erst `core_test`, dann `management_test` im Backend vormerken, danach
+startet der **Proxmox-Admin den Container manuell neu**. Zur Deaktivierung die
+umgekehrte Reihenfolge verwenden. Bis zum Neustart behalten laufende Prozesse
+ihre bisherige Registrierung. Frisch gestartete CLI-/Webprozesse übernehmen
+den Zielzustand bereits bei ihrem eigenen Start. Die Übersicht bestätigt
+ausdrücklich nur den Zustand des antwortenden Webprozesses.
+
+Anleitung, Fehlersuche und Wiederherstellung: `doku/plugin-development.md`.
+Keine produktiven Fachplugins; persistente Aufgaben, weitere technische Dienste,
+Sprachübersetzungen und vollständige Core-Abnahme bleiben offen.
+
+### Prüfungen
+
+- 95 Tests unter Windows/Python 3.12 bestanden, darunter 11 neue Fälle für
+  Zielzustand/Neustart, Abhängigkeiten, CSRF/Rechte, Parallelität, TOML-Übernahme,
+  Abbruch bei ungültiger Auswahl und lokale Wiederherstellung.
+- Wheel und sdist 0.1.5 gebaut; installiertes Wheel mit Backend-Aktivierung,
+  erneutem App-Start, zweiter Plugin-Vorlage und Testaufgabe geprüft.
+- CLI meldet 0.1.5; lokale Dokumentationslinks und `git diff --check` geprüft.
+- Keine Änderungen an Shell-Skripten. Kein eigener Proxmox-Neustart, keine
+  interaktive Browserprüfung und keine Linux-CI dieses Schritts ausgeführt.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+0.1.5: Plugin-Verwaltung im Backend und zweites Testplugin ergänzen
+```
+
+Commit-Beschreibung:
+
+```text
+Plugin-Aktivierung und Deaktivierung im Backend mit Admin-Recht und CSRF ergänzen.
+Zielzustand transaktional speichern und vom laufenden Prozesszustand unterscheiden.
+TOML-Auswahl bis zur ersten Backend-Speicherung als Ausgangswert erhalten.
+Abhängigkeiten vor Speicherung prüfen und parallele Änderungen erhalten.
+Neustarthinweis für manuellen Container-Neustart durch Proxmox-Admin anzeigen.
+Abhängiges Verwaltungs-Testplugin mit Formular und lokaler Testaufgabe ergänzen.
+Lokale Wiederherstellung der Plugin-Auswahl und deutsche Prüfanleitung bereitstellen.
+95 Tests und Prüfung des installierten Pakets bestanden; keine neue Schema-Revision.
+Version 0.1.5 und Funktionsnachweise aktualisieren; Proxmox-Abnahme noch offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt. Kein Commit oder Push durch Codex.
+
 ## Version 0.1.4 – 2026-09-17
 
 Bereich: Core-Systemeinstellungen und Darstellung (S04, S01, U07, X05–X07).

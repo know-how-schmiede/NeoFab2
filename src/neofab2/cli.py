@@ -50,6 +50,26 @@ def configured_app():
         raise click.ClickException(str(error)) from error
 
 
+@main.command("plugins-restore-config")
+@click.confirmation_option(prompt="Plugin-Auswahl aus der Serverkonfiguration übernehmen?")
+def plugins_restore_config():
+    """Lokale Wiederherstellung bei ungültiger gespeicherter Plugin-Auswahl."""
+    from .core.plugin_state import restore_config_selection
+
+    app = None
+    try:
+        app = create_app(use_config_plugins=True)
+        if not database_ready(app):
+            raise click.ClickException("Datenbank nicht bereit. Zuerst Migration prüfen.")
+        restore_config_selection(app)
+    except (OSError, ValueError) as error:
+        raise click.ClickException("Plugin-Wiederherstellung fehlgeschlagen; Konfiguration und Plugin-Abhängigkeiten prüfen.") from error
+    finally:
+        if app is not None:
+            app.extensions["neofab2_db"].dispose()
+    click.echo("Plugin-Auswahl aus der Konfiguration gespeichert. Alle Anwendungsprozesse neu starten.")
+
+
 @main.command("plugin-task")
 @click.argument("plugin_id")
 @click.argument("task_name")

@@ -176,7 +176,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.4 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.5 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
 | S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `core/plugins.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Core-/Plugin-Navigation per HTTP-Test geprüft | Infoseite und interaktive visuelle Browserprüfung offen |
 | S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html`, `templates/plugins.html` | Core-Versionsanzeige, Paketmetadaten und separate Plugin-Versionen geprüft | Weiterer Ausbau der Systeminformationen offen |
@@ -190,7 +190,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U06 | in Arbeit | `src/neofab2/core/users.py`, `auth.py`, `plugins.py`, `plugin_api/` | Rollen Benutzer/Mitarbeiter/Administrator, explizite Plugin-Rechte, Direktzugriff und Profil-Eskalation geprüft | Rollenpflege, feinere Plugin-Rechte und Altrollen-Zuordnung folgen |
 | U07 | in Arbeit | `src/neofab2/core/accounts.py`, `core/users.py`, `templates/profile.html`, `static/core.css` | Eigener Anzeigename, Passwortwechsel und dauerhafte persönliche Darstellung Hell/Dunkel/Systemvorgabe geprüft | Sprache folgt |
 | U08 | geprüft | `src/neofab2/core/auth.py`, `config.py`, `tests/core/test_accounts.py` | Server-Inaktivitätsfrist, absolute Laufzeit, Cookie-Replay nach Logout und unveränderte Frist bei Health-/Static-Anfragen geprüft | Keine dauerhaften Remember-me-Sitzungen vorgesehen |
-| N01 | in Arbeit | `src/neofab2/plugin_api/`, `src/neofab2/core/plugins.py`, `src/neofab2/plugins/`, `tests/plugin_contract/test_plugins.py` | API 1: Metadaten, Abhängigkeiten, API-Kompatibilität, Rechte, Navigation, Aktivierung nach Neustart, direkte Zugriffe und lokale Aufgaben geprüft | Weitere Dienstverträge, Plugin-Einstellungen und persistente Aufgaben offen; synthetische Zusatzplugins als Test-Fixtures in der Testdatei |
+| N01 | in Arbeit | `src/neofab2/plugin_api/`, `src/neofab2/core/plugins.py`, `core/plugin_state.py`, `src/neofab2/plugins/`, `tests/plugin_contract/` | API 1: Metadaten, Abhängigkeiten, Rechte, Navigation, Backend-Auswahl und Aktivierung nach Neustart; zwei Testplugins und lokale Aufgaben geprüft | Weitere Dienstverträge, fachliche Plugin-Einstellungen und persistente Aufgaben offen |
 
 ### Nachbesserung Anmeldung und Erstadmin (17.09.2026, weiterhin 0.1.2)
 
@@ -225,6 +225,15 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | X07 | geprüft (Teilumfang) | `migrations/versions/0003_user_theme.py`, `src/neofab2/database.py`, `tests/core/test_settings.py` | Explizites Upgrade von 0002 mit Benutzer-/Hash-/Einstellungserhalt; Wiederholung und Ablehnung des alten Schemas geprüft | Nur Testdaten; keine produktive Migration durch Codex |
 | X05, X06 | geprüft (Teilumfang) | `doku/Core_Einstellungen.md`, `doku/SETUP.md`, `script/README.md`, `doku/Version_Timeline.md` | Version 0.1.4; 84 Tests bestanden, Wheel/sdist gebaut und installiertes Wheel geprüft; Update-/Prüfbefehle dokumentiert | Neuer Container-Test und visuelle Prüfung offen; kein Commit/Push |
 | N01, X03 | implementiert | `doku/plugin-development.md`, `doku/Version_Timeline.md` | Nutzer meldet Schritt 0.1.3 als erfolgreich | Rückmeldung ersetzt keinen vollständigen Einzeltest aller Abhängigkeiten oder einen Vollrestore-Test |
+
+### Plugin-Verwaltung 0.1.5 (17.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| N01, U06 | in Arbeit | `src/neofab2/core/plugin_state.py`, `core/plugins.py`, `core/users.py`, `tests/plugin_contract/test_management.py` | Backend-Auswahl, Rechte/CSRF, Abhängigkeitsprüfung vor Speicherung, Parallelität, TOML-Ausgangswert, Neustart und Wiederherstellung geprüft; 95 Gesamttests bestanden | Laufende Prozesse übernehmen Änderungen erst beim Neustart; weitere Dienstverträge offen |
+| N01, S01, S12 | geprüft (Teilumfang) | `src/neofab2/plugins/management_test.py`, `plugins/templates/management_test/index.html`, `templates/plugins.html` | Zweites Testplugin mit deklarierter Abhängigkeit und Formular; aktuelle und gespeicherte Zustände getrennt; Pakettest mit Backend-Aktivierung und neuem App-Start bestanden | Testplugin 0.1.0, API 1; keine Fachfunktion; keine globale Prozessüberwachung |
+| X05, X06 | geprüft (Teilumfang) | `doku/plugin-development.md`, `doku/SETUP.md`, `script/README.md`, `doku/Version_Timeline.md`, `src/neofab2/cli.py` | Version 0.1.5, manuellen Proxmox-Neustart und bestätigte lokale Wiederherstellung dokumentiert; Wheel/sdist und CLI geprüft | Kein eigener Container-Neustart oder interaktiver Browsertest; keine neue Schema-Revision; kein Commit/Push |
+| S04, U07 | implementiert | `doku/Core_Einstellungen.md` | Nutzer meldet vorherigen Schritt 0.1.4 als lauffähig | Keine zusätzliche vollständige Core-Abnahme aus dieser Rückmeldung abgeleitet |
 
 Alle übrigen IDs bleiben geplant. U02–U04 (Registrierung/E-Mail-Verfahren),
 Benutzerlöschung, Sprache und weitere Plugin-Dienste sind offen.

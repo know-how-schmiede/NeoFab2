@@ -38,6 +38,17 @@ with tempfile.TemporaryDirectory() as folder:
         assert 'data-theme="light"' in client.get("/").text
         assert client.get("/plugins/core_test/").status_code == 200
         assert "erfolgreich" in app.extensions["neofab2_plugins"].run_task("core_test", "self_check")
+        page = client.get("/admin/plugins")
+        token = re.search(r'name="csrf_token" value="([^"]+)"', page.text).group(1)
+        assert client.post("/admin/plugins/management_test/state", data={"csrf_token": token, "action": "enable"}).status_code == 302
+        restarted = neofab2.create_app({"SECRET_KEY": "synthetic-test-key" * 4, "DATA_DIR": folder, "SESSION_COOKIE_SECURE": False})
+        try:
+            second_client = restarted.test_client()
+            second_client.set_cookie("neofab2_session", client.get_cookie("neofab2_session").value)
+            assert second_client.get("/plugins/management_test/").status_code == 200
+            assert "erfolgreich" in restarted.extensions["neofab2_plugins"].run_task("management_test", "self_check")
+        finally:
+            restarted.extensions["neofab2_db"].dispose()
     finally:
         app.extensions["neofab2_db"].dispose()
 print("Wheel: Migration, Templates, CSS und Logo erfolgreich geprüft.")

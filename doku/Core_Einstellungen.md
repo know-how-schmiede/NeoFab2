@@ -1,4 +1,4 @@
-# Systemeinstellungen und Darstellung – v0.1.4
+# Systemeinstellungen und Darstellung – v0.1.5
 
 Umfang: S04/S01 und der Darstellungsteil von U07. Die Oberfläche bleibt deutsch;
 Sprachwahl und Übersetzungen, Import/Export von Einstellungen, SMTP sowie
@@ -6,7 +6,7 @@ Impressum/Datenschutz werden in späteren Core-Schritten ergänzt.
 
 ## Update und Migration
 
-Voraussetzung: Änderungen zu 0.1.4 manuell in GitHub Desktop committen und
+Voraussetzung: Änderungen zu 0.1.5 manuell in GitHub Desktop committen und
 auf den verwendeten Remote-Branch übertragen. Danach als **root im Container**:
 
 ```bash
@@ -29,7 +29,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl status neofab2.service --no-pager
 ```
 
-Erwartet: Version 0.1.4, Datenbank und Schema bereit, aktiver Dienst.
+Erwartet: Version 0.1.5, Datenbank und Schema bereit, aktiver Dienst.
 Die HTTP-Einstellung `SESSION_COOKIE_SECURE = false` im isolierten Testnetz
 und die Plugin-Aktivierung werden durch diesen Schritt nicht verändert.
 

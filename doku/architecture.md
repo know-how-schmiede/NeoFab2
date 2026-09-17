@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.4
+# Architektur – Stand v0.1.5
 
 ## Erster Core-Schritt
 
@@ -26,7 +26,7 @@ oder produktive Last. Die endgültige produktive Datenbankentscheidung bleibt of
 | `src/neofab2/templates/`, `static/` | Layout, CSS, Logo |
 | `migrations/` | Zentrale Revisionen; als `neofab2.migrations` im Wheel |
 | `src/neofab2/plugin_api/` | API-1-Vertrag, Katalog und Abhängigkeitsprüfung |
-| `src/neofab2/plugins/` | Synthetisches Core-Testplugin, standardmäßig deaktiviert |
+| `src/neofab2/plugins/` | Zwei synthetische Testplugins, bei neuer Installation deaktiviert |
 | `src/neofab2/services/` | Vorbereiteter Zielbereich |
 | `tests/` | Core, CLI, Restore, simulierte Update-Steuerung |
 | `script/` | Debian-Installation und Wartung |
@@ -50,6 +50,18 @@ transaktional in der bestehenden Einstellungstabelle; jede Speicherung prüft
 den Administrator erneut. Keine globalen veraltenden Einstellungscaches:
 HTML-Anfragen laden aktuelle Werte. Gemeinsame CSS-Variablen gelten auch für Plugins.
 
+Ab 0.1.5 speichert `core/plugin_state.py` die gewünschte Plugin-Auswahl in
+`core_settings` unter `core.plugins.enabled`. Ohne diesen Datensatz gilt weiterhin
+`ENABLED_PLUGINS` aus TOML. Nach erster Backend-Speicherung hat die DB Vorrang,
+auch bei leerer Auswahl. Beim Start wird nur gelesen, kein Schema erzeugt.
+Die Registry ist ein Prozess-Snapshot; die Admin-Seite vergleicht ihn mit dem
+gespeicherten Zielzustand. Änderungen wirken beim nächsten Prozessstart.
+Manueller Container-Neustart durch den Proxmox-Admin übernimmt alle Prozesse.
+Keine Proxmox-API, kein Web-Neustartbefehl und keine automatische Rechteerhöhung.
+Abhängigkeitsprüfung und erneute Admin-Prüfung liegen in derselben serialisierten
+Speichertransaktion. Der lokale Befehl `plugins-restore-config` ermöglicht die
+Wiederherstellung aus einer geprüften TOML-Auswahl, falls die DB-Auswahl ungültig ist.
+
 Passwörter werden über Werkzeug/scrypt gehasht, Formulare durch Flask-WTF
 gegen CSRF geschützt. Das signierte Flask-Cookie enthält einen zufälligen
 Sitzungstoken, keine Rechte oder Passwörter. Sein SHA-256-Hash verweist auf
@@ -70,8 +82,9 @@ festen Rollen Benutzer/Mitarbeiter/Administrator sowie explizite Plugin-Zugriffs
 Importzuordnung und Rollenpflege folgen. U07 umfasst Anzeigename, Passwortwechsel
 und persönliche Darstellung; Sprache folgt. S04 umfasst öffentliche Darstellungseinstellungen,
 noch keinen Import/Export oder SMTP. U02–U04, S02/S03, S05–S11, N04 und N05 bleiben offen.
-N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Aktivierung beim Neustart,
-Seiten, Rechte, Navigation und lokale Aufgaben. Weitere Dienstverträge fehlen.
+N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Backend-Auswahl mit
+Aktivierung beim Neustart, Seiten, Rechte, Navigation und lokale Aufgaben.
+Weitere Dienstverträge fehlen.
 [Plugin-Vertrag und Betriebsprüfung](plugin-development.md).
 
 Die drei vertrauten Betriebsskriptnamen und interaktive Bedienung bleiben.
@@ -90,7 +103,7 @@ laufende Skriptdatei selbst aktualisiert werden kann.
    vollständige Core-Abnahme vor Fachplugins.
 
 Offen: Registrierungsregeln, Rollen-/Konfliktzuordnung beim Import, produktive
-Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.4.
+Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.5.
 
 ## Referenzen
 

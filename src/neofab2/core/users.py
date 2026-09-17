@@ -24,7 +24,7 @@ ROLES = {"user": "Benutzer", "staff": "Mitarbeiter", "admin": "Administrator"}
 ROLE_PERMISSIONS = {
     "user": frozenset({"core.profile"}),
     "staff": frozenset({"core.profile"}),
-    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.settings.manage"}),
+    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.plugins.manage", "core.settings.manage"}),
 }
 PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme]
 

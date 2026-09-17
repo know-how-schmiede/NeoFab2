@@ -1,4 +1,9 @@
-# Betrieb und Wiederherstellung – v0.1.4
+# Betrieb und Wiederherstellung – v0.1.5
+
+Plugin-Auswahl wird im Backend unter **Plugins** gespeichert und ab dem nächsten
+Prozessstart übernommen. Den erforderlichen Container-Neustart führt der
+Proxmox-Admin manuell aus. Die Datenbanksicherung enthält auch den Zielzustand.
+[Prüfablauf und lokaler Wiederherstellungsbefehl](plugin-development.md).
 
 Als **root im NeoFab2-Container** ausführen. Diese Fassung speichert nur die
 SQLite-Core-Datenbank. Mit späteren Dateidiensten muss der Sicherungsumfang

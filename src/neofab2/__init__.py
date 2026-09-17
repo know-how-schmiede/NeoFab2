@@ -3,7 +3,7 @@
 from .version import __version__
 
 
-def create_app(test_config=None, *, plugins=None):
+def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     from flask import Flask, render_template, request
     from flask_wtf.csrf import CSRFProtect, CSRFError
 
@@ -14,13 +14,19 @@ def create_app(test_config=None, *, plugins=None):
     from .core.auth import register_auth
     from .core.plugins import register_plugins
     from .core.settings import register_presentation
+    from .core.plugin_state import read_selection
     from .plugin_api import builtin_plugins
     from .plugin_api.registry import Registry
 
     app = Flask(__name__)
     app.config.from_mapping(load_config(test_config))
-    registry = Registry(builtin_plugins() if plugins is None else plugins, app.config["ENABLED_PLUGINS"])
     init_database(app)
+    try:
+        selected = app.config["ENABLED_PLUGINS"] if use_config_plugins else read_selection(app)[0]
+        registry = Registry(builtin_plugins() if plugins is None else plugins, selected)
+    except Exception:
+        app.extensions["neofab2_db"].dispose()
+        raise
     register_auth(app)
     CSRFProtect(app)
     app.register_blueprint(bp)

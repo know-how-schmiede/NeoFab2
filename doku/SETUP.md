@@ -1,4 +1,4 @@
-# NeoFab2 v0.1.4 – Installation und Entwicklung
+# NeoFab2 v0.1.5 – Installation und Entwicklung
 
 ## Umfang und Prüfstand
 
@@ -35,7 +35,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.4 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.5 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -149,7 +149,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.4`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.5`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:
@@ -167,7 +167,17 @@ die Benutzerverwaltung angelegt. [Details und Notfallzugang](Core_Zugang.md).
 
 ## 5. Fehlerhilfe
 
-### Neu in 0.1.4: Systemeinstellungen und Darstellung
+### Neu in 0.1.5: Plugin-Verwaltung im Backend
+
+Als Administrator **Plugins** öffnen und die gewünschte Aktivierung oder
+Deaktivierung vormerken. Die Übersicht zeigt gespeicherte Auswahl und laufenden
+Zustand getrennt. Änderungen übernimmt ein manueller Container-Neustart durch
+den **Proxmox-Admin**; das Backend führt keinen Neustart aus.
+Zuerst `core_test`, dann das neue abhängige `management_test` aktivieren.
+Zur Deaktivierung umgekehrt vorgehen. Keine zusätzliche Schema-Revision.
+[Prüfablauf, Konfigurationsvorrang und Wiederherstellung](plugin-development.md).
+
+### Seit 0.1.4: Systemeinstellungen und Darstellung
 
 Das Update führt `0003_user_theme` aus und ergänzt die Admin-Seite
 `/admin/settings`. Im Profil kann jeder Benutzer Hell, Dunkel oder Systemvorgabe
@@ -176,8 +186,9 @@ wählen. Vorhandene Konten folgen zunächst der Systemvorgabe (Dunkel).
 
 ### Seit 0.1.3: Plugin-Grundsystem
 
-Das reguläre Update ergänzt die Admin-Seite `/admin/plugins`. Alle Plugins
-sind standardmäßig deaktiviert. [Testplugin aktivieren und prüfen](plugin-development.md).
+Das Plugin-Grundsystem ergänzt die Admin-Seite `/admin/plugins`. Bei einer neuen
+Installation sind beide Testplugins deaktiviert. Bestehende Auswahl bleibt erhalten.
+[Testplugins aktivieren und prüfen](plugin-development.md).
 Das Plugin-Grundsystem selbst benötigt keine neue Tabelle. Bestehende Benutzer
 und HTTP-Cookie-Konfiguration bleiben erhalten. Anmeldung und Passwortwechsel im HTTP-Container wurden nach
 Korrektur von `SESSION_COOKIE_SECURE` durch den Nutzer bestätigt.

@@ -2,13 +2,29 @@
 {% block title %}Plugins · NeoFab2{% endblock %}
 {% block content %}
 <h1>Plugins</h1>
-<p>Aktivierung und Deaktivierung erfolgen durch die Administration in der Serverkonfiguration mit anschließendem Dienstneustart.</p>
+<p>Die gespeicherte Auswahl gilt nach dem Neustart. Bis dahin laufen Plugins in ihrem bisherigen Zustand weiter.</p>
+{% if restart_required %}
+<p class="notice" role="status"><strong>Neustart erforderlich.</strong> Die gespeicherte Auswahl weicht vom laufenden Webprozess ab. Bitte den Proxmox-Admin bitten, den Container manuell neu zu starten. Diese Seite löst keinen Neustart aus.</p>
+{% else %}
+<p class="notice">Die Auswahl stimmt mit diesem Webprozess überein. Nach Änderungen müssen alle Anwendungsprozesse neu gestartet werden; ein Container-Neustart durch den Proxmox-Admin übernimmt dies vollständig.</p>
+{% endif %}
+<p>{{ 'Auswahl im Backend gespeichert.' if source == 'database' else 'Bisherige Auswahl aus der Serverkonfiguration. Die erste Speicherung übernimmt die Verwaltung ins Backend.' }}</p>
 {% for plugin in registry.available.values() %}
 <section class="card-form">
   <h2>{{ plugin.name }}</h2>
-  <p>{{ 'Aktiv' if plugin.plugin_id in registry.enabled else 'Deaktiviert' }} · Version {{ plugin.version }} · API {{ plugin.api_version }}</p>
+  <p>Im laufenden Webprozess: <strong>{{ 'Aktiv' if plugin.plugin_id in registry.enabled else 'Deaktiviert' }}</strong></p>
+  <p>Gespeicherte Auswahl: <strong>{{ 'Aktiv' if plugin.plugin_id in selected else 'Deaktiviert' }}</strong>
+    {% if (plugin.plugin_id in selected) != (plugin.plugin_id in registry.enabled) %} · Neustart ausstehend{% endif %}</p>
+  <p>Version {{ plugin.version }} · API {{ plugin.api_version }}</p>
   <p>Kennung: {{ plugin.plugin_id }} · Recht: {{ plugin.permission }}</p>
   <p>Abhängigkeiten: {% for dependency in plugin.dependencies %}{{ dependency.plugin_id }} ab {{ dependency.minimum_version }}{% if not loop.last %}, {% endif %}{% else %}keine{% endfor %}</p>
+  {% if has_permission(current_user, 'core.plugins.manage') %}
+  <form method="post" action="{{ url_for('plugins.change', plugin_id=plugin.plugin_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="{{ 'disable' if plugin.plugin_id in selected else 'enable' }}">
+    <button type="submit">{{ 'Deaktivierung vormerken' if plugin.plugin_id in selected else 'Aktivierung vormerken' }}</button>
+  </form>
+  {% endif %}
 </section>
 {% else %}<p>Keine Plugins installiert.</p>{% endfor %}
 {% endblock %}
