@@ -6,7 +6,7 @@ from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from alembic.script import ScriptDirectory
-from sqlalchemy import create_engine, URL, text
+from sqlalchemy import create_engine, URL, text, event
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -26,6 +26,10 @@ def init_database(app):
         connect_args={"timeout": 15},
     )
 
+    @event.listens_for(app.extensions["neofab2_db"], "connect")
+    def enable_foreign_keys(connection, _record):
+        connection.execute("PRAGMA foreign_keys=ON")
+
 
 def upgrade_database(app):
     Path(app.config["DATA_DIR"]).mkdir(parents=True, exist_ok=True)
@@ -43,6 +47,9 @@ def database_ready(app):
             expected = set(ScriptDirectory.from_config(migration_config()).get_heads())
             actual = set(MigrationContext.configure(connection).get_current_heads())
             connection.execute(text("SELECT key, value FROM core_settings LIMIT 0"))
+            connection.execute(text("SELECT id, email, display_name, password_hash, role, active, created_at FROM core_users LIMIT 0"))
+            connection.execute(text("SELECT token_hash, user_id, created_at, last_seen FROM core_sessions LIMIT 0"))
+            connection.execute(text("SELECT key, count, window_start FROM core_login_attempts LIMIT 0"))
             return actual == expected
     except SQLAlchemyError:
         return False

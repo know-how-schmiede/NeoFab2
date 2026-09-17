@@ -16,5 +16,5 @@ jobs:
       - run: python -m build
       - run: python -m pip install --force-reinstall --no-deps dist/*.whl
       - run: python tests/wheel_smoke.py
-      - run: for file in script/common.sh script/setupNeoFab script/setupNeoFabService script/upDateNeoFabService; do bash -n "$file" || exit; done
-      - run: shellcheck script/common.sh script/setupNeoFab script/setupNeoFabService script/upDateNeoFabService
+      - run: for file in script/common.sh script/setupNeoFab script/setupNeoFabService script/upDateNeoFabService script/resetAdminPassword; do bash -n "$file" || exit; done
+      - run: shellcheck script/common.sh script/setupNeoFab script/setupNeoFabService script/upDateNeoFabService script/resetAdminPassword

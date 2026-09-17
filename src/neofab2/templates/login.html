@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Anmelden · NeoFab2{% endblock %}
+{% block content %}
+<h1>Anmelden</h1>
+<p>Deinen Zugang erhältst du von der Werkstatt-Administration.</p>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="email">E-Mail</label><input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
+  <label for="password">Passwort</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+  <button type="submit">Anmelden</button>
+</form>
+<p>Passwort vergessen? Bitte die Administration kontaktieren.</p>
+{% endblock %}

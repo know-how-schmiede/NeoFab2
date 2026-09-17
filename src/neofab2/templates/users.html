@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Benutzerverwaltung · NeoFab2{% endblock %}
+{% block content %}
+<h1>Benutzerverwaltung</h1>
+<p><a class="button" href="{{ url_for('accounts.user_new') }}">Benutzer anlegen</a></p>
+<div class="table-scroll"><table><caption>Benutzerkonten · Seite {{ page }}</caption>
+  <thead><tr><th scope="col">Name</th><th scope="col">E-Mail</th><th scope="col">Rolle</th><th scope="col">Status</th><th scope="col">Aktion</th></tr></thead>
+  <tbody>{% for entry in entries %}<tr><td>{{ entry.display_name }}</td><td>{{ entry.email }}</td><td>{{ roles[entry.role] }}</td><td>{{ 'Aktiv' if entry.active else 'Deaktiviert' }}</td><td><a href="{{ url_for('accounts.user_edit', user_id=entry.id) }}">Bearbeiten<span class="sr-only">: {{ entry.display_name }}</span></a></td></tr>{% endfor %}</tbody>
+</table></div>
+<nav aria-label="Benutzerseiten">{% if page > 1 %}<a href="{{ url_for('accounts.user_list', page=page-1) }}">Zurück</a>{% endif %}{% if more %}<a href="{{ url_for('accounts.user_list', page=page+1) }}">Weiter</a>{% endif %}</nav>
+{% endblock %}

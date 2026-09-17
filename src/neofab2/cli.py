@@ -21,7 +21,8 @@ def main():
 @main.command("init-config")
 @click.option("--output", required=True, type=click.Path(path_type=Path))
 @click.option("--data-dir", required=True, type=click.Path(path_type=Path))
-def init_config(output, data_dir):
+@click.option("--http-test", is_flag=True, help="Nur für isoliertes HTTP-Testnetz: Secure-Cookie deaktivieren.")
+def init_config(output, data_dir, http_test):
     """Neue Konfiguration anlegen; vorhandene Dateien niemals überschreiben."""
     if not data_dir.is_absolute():
         raise click.ClickException("--data-dir muss absolut sein.")
@@ -29,7 +30,7 @@ def init_config(output, data_dir):
         "# NeoFab2 – nicht in Git aufnehmen.\n"
         f"SECRET_KEY = {json.dumps(secrets.token_hex(32))}\n"
         f"DATA_DIR = {json.dumps(str(data_dir), ensure_ascii=False)}\n"
-        "SESSION_COOKIE_SECURE = true\n"
+        f"SESSION_COOKIE_SECURE = {'false' if http_test else 'true'}\n"
     )
     try:
         fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -86,6 +87,53 @@ def backup(output):
     except (OSError, sqlite3.Error, ValueError) as error:
         raise click.ClickException("Sicherung fehlgeschlagen; Zieldatei nicht als gültiges Backup verwenden.") from error
     click.echo(f"Datenbank gesichert: {output}")
+
+
+def ready_app():
+    app = configured_app()
+    if not database_ready(app):
+        raise click.ClickException("Datenbank nicht bereit. Zuerst 'neofab2 migrate' ausführen.")
+    return app
+
+
+@main.command("create-admin")
+@click.option("--email", prompt="E-Mail des ersten Administrators")
+@click.option("--name", prompt="Anzeigename")
+def create_admin(email, name):
+    """Ersten Administrator anlegen; kein Standardkonto und kein Passwortargument."""
+    from .core.users import create_user
+
+    app = ready_app()
+    password = click.prompt("Passwort (15–128 Zeichen)", hide_input=True, confirmation_prompt="Passwort wiederholen")
+    try:
+        create_user(app, email, name, password, role="admin", bootstrap=True)
+    except ValueError as error:
+        raise click.ClickException(str(error)) from error
+    click.echo("Erster Administrator angelegt.")
+
+
+@main.command("reset-admin-password")
+@click.option("--reactivate", is_flag=True, help="Ausgewähltes deaktiviertes Admin-Konto ausdrücklich reaktivieren.")
+def reset_admin(reactivate):
+    """Lokaler Notfallzugang: Admin auswählen, Passwort verdeckt neu setzen."""
+    from sqlalchemy import select
+    from .core.users import users, PUBLIC_COLUMNS, reset_admin_password
+
+    app = ready_app()
+    with app.extensions["neofab2_db"].connect() as connection:
+        admins = connection.execute(select(*PUBLIC_COLUMNS).where(users.c.role == "admin").order_by(users.c.id)).mappings().all()
+    if not admins:
+        raise click.ClickException("Kein Administrator vorhanden. 'neofab2 create-admin' verwenden.")
+    for admin in admins:
+        click.echo(f"{admin['id']}: {admin['email']} ({'aktiv' if admin['active'] else 'deaktiviert'})")
+    selected = click.prompt("Administrator-ID", type=click.Choice([str(admin["id"]) for admin in admins]))
+    click.confirm("Passwort dieses Administrators ändern und alle seine Sitzungen beenden?", abort=True)
+    password = click.prompt("Neues Passwort (15–128 Zeichen)", hide_input=True, confirmation_prompt="Passwort wiederholen")
+    try:
+        reset_admin_password(app, int(selected), password, reactivate=reactivate)
+    except ValueError as error:
+        raise click.ClickException(str(error)) from error
+    click.echo("Admin-Passwort geändert; bisherige Sitzungen beendet.")
 
 
 if __name__ == "__main__":

@@ -176,18 +176,25 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.1 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.2 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
-| S01 | in Arbeit | `src/neofab2/core/routes.py`, `templates/`, `static/core.css` | Startseite ohne Fachplugins und Assets per HTTP-Test geprüft | Profil/Admin/Plugin-Navigation und visuelle Browserprüfung offen |
+| S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Navigation per HTTP-Test geprüft | Plugin-Navigation, Infoseite und visuelle Browserprüfung offen |
 | S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html` | Core-Versionsanzeige und Paketmetadaten geprüft | Separate Plugin-Versionen folgen mit N01 |
-| X07 | in Arbeit | `src/neofab2/database.py`, `migrations/versions/0001_core_settings.py` | Erste Migration, Wiederholung mit Datenerhalt, ungültiger Schemastand und Start ohne implizite Migration geprüft | Weitere Core-/Plugin-Schemata folgen |
-| X01 | implementiert | `script/setupNeoFab` | Bash-Syntax und ShellCheck bestanden | Echter Debian-Erstlauf offen; feste NeoFab2-Pfade/Benutzer; Admin-Fragen erst mit Benutzerverwaltung |
+| X07 | in Arbeit | `src/neofab2/database.py`, `migrations/versions/0001_core_settings.py`, `0002_core_users.py`, `tests/integration/test_accounts_cli.py` | Migration vom vorherigen Schema mit Erhalt der Einstellungen, Wiederholung, fehlendes Schema und Start ohne implizite Migration geprüft | Weitere Core-/Plugin-Schemata folgen |
+| X01 | implementiert | `script/setupNeoFab`, `tests/integration/test_setup_teststart.py` | Nutzer meldet laufendes Grundsystem; Teststart-CWD korrigiert. HTTPS-Auswahl und interaktiven Erstadmin ergänzt; CLI und Shell-Syntax geprüft | Kein eigener LXC-Erstlauf des neuen Benutzer-Schritts; feste NeoFab2-Pfade/Benutzer |
 | X02 | implementiert | `script/setupNeoFabService` | Bash-Syntax und ShellCheck bestanden | systemd-Echttest offen; noch keine Hintergrundaufgaben |
 | X03 | implementiert | `script/upDateNeoFabService`, `src/neofab2/cli.py`, `tests/integration/` | Simulierte Update-Steuerung inkl. Fehlerfällen und SQLite-Backup/Restore geprüft | Echter Service-/LXC-Update- und Vollrestore-Test offen |
-| X04 | geplant | später `script/resetAdminPassword` | Nicht implementiert | Folgt mit Benutzerverwaltung; kein funktionsloser Platzhalter |
+| X04 | implementiert | `script/resetAdminPassword`, `src/neofab2/cli.py`, `core/users.py`, `tests/integration/test_accounts_cli.py` | Admin-Auswahl, verdeckte Eingabe, Sperrstatus, explizite Reaktivierung und Sitzungswiderruf per CLI geprüft | Echter Skriptlauf im LXC noch offen |
+| U01 | geprüft | `src/neofab2/core/auth.py`, `accounts.py`, `tests/core/test_accounts.py` | Gültige/falsche/unbekannte/deaktivierte Logins, Logout, scrypt-Hashing, CSRF und serverseitige Anmeldebegrenzung geprüft | Keine Selbstregistrierung/E-Mail-Verfahren in diesem Teilumfang |
+| U05 | in Arbeit | `src/neofab2/core/users.py`, `accounts.py`, `tests/core/test_accounts.py` | Anlegen/Bearbeiten/Aktivieren/Deaktivieren, doppelte E-Mail, serverseitige Rechte und paralleler Letzter-Admin-Schutz geprüft | Benutzerlöschung mit Auswirkungen auf Plugins bleibt offen |
+| U06 | in Arbeit | `src/neofab2/core/users.py`, `auth.py` | Rollen Benutzer/Mitarbeiter/Administrator als Rechtebündel; Direktzugriff und Profil-Eskalation geprüft | Plugin-Rechte, Rollenpflege und Altrollen-Zuordnung folgen |
+| U07 | in Arbeit | `src/neofab2/core/accounts.py`, `templates/profile.html` | Eigener Anzeigename, Passwortwechsel mit altem Passwort und Sitzungswiderruf geprüft | Sprache und Darstellungseinstellungen folgen |
+| U08 | geprüft | `src/neofab2/core/auth.py`, `config.py`, `tests/core/test_accounts.py` | Server-Inaktivitätsfrist, absolute Laufzeit, Cookie-Replay nach Logout und unveränderte Frist bei Health-/Static-Anfragen geprüft | Keine dauerhaften Remember-me-Sitzungen vorgesehen |
 | N01 | geplant | `src/neofab2/plugin_api/`, `tests/fixtures/plugins/` | Zielverzeichnisse vorhanden | Plugin-Vertrag und Testplugin folgen |
 
-Alle übrigen IDs bleiben geplant. Arbeitspaket 0.1.1 umfasst das erste
-startfähige Core-Grundsystem und die drei Betriebsskripte; keine Core-Abnahme.
+Alle übrigen IDs bleiben geplant. Version 0.1.2 ergänzt Benutzerzugang und
+lokalen Admin-Reset gegenüber dem Grundsystem v0.1.1.
+U02–U04 (Registrierung/E-Mail-Verfahren), Benutzerlöschung und Plugin-Vertrag
+sind nicht Teil dieses Arbeitspakets. Keine vollständige Core-Abnahme.
 
 Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsänderungen zusätzlich gemäß Projektbeschreibung in `doku/Version_Timeline.md` dokumentieren, einschließlich Commit-Titel und Commit-Beschreibung für den manuellen Commit. Diese Matrix allein ersetzt weder Tests noch die Versionshistorie.

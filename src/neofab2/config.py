@@ -13,6 +13,12 @@ def load_config(overrides=None):
         "SESSION_COOKIE_HTTPONLY": True,
         "SESSION_COOKIE_SAMESITE": "Lax",
         "SESSION_COOKIE_SECURE": True,
+        "SESSION_COOKIE_NAME": "neofab2_session",
+        "SESSION_IDLE_SECONDS": 1800,
+        "SESSION_MAX_SECONDS": 43200,
+        "LOGIN_WINDOW_SECONDS": 900,
+        "LOGIN_ACCOUNT_LIMIT": 5,
+        "LOGIN_IP_LIMIT": 30,
         "MAX_CONTENT_LENGTH": 1024 * 1024,
     }
     filename = os.environ.get("NEOFAB2_CONFIG")
@@ -28,4 +34,9 @@ def load_config(overrides=None):
     if not data_dir.is_absolute():
         raise ValueError("DATA_DIR muss ein absoluter Pfad sein.")
     config["DATA_DIR"] = str(data_dir)
+    for key in ("SESSION_IDLE_SECONDS", "SESSION_MAX_SECONDS", "LOGIN_WINDOW_SECONDS", "LOGIN_ACCOUNT_LIMIT", "LOGIN_IP_LIMIT"):
+        if type(config[key]) is not int or config[key] <= 0:
+            raise ValueError(f"{key} muss eine positive ganze Zahl sein.")
+    if type(config["SESSION_COOKIE_SECURE"]) is not bool:
+        raise ValueError("SESSION_COOKIE_SECURE muss true oder false sein.")
     return config

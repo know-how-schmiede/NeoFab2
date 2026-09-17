@@ -8,7 +8,7 @@ require_root
 trap 'printf "Installation abgebrochen (Zeile %s). Bestehende Dateien bleiben zur Diagnose erhalten.\n" "$LINENO" >&2' ERR
 
 printf 'NeoFab2: neue Installation nach %s, Benutzer %s, Daten %s.\n' "$APP_DIR" "$APP_USER" "$DATA_DIR"
-printf 'Dieser Core-Schritt enthält noch keine Benutzeranmeldung und keinen Admin-Zugang.\n'
+printf 'Nach der Migration wird der erste Administrator interaktiv angelegt.\n'
 prompt CONFIRM 'Neue Installation beginnen? (j/n)' 'n'
 [[ $CONFIRM == j ]] || exit 0
 [[ ! -e $APP_DIR && ! -e $CONFIG_DIR && ! -e $DATA_DIR ]] || die 'Installationspfade existieren bereits. Nicht überschrieben; für bestehende Installation Update-Skript verwenden.'
@@ -19,6 +19,8 @@ prompt BRANCH 'Git-Branch' 'main'
 [[ $BRANCH != -* ]] || die 'Ungültiger Branch.'
 prompt PORT 'HTTP-Port im Container' '8080'
 validate_port
+prompt HTTPS 'Wird die Anmeldung über HTTPS verwendet? (j/n; n nur im isolierten HTTP-Testnetz)' 'j'
+[[ $HTTPS == j || $HTTPS == n ]] || die 'Bitte j oder n für HTTPS angeben.'
 
 apt-get update
 apt-get install -y python3 python3-venv python3-pip git curl ca-certificates
@@ -30,16 +32,37 @@ install -d -o root -g "$APP_USER" -m 0750 "$CONFIG_DIR"
 as_app git clone --branch "$BRANCH" --single-branch -- "$REPO_URL" "$APP_DIR"
 as_app python3 -m venv "$APP_DIR/.venv"
 as_app "$APP_DIR/.venv/bin/python" -m pip install "${APP_DIR}[server]"
-"$APP_DIR/.venv/bin/neofab2" init-config --output "$CONFIG_FILE" --data-dir "$DATA_DIR"
+CONFIG_ARGS=()
+if [[ $HTTPS == n ]]; then CONFIG_ARGS+=(--http-test); fi
+"$APP_DIR/.venv/bin/neofab2" init-config --output "$CONFIG_FILE" --data-dir "$DATA_DIR" "${CONFIG_ARGS[@]}"
 chown root:"$APP_USER" "$CONFIG_FILE"
 chmod 0640 "$CONFIG_FILE"
 printf '%s\n' "$PORT" > "$CONFIG_DIR/port"
 chmod 0644 "$CONFIG_DIR/port"
 app_cli migrate
 app_cli check
+# Auch CLI-Prozesse nicht aus einem für neofab2 unzugänglichen CWD starten.
+(cd -- "$APP_DIR" && app_cli create-admin)
 printf 'Basisinstallation erfolgreich. Service installieren: bash %s/script/setupNeoFabService\n' "$APP_DIR"
+# Ab hier betreffen Fehler nur noch den optionalen Test, nicht die Installation.
+trap - ERR
 prompt TEST_RUN 'Temporären HTTP-Teststart im Terminal ausführen? (j/n)' 'n'
 if [[ $TEST_RUN == j ]]; then
-  printf 'Test erreichbar unter http://<Container-IP>:%s – Beenden mit Strg+C.\n' "$PORT"
-  as_app env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/gunicorn" --bind "0.0.0.0:$PORT" --workers 1 'neofab2:create_app()'
+  printf 'Starte optionalen Test unter http://<Container-IP>:%s – Beenden mit Strg+C.\n' "$PORT"
+  trap ':' INT
+  if (
+    cd -- "$APP_DIR" &&
+      as_app env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/gunicorn" --bind "0.0.0.0:$PORT" --workers 1 'neofab2:create_app()'
+  ); then
+    printf 'Optionaler Test beendet. Die Basisinstallation ist erfolgreich abgeschlossen.\n'
+  else
+    TEST_STATUS=$?
+    if [[ $TEST_STATUS -eq 130 ]]; then
+      printf 'Optionaler Test mit Strg+C beendet. Die Basisinstallation ist erfolgreich abgeschlossen.\n'
+    else
+      printf 'Optionaler Teststart fehlgeschlagen (Exit-Code %s). Die Basisinstallation ist erfolgreich abgeschlossen; keine Neuinstallation erforderlich.\n' "$TEST_STATUS" >&2
+      exit "$TEST_STATUS"
+    fi
+  fi
+  trap - INT
 fi

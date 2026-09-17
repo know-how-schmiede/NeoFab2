@@ -8,7 +8,19 @@
 </head>
 <body>
   <header><a href="{{ url_for('core.index') }}" aria-label="NeoFab2 Startseite"><img src="{{ url_for('static', filename='branding/neofab2-logo.png') }}" alt="NeoFab2" width="240"></a><span>Werkstatt &amp; Makerspace</span></header>
-  <main>{% block content %}{% endblock %}</main>
+  <nav aria-label="Hauptnavigation">
+    <a href="{{ url_for('core.index') }}">Startseite</a>
+    {% if current_user %}
+      <a href="{{ url_for('accounts.profile') }}">Mein Profil</a>
+      {% if has_permission(current_user, 'core.users.manage') %}<a href="{{ url_for('accounts.user_list') }}">Benutzerverwaltung</a>{% endif %}
+      <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">Abmelden</button></form>
+    {% else %}<a href="{{ url_for('accounts.login') }}">Anmelden</a>{% endif %}
+  </nav>
+  <main>
+    {% for message in get_flashed_messages() %}<p class="notice" role="status">{{ message }}</p>{% endfor %}
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
   <footer>NeoFab2 · Version {{ version }} · Core im Aufbau</footer>
 </body>
 </html>

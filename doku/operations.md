@@ -1,8 +1,10 @@
-# Betrieb und Wiederherstellung – v0.1.1
+# Betrieb und Wiederherstellung – v0.1.2
 
 Als **root im NeoFab2-Container** ausführen. Diese Fassung speichert nur die
 SQLite-Core-Datenbank. Mit späteren Dateidiensten muss der Sicherungsumfang
-erweitert werden; es gibt noch keine Uploads oder Benutzer.
+erweitert werden; es gibt noch keine Uploads. Die Datenbank enthält jetzt
+Benutzer, Passwort-Hashes und Sitzungen. Sicherungen entsprechend geschützt
+aufbewahren. Lokaler Admin-Reset: [Core-Zugang](Core_Zugang.md).
 
 ## Dienststeuerung
 

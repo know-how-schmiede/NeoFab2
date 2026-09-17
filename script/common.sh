@@ -32,7 +32,7 @@ require_root() {
   umask 027
 }
 as_app() { runuser -u "$APP_USER" -- "$@"; }
-app_cli() { as_app env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/neofab2" "$@"; }
+app_cli() { (cd -- "$APP_DIR" && as_app env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/neofab2" "$@"); }
 require_install() {
   [[ -x $APP_DIR/.venv/bin/neofab2 && -f $CONFIG_FILE && -d $APP_DIR/.git ]] || die 'Zuerst setupNeoFab ausführen.'
 }

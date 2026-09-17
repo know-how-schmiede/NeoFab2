@@ -4,17 +4,39 @@ from .version import __version__
 
 
 def create_app(test_config=None):
-    from flask import Flask
+    from flask import Flask, render_template, request
+    from flask_wtf.csrf import CSRFProtect, CSRFError
 
     from .config import load_config
     from .database import init_database
     from .core.routes import bp
+    from .core.accounts import bp as accounts_bp
+    from .core.auth import register_auth
 
     app = Flask(__name__)
     app.config.from_mapping(load_config(test_config))
     init_database(app)
+    register_auth(app)
+    CSRFProtect(app)
     app.register_blueprint(bp)
+    app.register_blueprint(accounts_bp)
     app.context_processor(lambda: {"version": __version__})
+
+    @app.errorhandler(CSRFError)
+    def csrf_error(_error):
+        return render_template("error.html", message="Die Formularsitzung ist abgelaufen oder ungültig. Bitte die Seite neu laden."), 400
+
+    @app.errorhandler(PermissionError)
+    def permission_error(_error):
+        return render_template("error.html", message="Für diese Aktion fehlt die Berechtigung."), 403
+
+    @app.errorhandler(403)
+    def forbidden(_error):
+        return render_template("error.html", message="Für diese Seite fehlt die Berechtigung."), 403
+
+    @app.errorhandler(503)
+    def unavailable(_error):
+        return render_template("error.html", message="Das System ist noch nicht bereit. Bitte die Administration informieren."), 503
 
     @app.after_request
     def security_headers(response):
@@ -24,6 +46,8 @@ def create_app(test_config=None):
             "frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
         )
         response.headers["Referrer-Policy"] = "same-origin"
+        if request.endpoint != "static":
+            response.headers["Cache-Control"] = "no-store"
         return response
 
     return app

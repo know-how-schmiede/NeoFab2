@@ -1,4 +1,4 @@
-﻿# NeoFab2 – Installation und Wartung (v0.1.1)
+# NeoFab2 – Installation und Wartung (v0.1.2)
 
 Als **root in einem neuen Debian-13-Container**, nicht auf dem Proxmox-Host:
 
@@ -10,14 +10,21 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.1 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.2 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
-Die Installation fragt nach Bestätigung, Repository, Branch, Port und optionalem
-Teststart. Vorgaben: Branch `main`, Port `8080`. Feste Pfade:
+Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
+Erstadministrator und optionalem Teststart. Vorgaben: Branch `main`, Port `8080`,
+HTTPS `j`. Feste Pfade:
 Code `/opt/neofab2`, Daten `/var/lib/neofab2`, Konfiguration `/etc/neofab2`,
 Benutzer `neofab2`. Vorhandene Installationen werden nicht überschrieben.
-Noch kein Admin-Zugang: Die Benutzerverwaltung folgt im nächsten Arbeitspaket.
+Admin-E-Mail und Anzeigename eingeben, Passwort verdeckt wiederholen (15–128
+Zeichen). Keine Standardzugangsdaten. Nur für ein isoliertes HTTP-Testnetz bei
+HTTPS `n` wählen; sonst wird eine HTTPS-Verbindung für die Login-Cookies benötigt.
+
+Der optionale Test startet aus dem Installationsverzeichnis. Ein Fehler dabei
+wird separat gemeldet; die erfolgreiche Basisinstallation bleibt bestehen.
+Mit `n` wird der Test übersprungen, Strg+C beendet ihn regulär.
 
 Prüfen:
 
@@ -40,8 +47,23 @@ Vor Änderungen entstehen Sicherungen unter `/var/backups/neofab2/`.
 Fehler nach Dienststopp lassen den Dienst angehalten. Keine automatische
 Rückmigration oder Aktualisierung der systemd-Unit.
 
-`resetAdminPassword` folgt mit Benutzerverwaltung und sicherem CLI-Reset;
-kein funktionsloses Ersatzskript.
+Nach dem Update einer bestehenden Installation ohne Administrator, als root:
+
+```bash
+cd /opt/neofab2
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 create-admin
+```
+
+Lokaler Notfall-Reset (Admin auswählen, Passwort verdeckt eingeben):
+
+```bash
+bash /opt/neofab2/script/resetAdminPassword
+```
+
+Ein deaktiviertes Admin-Konto bleibt dabei gesperrt; nur mit ausdrücklich
+angegebenem `--reactivate` wieder aktivieren. Alle Sitzungen des Kontos enden.
+
+[Zugang, HTTP-Testkonfiguration und Rollen](../doku/Core_Zugang.md).
 
 [Ausführliche Anleitung und Fehlerhilfe](../doku/SETUP.md) ·
 [Betrieb und Wiederherstellung](../doku/operations.md)

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Benutzer {{ 'anlegen' if creating else 'bearbeiten' }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>Benutzer {{ 'anlegen' if creating else 'bearbeiten' }}</h1>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="display_name">Anzeigename</label><input id="display_name" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>
+  <label for="email">E-Mail</label><input id="email" name="email" type="email" value="{{ entry.email|default('') }}" maxlength="254" required>
+  <label for="role">Rolle</label><select id="role" name="role">{% for value, label in roles.items() %}<option value="{{ value }}" {% if entry.role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  {% if creating %}
+    <p>Das Startpasswort über einen sicheren Weg persönlich übergeben. Es wird keine E-Mail verschickt.</p>
+    <label for="password">Startpasswort (15–128 Zeichen)</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required>
+    <label for="confirm_password">Startpasswort wiederholen</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required>
+  {% else %}
+    <label class="checkbox"><input name="active" type="checkbox" {% if entry.active %}checked{% endif %}> Konto aktiv</label>
+    <p>Änderungen an E-Mail, Rolle oder Aktivstatus beenden alle bisherigen Sitzungen dieses Kontos. Der letzte aktive Administrator bleibt geschützt.</p>
+  {% endif %}
+  <button type="submit">{{ 'Benutzer anlegen' if creating else 'Änderungen speichern' }}</button>
+</form>
+<p><a href="{{ url_for('accounts.user_list') }}">Zur Benutzerübersicht</a></p>
+{% endblock %}
