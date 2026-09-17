@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Kontrolliertes Fast-Forward-Update; bei Fehler nach Dienststopp bleibt er aus.
+set -Eeuo pipefail
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=script/common.sh
+source "$SCRIPT_DIR/common.sh"
+main() {
+# Funktionskörper wird vor dem Git-Update vollständig eingelesen, auch wenn
+# das Update diese Skriptdatei ersetzt.
+require_root
+require_install
+verify_service
+read_port
+app_cli check
+[[ -z $(as_app git -C "$APP_DIR" status --porcelain) ]] || die 'Checkout enthält lokale Änderungen; zuerst manuell klären.'
+BRANCH=$(as_app git -C "$APP_DIR" symbolic-ref --quiet --short HEAD) || die 'Kein aktiver Git-Branch.'
+as_app git -C "$APP_DIR" fetch origin
+TARGET=$(as_app git -C "$APP_DIR" rev-parse --verify "refs/remotes/origin/$BRANCH^{commit}")
+OLD_REV=$(as_app git -C "$APP_DIR" rev-parse HEAD)
+as_app git -C "$APP_DIR" merge-base --is-ancestor "$OLD_REV" "$TARGET" || die 'Kein Fast-Forward möglich; lokale Commits manuell klären.'
+if [[ $OLD_REV == "$TARGET" ]]; then printf 'Bereits auf aktuellem Git-Stand.\n'; exit 0; fi
+printf 'Update: %s -> %s\n' "$OLD_REV" "$TARGET"
+prompt CONFIRM 'Service stoppen, sichern und aktualisieren? (j/n)' 'n'
+[[ $CONFIRM == j ]] || exit 0
+install -d -o root -g root -m 0700 "$BACKUP_ROOT"
+BACKUP=$(mktemp -d "$BACKUP_ROOT/$(date -u +%Y%m%dT%H%M%SZ)-XXXXXX")
+chmod 0700 "$BACKUP"
+STOPPED=0
+failed() {
+  local status=$?
+  trap - ERR
+  if [[ $STOPPED == 1 ]]; then systemctl stop "$SERVICE" || true; fi
+  printf 'Update fehlgeschlagen. Dienst nach begonnenem Update angehalten. Sicherung: %s\nWiederherstellung: doku/operations.md\n' "$BACKUP" >&2
+  exit "$status"
+}
+trap failed ERR
+systemctl stop "$SERVICE"
+STOPPED=1
+# Root sichert in das nur für root zugängliche Backupverzeichnis.
+env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/neofab2" backup --output "$BACKUP/neofab2.sqlite3"
+cp -a "$CONFIG_DIR" "$BACKUP/config"
+cp -a "$UNIT" "$BACKUP/neofab2.service"
+printf '%s\n' "$OLD_REV" > "$BACKUP/revision.txt"
+as_app "$APP_DIR/.venv/bin/python" -m pip freeze > "$BACKUP/requirements.txt"
+tar -C "$APP_DIR" --exclude='./.venv' --exclude='./.git' -czf "$BACKUP/source.tar.gz" .
+# Vollständige alte venv für die Wiederherstellung am selben Pfad.
+tar -C "$APP_DIR" -czf "$BACKUP/venv.tar.gz" .venv
+as_app git -C "$APP_DIR" merge --ff-only "$TARGET"
+as_app "$APP_DIR/.venv/bin/python" -m pip install --upgrade "${APP_DIR}[server]"
+app_cli migrate
+app_cli check
+systemctl start "$SERVICE"
+wait_ready
+STOPPED=0
+trap - ERR
+printf 'Update erfolgreich. Sicherung aufbewahren: %s\n' "$BACKUP"
+}
+main "$@"

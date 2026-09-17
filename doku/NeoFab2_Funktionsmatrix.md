@@ -176,12 +176,18 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `README.md`, `doku/Version_Timeline.md` | Anfangsversion 0.1.0 und Commit-Texte vorhanden; Versionsangabe geprüft | Laufende UI-Versionsanzeige unter S12 noch geplant |
-| X05 | in Arbeit | `doku/architecture.md`, `doku/SETUP.md`, `script/README.md`, `AGENTS.md` | Struktur und Dokumentationslinks geprüft | Installations- und Betriebsanleitungen folgen mit Implementierung; X01–X04 bleiben geplant |
-| S01, S12 | geplant | `src/neofab2/static/branding/neofab2-logo.png`, `src/neofab2/version.py` | Logo visuell geprüft; Assets und Versionsquelle vorbereitet | Noch keine Weboberfläche oder Laufzeitprüfung |
-| X07, N01 | geplant | `migrations/versions/`, `src/neofab2/plugin_api/`, `tests/fixtures/plugins/` | Zielverzeichnisse vorhanden | Keine Migration und kein Plugin-Vertrag implementiert |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.1 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
+| S01 | in Arbeit | `src/neofab2/core/routes.py`, `templates/`, `static/core.css` | Startseite ohne Fachplugins und Assets per HTTP-Test geprüft | Profil/Admin/Plugin-Navigation und visuelle Browserprüfung offen |
+| S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html` | Core-Versionsanzeige und Paketmetadaten geprüft | Separate Plugin-Versionen folgen mit N01 |
+| X07 | in Arbeit | `src/neofab2/database.py`, `migrations/versions/0001_core_settings.py` | Erste Migration, Wiederholung mit Datenerhalt, ungültiger Schemastand und Start ohne implizite Migration geprüft | Weitere Core-/Plugin-Schemata folgen |
+| X01 | implementiert | `script/setupNeoFab` | Bash-Syntax und ShellCheck bestanden | Echter Debian-Erstlauf offen; feste NeoFab2-Pfade/Benutzer; Admin-Fragen erst mit Benutzerverwaltung |
+| X02 | implementiert | `script/setupNeoFabService` | Bash-Syntax und ShellCheck bestanden | systemd-Echttest offen; noch keine Hintergrundaufgaben |
+| X03 | implementiert | `script/upDateNeoFabService`, `src/neofab2/cli.py`, `tests/integration/` | Simulierte Update-Steuerung inkl. Fehlerfällen und SQLite-Backup/Restore geprüft | Echter Service-/LXC-Update- und Vollrestore-Test offen |
+| X04 | geplant | später `script/resetAdminPassword` | Nicht implementiert | Folgt mit Benutzerverwaltung; kein funktionsloser Platzhalter |
+| N01 | geplant | `src/neofab2/plugin_api/`, `tests/fixtures/plugins/` | Zielverzeichnisse vorhanden | Plugin-Vertrag und Testplugin folgen |
 
-Alle übrigen IDs bleiben geplant. Arbeitspaket 0.1.0 umfasst ausschließlich
-Projektstruktur, Branding und Versionsinitialisierung; keine Core-Abnahme.
+Alle übrigen IDs bleiben geplant. Arbeitspaket 0.1.1 umfasst das erste
+startfähige Core-Grundsystem und die drei Betriebsskripte; keine Core-Abnahme.
 
 Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsänderungen zusätzlich gemäß Projektbeschreibung in `doku/Version_Timeline.md` dokumentieren, einschließlich Commit-Titel und Commit-Beschreibung für den manuellen Commit. Diese Matrix allein ersetzt weder Tests noch die Versionshistorie.

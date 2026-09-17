@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="eyebrow">GEMEINSAM IDEEN VERWIRKLICHEN</p>
+<h1>Willkommen bei NeoFab2.</h1>
+<p class="intro">Der neue Ausgangspunkt für unsere Werkstatt und unseren Makerspace.</p>
+<section aria-labelledby="status-title">
+  <span class="badge">{{ 'Grundsystem bereit' if ready else 'Einrichtung ausstehend' }}</span>
+  <h2 id="status-title">Ein Fundament für die nächsten Schritte.</h2>
+  {% if ready %}<p>Das Grundsystem ist gestartet. Benutzerzugänge und weitere Funktionen werden schrittweise ergänzt.</p>
+  {% else %}<p>Die Einrichtung ist noch nicht abgeschlossen. Bitte wende dich an die Administration.</p>{% endif %}
+  <p>Workshops und Fertigungsbereiche folgen später als eigenständige Erweiterungen.</p>
+</section>
+{% endblock %}

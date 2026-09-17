@@ -1,0 +1,20 @@
+name: Core
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python }}'
+      - run: python -m pip install '.[dev,server]'
+      - run: python -m pytest -q
+      - run: python -m build
+      - run: python -m pip install --force-reinstall --no-deps dist/*.whl
+      - run: python tests/wheel_smoke.py
+      - run: for file in script/common.sh script/setupNeoFab script/setupNeoFabService script/upDateNeoFabService; do bash -n "$file" || exit; done
+      - run: shellcheck script/common.sh script/setupNeoFab script/setupNeoFabService script/upDateNeoFabService

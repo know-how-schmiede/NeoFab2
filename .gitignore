@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# NeoFab2 local runtime and backups
+*.sqlite3
+*.sqlite3-*
+backups/
+.test-artifacts/

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Neue isolierte Installation im Debian-13-LXC, nicht auf dem Proxmox-Host.
+set -Eeuo pipefail
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=script/common.sh
+source "$SCRIPT_DIR/common.sh"
+require_root
+trap 'printf "Installation abgebrochen (Zeile %s). Bestehende Dateien bleiben zur Diagnose erhalten.\n" "$LINENO" >&2' ERR
+
+printf 'NeoFab2: neue Installation nach %s, Benutzer %s, Daten %s.\n' "$APP_DIR" "$APP_USER" "$DATA_DIR"
+printf 'Dieser Core-Schritt enthält noch keine Benutzeranmeldung und keinen Admin-Zugang.\n'
+prompt CONFIRM 'Neue Installation beginnen? (j/n)' 'n'
+[[ $CONFIRM == j ]] || exit 0
+[[ ! -e $APP_DIR && ! -e $CONFIG_DIR && ! -e $DATA_DIR ]] || die 'Installationspfade existieren bereits. Nicht überschrieben; für bestehende Installation Update-Skript verwenden.'
+if id "$APP_USER" >/dev/null 2>&1; then die 'Benutzer neofab2 existiert bereits; für die Neuinstallation einen frischen Container verwenden.'; fi
+prompt REPO_URL 'Repository-URL (ohne eingebettete Zugangsdaten)' 'https://github.com/know-how-schmiede/NeoFab2.git'
+[[ $REPO_URL == https://* && $REPO_URL != *@* ]] || die 'Eine HTTPS-Repository-URL ohne Zugangsdaten angeben.'
+prompt BRANCH 'Git-Branch' 'main'
+[[ $BRANCH != -* ]] || die 'Ungültiger Branch.'
+prompt PORT 'HTTP-Port im Container' '8080'
+validate_port
+
+apt-get update
+apt-get install -y python3 python3-venv python3-pip git curl ca-certificates
+python3 -c 'import sys; assert sys.version_info[:2] == (3, 13), "Python 3.13 erforderlich"'
+git check-ref-format --branch "$BRANCH" >/dev/null
+useradd --system --user-group --create-home --home-dir /home/neofab2 --shell /usr/sbin/nologin "$APP_USER"
+install -d -o "$APP_USER" -g "$APP_USER" -m 0750 "$APP_DIR" "$DATA_DIR"
+install -d -o root -g "$APP_USER" -m 0750 "$CONFIG_DIR"
+as_app git clone --branch "$BRANCH" --single-branch -- "$REPO_URL" "$APP_DIR"
+as_app python3 -m venv "$APP_DIR/.venv"
+as_app "$APP_DIR/.venv/bin/python" -m pip install "${APP_DIR}[server]"
+"$APP_DIR/.venv/bin/neofab2" init-config --output "$CONFIG_FILE" --data-dir "$DATA_DIR"
+chown root:"$APP_USER" "$CONFIG_FILE"
+chmod 0640 "$CONFIG_FILE"
+printf '%s\n' "$PORT" > "$CONFIG_DIR/port"
+chmod 0644 "$CONFIG_DIR/port"
+app_cli migrate
+app_cli check
+printf 'Basisinstallation erfolgreich. Service installieren: bash %s/script/setupNeoFabService\n' "$APP_DIR"
+prompt TEST_RUN 'Temporären HTTP-Teststart im Terminal ausführen? (j/n)' 'n'
+if [[ $TEST_RUN == j ]]; then
+  printf 'Test erreichbar unter http://<Container-IP>:%s – Beenden mit Strg+C.\n' "$PORT"
+  as_app env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/gunicorn" --bind "0.0.0.0:$PORT" --workers 1 'neofab2:create_app()'
+fi

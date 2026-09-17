@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}NeoFab2{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='core.css') }}">
+</head>
+<body>
+  <header><a href="{{ url_for('core.index') }}" aria-label="NeoFab2 Startseite"><img src="{{ url_for('static', filename='branding/neofab2-logo.png') }}" alt="NeoFab2" width="240"></a><span>Werkstatt &amp; Makerspace</span></header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer>NeoFab2 · Version {{ version }} · Core im Aufbau</footer>
+</body>
+</html>

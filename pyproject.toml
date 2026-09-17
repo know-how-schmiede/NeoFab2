@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neofab2"
+dynamic = ["version"]
+description = "Modulares Core-System für Werkstätten und Makerspaces"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = "MIT"
+dependencies = [
+  "Flask>=3.1,<3.2",
+  "SQLAlchemy>=2.0,<2.1",
+  "alembic>=1.16,<2",
+]
+
+[project.optional-dependencies]
+server = ["gunicorn>=23,<26; sys_platform != 'win32'"]
+dev = ["pytest>=8,<10", "build>=1.2,<2"]
+
+[project.scripts]
+neofab2 = "neofab2.cli:main"
+
+[tool.setuptools]
+packages = ["neofab2", "neofab2.core", "neofab2.migrations", "neofab2.migrations.versions"]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+"" = "src"
+"neofab2.migrations" = "migrations"
+
+[tool.setuptools.package-data]
+neofab2 = ["templates/*.html", "static/*.css", "static/branding/*.png"]
+
+[tool.setuptools.dynamic]
+version = {attr = "neofab2.version.__version__"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

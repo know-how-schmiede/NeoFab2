@@ -1,5 +1,65 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.1 – 2026-09-17
+
+Bereich: Core-Grundsystem / Installation und Betrieb.
+
+### Änderungen
+
+- Startfähige Flask-Application-Factory, validierte TOML-Konfiguration und
+  zentrale Version für Python-Paket, CLI und Oberfläche.
+- Gemeinsame Startseite mit Logo, responsivem CSS und Betriebsanzeige.
+- SQLite für die erste Testinstallation, explizite Alembic-Revision
+  `0001_core_settings`; keine Schemaänderung bei Anwendungsstart/Seitenaufruf.
+- CLI für Konfiguration, Migration, Bereitschaftsprüfung und konsistentes Backup.
+- Debian-13-Installer, Gunicorn-/systemd-Einrichtung und Fast-Forward-Update
+  mit Sicherungen und kontrolliertem Abbruch.
+- Automatisierte Tests, Wheel-/sdist-Paketierung und vorbereitete Linux-CI.
+- Deutsche Installation, Fehlerhilfe, Betrieb und Wiederherstellung dokumentiert.
+
+### Betrieb und Migration
+
+Neue Testinstallation gemäß `doku/SETUP.md`. Die frühere v0.1.0 enthält kein
+Laufzeitschema; die neue Datenbank entsteht ausdrücklich durch `neofab2 migrate`.
+Installer verwenden ausschließlich eigene NeoFab2-Pfade und Dienstnamen.
+SQLite ist zunächst Testbasis, produktive Datenbankentscheidung bleibt offen.
+Keine Benutzer-/Bestandsdatenmigration; kein Eingriff in altes NeoFab.
+Anmeldung, Admin-Erstzugang, Passwort-Reset, Plugin-Vertrag und Benutzerimport
+folgen; keine vollständige Core-Abnahme.
+
+### Prüfungen
+
+- 19 lokale Tests unter Windows/Python 3.12 bestanden: Core, CLI,
+  Migration, Sicherung/Restore und simulierte Update-Erfolgs-/Fehlerabläufe.
+- Bash-Syntax und ShellCheck für alle vier Shell-Dateien bestanden.
+- Wheel und sdist gebaut; installiertes Wheel mit Migration, Templates,
+  CSS und Logo geprüft.
+- Git-Diff und lokale Dokumentationslinks geprüft.
+- Keine echte Debian-/LXC-/systemd-Abnahme, keine ausgeführte GitHub-CI.
+- Kein Browser verbunden; visuelle Browserprüfung noch offen.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+0.1.1: Core-Grundsystem und Debian-Installationsskripte umsetzen
+```
+
+Commit-Beschreibung:
+
+```text
+Flask-Factory, TOML-Konfiguration und explizite Alembic-Migration ergänzen.
+Startseite mit Logo/Version sowie Health-Endpunkte und Betriebs-CLI erstellen.
+Neue Debian-13-Installation, systemd-Service und abgesichertes Update vorbereiten.
+SQLite-Backup und Wiederherstellung, Paketierung und Tests ergänzen.
+19 lokale Tests, ShellCheck, Bash-Syntax und Wheel-Smoke-Test bestanden.
+Deutsche Betriebsanleitungen und Funktionsnachweis aktualisieren.
+Echte LXC-/systemd-Abnahme und vollständiger Core-Ausbau stehen noch aus.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.0 – 2026-09-17
 
 Bereich: Projektgerüst / Distribution / Branding.

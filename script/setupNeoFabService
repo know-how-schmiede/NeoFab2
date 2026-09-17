@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=script/common.sh
+source "$SCRIPT_DIR/common.sh"
+require_root
+require_install
+read_port
+[[ -d /run/systemd/system ]] || die 'systemd läuft nicht. Im Debian-Container ausführen.'
+app_cli check
+if [[ -e $UNIT ]]; then
+  verify_service
+  printf 'Vorhandener NeoFab2-Service wird unverändert verwendet.\n'
+else
+  cat > "$UNIT" <<EOF
+[Unit]
+Description=NeoFab2 Core
+After=network.target
+
+[Service]
+Type=simple
+User=$APP_USER
+Group=$APP_USER
+WorkingDirectory=$APP_DIR
+Environment=NEOFAB2_CONFIG=$CONFIG_FILE
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStartPre=$APP_DIR/.venv/bin/neofab2 check
+ExecStart=$APP_DIR/.venv/bin/gunicorn --bind 0.0.0.0:$PORT --workers 2 --access-logfile - --error-logfile - neofab2:create_app()
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=$DATA_DIR
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  chmod 0644 "$UNIT"
+fi
+systemd-analyze verify "$UNIT"
+systemctl daemon-reload
+systemctl enable "$SERVICE"
+systemctl restart "$SERVICE"
+if ! wait_ready; then
+  systemctl stop "$SERVICE"
+  die 'Service nach fehlgeschlagenem Start angehalten.'
+fi
