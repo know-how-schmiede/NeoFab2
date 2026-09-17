@@ -47,8 +47,8 @@ def validate_name(value):
 
 
 def hash_password(value):
-    if not 15 <= len(value) <= 128:
-        raise ValueError("Das Passwort muss 15 bis 128 Zeichen enthalten.")
+    if not 8 <= len(value) <= 128:
+        raise ValueError("Das Passwort muss 8 bis 128 Zeichen enthalten.")
     return generate_password_hash(value, method="scrypt")
 
 

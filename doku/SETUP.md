@@ -71,11 +71,24 @@ eingerichteten Git-Zugriff für den Dienstbenutzer.
 
 Der Installer erzeugt einen zufälligen Secret-Key, installiert das Python-Paket
 und führt `neofab2 migrate`, `neofab2 check` sowie `neofab2 create-admin` aus.
-Das Admin-Passwort muss 15 bis 128 Zeichen enthalten. Keine Beispieldaten,
+Das Admin-Passwort muss 8 bis 128 Zeichen enthalten. Keine Beispieldaten,
 keine Änderungen am alten NeoFab. Existiert einer der Installationspfade oder
 der Benutzer bereits, bricht er ab. Nach einer unvollständigen Erstinstallation
 Fehlerursache prüfen und vorzugsweise einen frischen Testcontainer verwenden;
 es wird nichts automatisch gelöscht oder überschrieben.
+
+### Erstadmin bei einer Neuinstallation
+
+Nach Migration und Datenbankprüfung ruft `setupNeoFab` automatisch
+`neofab2 create-admin` auf. Nacheinander E-Mail-Adresse (später der Anmeldename),
+Anzeigename und Passwort mit 8–128 Zeichen eingeben. Das Passwort wird zweimal
+verdeckt abgefragt; dass beim Tippen keine Zeichen erscheinen, ist beabsichtigt.
+
+Erwartet: `Erster Administrator angelegt.` Es gibt kein voreingestelltes Konto.
+Danach den optionalen Teststart ausführen oder überspringen und den Service
+installieren. Für einen reinen HTTP-Testzugang die HTTPS-Frage vorher mit `n`
+beantworten. Anschließend unter `/login` mit der gewählten E-Mail und dem
+Passwort anmelden; erwartet werden Profil und Benutzerverwaltung.
 
 ## 3. Service
 
@@ -153,6 +166,53 @@ weiteren; zusätzliche Benutzer und Administratoren werden angemeldet über
 die Benutzerverwaltung angelegt. [Details und Notfallzugang](Core_Zugang.md).
 
 ## 5. Fehlerhilfe
+
+### Anmeldung: „Formularsitzung abgelaufen oder ungültig“
+
+Diese Meldung entsteht vor der Passwortprüfung und betrifft nicht die
+Passwortlänge. Im bestehenden HTTP-Testcontainer kann das voreingestellte
+Secure-Cookie die Ursache sein: Der Browser sendet es nur über HTTPS zurück.
+
+Als **root im isolierten HTTP-Testcontainer** prüfen:
+
+```bash
+grep '^SESSION_COOKIE_SECURE' /etc/neofab2/config.toml
+```
+
+Erforderlich für HTTP: `SESSION_COOKIE_SECURE = false`. Den vom Installer
+angelegten `true`-Eintrag gezielt ändern und den Dienst neu starten:
+
+```bash
+sed -i 's/^[[:space:]]*SESSION_COOKIE_SECURE[[:space:]]*=[[:space:]]*true[[:space:]]*$/SESSION_COOKIE_SECURE = false/' /etc/neofab2/config.toml
+grep '^SESSION_COOKIE_SECURE' /etc/neofab2/config.toml
+systemctl restart neofab2.service
+```
+
+Erwartet: `SESSION_COOKIE_SECURE = false`. Bei HTTPS `true` beibehalten.
+Danach `http://<Container-IP>:8080/login` frisch öffnen, nicht das alte Formular
+erneut senden. Cookies für die Website zulassen und Host/IP-Adresse zwischen
+Aufruf und Absenden nicht wechseln. Bei anhaltendem Fehler Cookies dieser
+Website löschen und `/login` erneut öffnen. Der CSRF-Schutz bleibt eingeschaltet.
+Die überarbeitete Meldung weist eine fehlende Formularsitzung gesondert aus.
+
+### Admin-Passwort nachträglich ändern oder wiederherstellen
+
+Der lokale Admin-Zugang funktioniert laut Nutzerrückmeldung. Für ein neues,
+auch kürzeres Passwort nach dem Code-Update als **root im Container**:
+
+```bash
+bash /opt/neofab2/script/resetAdminPassword
+```
+
+Admin-ID aus der Liste wählen, Änderung bestätigen und das neue Passwort mit
+8–128 Zeichen zweimal verdeckt eingeben. Danach `/login` neu öffnen und mit
+E-Mail und neuem Passwort anmelden. Bestehende Sitzungen werden beendet;
+für den Passwortwechsel ist kein Dienstneustart nötig. Deaktivierte Konten
+nur ausdrücklich mit `--reactivate` reaktivieren. Bereits angelegte Konten
+nicht durch erneutes `create-admin` ersetzen. Längere bestehende Passwörter
+bleiben gültig.
+
+### Weitere Prüfungen
 
 ```bash
 journalctl -u neofab2.service -n 80 --no-pager

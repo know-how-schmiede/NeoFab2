@@ -57,12 +57,16 @@ eine erneute Erstadmin-Anlage, auch wenn es deaktiviert ist. Zusätzliche Konten
 werden über `/admin/users` angelegt. Startpasswörter persönlich über einen
 sicheren Weg übergeben; Benutzer können sie im Profil ändern.
 
-Passwörter: 15–128 Zeichen, keine stillschweigende Kürzung und keine erzwungene
+Passwörter: 8–128 Zeichen, keine stillschweigende Kürzung und keine erzwungene
 Zeichenmischung. Speicherung nur als Werkzeug-scrypt-Hash. Es gibt kein
 CLI-Passwortargument; Passwörter erscheinen weder in Shell-History noch in
 Erfolgsmeldungen. Secrets/Hashwerte werden nicht in HTML ausgegeben.
 
 ## Anmeldung im bestehenden HTTP-Testcontainer
+
+Die Meldung „Formularsitzung abgelaufen oder ungültig“ ist kein Passwortfehler.
+Bei fehlender Sitzung wird jetzt ein eigener Cookie-/HTTPS-Hinweis mit Link
+zum erneuten Öffnen der Anmeldung angezeigt. [Schrittweise Fehlerbehebung](SETUP.md).
 
 Unter `/etc/neofab2/config.toml` steht standardmäßig:
 
@@ -146,7 +150,7 @@ für Benutzer und Mitarbeiter gehören noch zum offenen Self-Service-Arbeitspake
 
 ## Nachweise und Grenzen
 
-47 Tests unter Windows/Python 3.12 bestanden. Bash-Syntax und ShellCheck für
+53 Tests unter Windows/Python 3.12 bestanden. Bash-Syntax und ShellCheck für
 alle fünf Shell-Dateien bestanden; Wheel und sdist gebaut. Das installierte
 Wheel wurde einschließlich Migration, Login, Profil und Benutzerübersicht geprüft.
 
@@ -155,6 +159,10 @@ werden gültige/ungültige/deaktivierte Logins, CSRF, Rechte bei Direktzugriff,
 unerlaubte Profiländerungen, Hashing, Cookie-Replay nach Logout,
 Sitzungsablauf, Passwortwechsel, Erstadmin-/Letzter-Admin-Parallelität,
 Anmeldebegrenzung sowie CLI-Reset und Migration vom vorherigen Schema.
+
+Zusätzlich geprüft: Passwortgrenzen bei 7/8/128/129 Zeichen, Benutzeranlage,
+Passwortwechsel und CLI-Reset mit genau 8 Zeichen sowie fehlende Sitzungscookies
+mit verständlichem Fehlerhinweis bei weiterhin aktivem CSRF-Schutz.
 
 Die Benutzerverwaltung ergänzt die bereits vom Nutzer als laufend gemeldete
 Grundinstallation. Ein eigener LXC-Echttest dieses neuen Schritts und visuelle

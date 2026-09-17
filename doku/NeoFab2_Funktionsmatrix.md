@@ -192,6 +192,14 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U08 | geprüft | `src/neofab2/core/auth.py`, `config.py`, `tests/core/test_accounts.py` | Server-Inaktivitätsfrist, absolute Laufzeit, Cookie-Replay nach Logout und unveränderte Frist bei Health-/Static-Anfragen geprüft | Keine dauerhaften Remember-me-Sitzungen vorgesehen |
 | N01 | geplant | `src/neofab2/plugin_api/`, `tests/fixtures/plugins/` | Zielverzeichnisse vorhanden | Plugin-Vertrag und Testplugin folgen |
 
+### Nachbesserung Anmeldung und Erstadmin (17.09.2026, weiterhin 0.1.2)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| U01, U05, U07, X04 | geprüft (Teilumfang) | `src/neofab2/core/users.py`, `src/neofab2/cli.py`, `src/neofab2/templates/profile.html`, `src/neofab2/templates/user_form.html`, `tests/core/test_accounts.py`, `tests/integration/test_accounts_cli.py` | Einheitlich 8–128 Zeichen; Grenzen 7/8/128/129 sowie Anlage, Anmeldung, Wechsel und CLI-Reset mit 8 Zeichen geprüft; insgesamt 53 Tests bestanden | Keine Schemaänderung; vorhandene Passwörter bleiben gültig; übrige offene Teile der IDs unverändert |
+| U01 | geprüft (Teilumfang) | `src/neofab2/__init__.py`, `src/neofab2/templates/error.html`, `tests/core/test_accounts.py` | Fehlendes Sitzungscookie reproduziert; eigener Cookie-/HTTPS-Hinweis und Link zur Anmeldung; CSRF bleibt aktiv | Secure-Cookie bei HTTP ist eine mögliche Ursache im Nutzercontainer, dort nicht selbst geprüft |
+| X01, X04, X05 | implementiert (Dokumentation) | `doku/SETUP.md`, `doku/Core_Zugang.md`, `script/README.md` | Automatische Erstadmin-Abfrage, erste Anmeldung, lokaler Passwort-Reset und HTTP-Cookie-Fehlerhilfe dokumentiert; Nutzer bestätigt funktionierendes Admin-Skript | Neuer Stand nicht selbst im LXC geprüft; frühere Aussage zum offenen Skriptlauf durch Nutzerrückmeldung ergänzt |
+
 Alle übrigen IDs bleiben geplant. Version 0.1.2 ergänzt Benutzerzugang und
 lokalen Admin-Reset gegenüber dem Grundsystem v0.1.1.
 U02–U04 (Registrierung/E-Mail-Verfahren), Benutzerlöschung und Plugin-Vertrag

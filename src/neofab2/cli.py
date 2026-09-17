@@ -104,7 +104,7 @@ def create_admin(email, name):
     from .core.users import create_user
 
     app = ready_app()
-    password = click.prompt("Passwort (15–128 Zeichen)", hide_input=True, confirmation_prompt="Passwort wiederholen")
+    password = click.prompt("Passwort (8–128 Zeichen)", hide_input=True, confirmation_prompt="Passwort wiederholen")
     try:
         create_user(app, email, name, password, role="admin", bootstrap=True)
     except ValueError as error:
@@ -128,7 +128,7 @@ def reset_admin(reactivate):
         click.echo(f"{admin['id']}: {admin['email']} ({'aktiv' if admin['active'] else 'deaktiviert'})")
     selected = click.prompt("Administrator-ID", type=click.Choice([str(admin["id"]) for admin in admins]))
     click.confirm("Passwort dieses Administrators ändern und alle seine Sitzungen beenden?", abort=True)
-    password = click.prompt("Neues Passwort (15–128 Zeichen)", hide_input=True, confirmation_prompt="Passwort wiederholen")
+    password = click.prompt("Neues Passwort (8–128 Zeichen)", hide_input=True, confirmation_prompt="Passwort wiederholen")
     try:
         reset_admin_password(app, int(selected), password, reactivate=reactivate)
     except ValueError as error:

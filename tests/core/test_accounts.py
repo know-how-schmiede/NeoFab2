@@ -259,3 +259,48 @@ def test_unauthenticated_admin_request_does_not_expose_accounts(app, admin):
     response = app.test_client().get("/admin/users")
     assert response.status_code == 302 and response.location == "/login"
     assert "admin@example.org" not in response.text
+
+
+@pytest.mark.parametrize("length,valid", [(7, False), (8, True), (128, True), (129, False)])
+def test_password_length_boundaries(length, valid):
+    from neofab2.core.users import hash_password
+    from werkzeug.security import check_password_hash
+
+    password = "x" * length
+    if valid:
+        assert check_password_hash(hash_password(password), password)
+    else:
+        with pytest.raises(ValueError, match="8 bis 128"):
+            hash_password(password)
+
+
+def test_eight_character_password_create_login_and_change(app, admin):
+    client = app.test_client()
+    login(client)
+    page = client.get("/admin/users/new")
+    assert 'minlength="8"' in page.text and 'minlength="15"' not in page.text
+    data = {"display_name": "Short Password Test", "email": "short@example.org", "role": "user",
+            "password": "Test123!", "confirm_password": "Test123!"}
+    assert post(client, "/admin/users/new", data).status_code == 302
+    person = app.test_client()
+    assert login(person, "short@example.org", "Test123!").status_code == 302
+    assert 'minlength="8"' in person.get("/profile").text
+    response = post(person, "/profile/password", {"old_password": "Test123!", "new_password": "Changed!", "confirm_password": "Changed!"}, form="/profile")
+    assert response.status_code == 302
+    assert login(person, "short@example.org", "Changed!").status_code == 302
+
+
+def test_missing_cookie_explains_session_error_without_bypassing_csrf(app, admin):
+    app.config["SESSION_COOKIE_SECURE"] = True
+    # Simuliert den Browser, der das Secure-Cookie bei HTTP nicht zurücksendet.
+    client = app.test_client(use_cookies=False)
+    token = csrf(client, "/login")
+    response = client.post("/login", data={"csrf_token": token, "email": "admin@example.org", "password": PASSWORD})
+    assert response.status_code == 400
+    assert "Die Sitzung zum Formular fehlt" in response.text
+    assert "HTTPS" in response.text and 'href="/login"' in response.text
+    assert PASSWORD not in response.text
+    with app.extensions["neofab2_db"].connect() as connection:
+        assert not connection.execute(select(sessions)).first()
+    app.config["SESSION_COOKIE_SECURE"] = False
+    assert login(app.test_client()).status_code == 302

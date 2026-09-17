@@ -18,13 +18,18 @@ Erstadministrator und optionalem Teststart. Vorgaben: Branch `main`, Port `8080`
 HTTPS `j`. Feste Pfade:
 Code `/opt/neofab2`, Daten `/var/lib/neofab2`, Konfiguration `/etc/neofab2`,
 Benutzer `neofab2`. Vorhandene Installationen werden nicht überschrieben.
-Admin-E-Mail und Anzeigename eingeben, Passwort verdeckt wiederholen (15–128
+Admin-E-Mail und Anzeigename eingeben, Passwort verdeckt wiederholen (8–128
 Zeichen). Keine Standardzugangsdaten. Nur für ein isoliertes HTTP-Testnetz bei
 HTTPS `n` wählen; sonst wird eine HTTPS-Verbindung für die Login-Cookies benötigt.
 
 Der optionale Test startet aus dem Installationsverzeichnis. Ein Fehler dabei
 wird separat gemeldet; die erfolgreiche Basisinstallation bleibt bestehen.
 Mit `n` wird der Test übersprungen, Strg+C beendet ihn regulär.
+
+Bei der Erstinstallation wird `create-admin` automatisch nach der Migration
+aufgerufen: E-Mail (Anmeldename), Anzeigename und Passwort zweimal eingeben.
+Nach `Erster Administrator angelegt.` und dem Service-Start `/login` öffnen
+und diese E-Mail mit dem gewählten Passwort verwenden.
 
 Prüfen:
 
@@ -64,6 +69,11 @@ Ein deaktiviertes Admin-Konto bleibt dabei gesperrt; nur mit ausdrücklich
 angegebenem `--reactivate` wieder aktivieren. Alle Sitzungen des Kontos enden.
 
 [Zugang, HTTP-Testkonfiguration und Rollen](../doku/Core_Zugang.md).
+
+Bei „Formularsitzung ungültig“ im HTTP-Testnetz den bestehenden Eintrag
+`SESSION_COOKIE_SECURE = false` prüfen. Nach einer Änderung Dienst neu starten
+und Loginseite frisch öffnen. Die Meldung betrifft die Sitzung, nicht die
+Passwortlänge. [Konkrete Fehlerbehebung und erster Login](../doku/SETUP.md).
 
 [Ausführliche Anleitung und Fehlerhilfe](../doku/SETUP.md) ·
 [Betrieb und Wiederherstellung](../doku/operations.md)

@@ -23,8 +23,16 @@ def create_app(test_config=None):
     app.context_processor(lambda: {"version": __version__})
 
     @app.errorhandler(CSRFError)
-    def csrf_error(_error):
-        return render_template("error.html", message="Die Formularsitzung ist abgelaufen oder ungültig. Bitte die Seite neu laden."), 400
+    def csrf_error(error):
+        if error.description == "The CSRF session token is missing.":
+            message = (
+                "Die Sitzung zum Formular fehlt. Bitte Cookies für diese Website zulassen "
+                "und die Anmeldung neu öffnen. Bei einem HTTP-Testzugang muss die Administration "
+                "die Cookie-Einstellung prüfen; sichere Cookies benötigen HTTPS."
+            )
+        else:
+            message = "Die Formularsitzung ist abgelaufen oder ungültig. Bitte die Anmeldung neu öffnen und erneut versuchen."
+        return render_template("error.html", message=message, login_recovery=True), 400
 
     @app.errorhandler(PermissionError)
     def permission_error(_error):

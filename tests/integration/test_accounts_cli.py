@@ -13,8 +13,8 @@ from neofab2.database import migration_config, upgrade_database, database_ready
 from neofab2.core.auth import authenticate
 from neofab2.core.users import users, sessions
 
-PASSWORD = "Synthetic initial password!"
-RESET_PASSWORD = "Synthetic reset password!"
+PASSWORD = "Test123!"
+RESET_PASSWORD = "Reset12!"
 
 
 def test_migrate_previous_schema_without_data_loss(tmp_path, monkeypatch):
