@@ -60,9 +60,9 @@ def test_access_navigation_and_restart_deactivation(config):
         assert client.get("/plugins/core_test/").status_code == 200
         assert "/plugins/core_test/" in client.get("/profile").text
         overview = client.get("/admin/plugins")
-        assert overview.status_code == 200 and "0.1.0" in overview.text and "Aktiv" in overview.text
+        assert overview.status_code == 200 and "0.1.0" in overview.text and "Active" in overview.text
         registry = app.extensions["neofab2_plugins"]
-        assert "erfolgreich" in registry.run_task("core_test", "self_check")
+        assert "successfully" in registry.run_task("core_test", "self_check")
         cookie = client.get_cookie("neofab2_session").value
         restarted = create_app({**config, "ENABLED_PLUGINS": []})
         try:
@@ -70,8 +70,8 @@ def test_access_navigation_and_restart_deactivation(config):
             other.set_cookie("neofab2_session", cookie)
             assert other.get("/plugins/core_test/").status_code == 404
             assert "/plugins/core_test/" not in other.get("/profile").text
-            assert "Deaktiviert" in other.get("/admin/plugins").text
-            with pytest.raises(ValueError, match="nicht aktiv"):
+            assert "Disabled" in other.get("/admin/plugins").text
+            with pytest.raises(ValueError, match="not active"):
                 restarted.extensions["neofab2_plugins"].run_task("core_test", "self_check")
             # Deaktivierung erhält Konten, Schema und bestehende Core-Sitzung.
             assert other.get("/admin/users").status_code == 200
@@ -83,17 +83,17 @@ def test_access_navigation_and_restart_deactivation(config):
 
 
 @pytest.mark.parametrize("plugins,enabled,message", [
-    ([], ["missing"], "nicht installiert"),
-    ([plugin, plugin], [], "Doppelte"),
-    ([replace(plugin, api_version=2)], ["core_test"], "Inkompatible"),
-    ([replace(plugin, permission="core.users.manage")], [], "Vertrag"),
-    ([replace(plugin, version="bad")], [], "Version"),
-    ([plugin], "core_test", "Liste"),
-    ([plugin], ["core_test", "core_test"], "doppelte"),
-    ([synthetic("a", dependencies=(Dependency("b", "1.0.0"),))], ["a"], "benötigt"),
-    ([synthetic("a", dependencies=(Dependency("b", "2.0.0"),)), synthetic("b")], ["a", "b"], "ab 2.0.0"),
+    ([], ["missing"], "not installed"),
+    ([plugin, plugin], [], "Duplicate"),
+    ([replace(plugin, api_version=2)], ["core_test"], "Incompatible"),
+    ([replace(plugin, permission="core.users.manage")], [], "contract"),
+    ([replace(plugin, version="bad")], [], "version"),
+    ([plugin], "core_test", "list"),
+    ([plugin], ["core_test", "core_test"], "duplicate"),
+    ([synthetic("a", dependencies=(Dependency("b", "1.0.0"),))], ["a"], "requires"),
+    ([synthetic("a", dependencies=(Dependency("b", "2.0.0"),)), synthetic("b")], ["a", "b"], "version 2.0.0"),
     ([synthetic("a", dependencies=(Dependency("b", "1.0.0"),)),
-      synthetic("b", dependencies=(Dependency("a", "1.0.0"),))], ["a", "b"], "Zyklische"),
+      synthetic("b", dependencies=(Dependency("a", "1.0.0"),))], ["a", "b"], "Cyclic"),
 ])
 def test_invalid_registry_fails_closed(plugins, enabled, message):
     with pytest.raises(ValueError, match=message):
@@ -108,7 +108,7 @@ def test_dependency_order_and_no_admin_wildcard():
     assert not registry.allows({"active": True, "role": "admin"}, "b.access")
     assert registry.allows({"active": True, "role": "staff"}, "b.access")
     assert not registry.allows({"active": False, "role": "staff"}, "b.access")
-    with pytest.raises(ValueError, match="benötigt"):
+    with pytest.raises(ValueError, match="requires"):
         Registry((a, b), ["a"])
 
 
@@ -139,8 +139,8 @@ def test_cli_task_respects_config_activation(config, tmp_path, monkeypatch):
     runner = CliRunner()
     assert runner.invoke(main, ["migrate"]).exit_code == 0
     result = runner.invoke(main, ["plugin-task", "core_test", "self_check"])
-    assert result.exit_code == 0 and "erfolgreich" in result.output
+    assert result.exit_code == 0 and "successfully" in result.output
     assert runner.invoke(main, ["plugin-task", "core_test", "missing"]).exit_code == 1
     filename.write_text(content, encoding="utf-8")
     result = runner.invoke(main, ["plugin-task", "core_test", "self_check"])
-    assert result.exit_code == 1 and "nicht aktiv" in result.output
+    assert result.exit_code == 1 and "not active" in result.output

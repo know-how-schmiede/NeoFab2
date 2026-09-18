@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Benutzer {{ 'anlegen' if creating else 'bearbeiten' }} · NeoFab2{% endblock %}
+{% block title %}{{ _('Create user' if creating else 'Edit user') }} · NeoFab2{% endblock %}
 {% block content %}
-<h1>Benutzer {{ 'anlegen' if creating else 'bearbeiten' }}</h1>
+<h1>{{ _('Create user' if creating else 'Edit user') }}</h1>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="display_name">Anzeigename</label><input id="display_name" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>
-  <label for="email">E-Mail</label><input id="email" name="email" type="email" value="{{ entry.email|default('') }}" maxlength="254" required>
-  <label for="role">Rolle</label><select id="role" name="role">{% for value, label in roles.items() %}<option value="{{ value }}" {% if entry.role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
-  <label for="locale">Sprache</label><select id="locale" name="locale">{% for value, label in languages.items() %}<option value="{{ value }}" {% if entry.locale|default('de') == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <label for="display_name">{{ _("Display name") }}</label><input id="display_name" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>
+  <label for="email">{{ _("Email") }}</label><input id="email" name="email" type="email" value="{{ entry.email|default('') }}" maxlength="254" required>
+  <label for="role">{{ _("Role") }}</label><select id="role" name="role">{% for value, label in roles.items() %}<option value="{{ value }}" {% if entry.role == value %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}</select>
+  <label for="locale">{{ _("Language") }}</label><select id="locale" name="locale">{% for value, label in languages.items() %}<option value="{{ value }}" {% if entry.locale|default('en') == value %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}</select>
   <input type="hidden" name="active" value="off">
-  <label class="checkbox"><input name="active" type="checkbox" value="on" {% if entry.active == true or (entry.getlist is defined and 'on' in entry.getlist('active')) %}checked{% endif %}> Konto aktiv</label>
+  <label class="checkbox"><input name="active" type="checkbox" value="on" {% if entry.active == true or (entry.getlist is defined and 'on' in entry.getlist('active')) %}checked{% endif %}> {{ _("Account active") }}</label>
   {% for key, specification in detail_fields.items() %}
-    <label for="{{ key }}">{{ specification[0] }}</label>
+    <label for="{{ key }}">{{ _(specification[0]) }}</label>
     {% if key == 'note' %}<textarea id="{{ key }}" name="{{ key }}" maxlength="{{ specification[1] }}" rows="4">{{ entry[key]|default('') }}</textarea>
     {% else %}<input id="{{ key }}" name="{{ key }}" value="{{ entry[key]|default('') }}" maxlength="{{ specification[1] }}">{% endif %}
   {% endfor %}
   {% if creating %}
-    <p>Das Startpasswort über einen sicheren Weg persönlich übergeben. Es wird keine E-Mail verschickt.</p>
-    <label for="password">Startpasswort (8–128 Zeichen)</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
-    <label for="confirm_password">Startpasswort wiederholen</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+    <p>{{ _("Provide the initial password personally through a secure channel. No email is sent.") }}</p>
+    <label for="password">{{ _("Initial password (8–128 characters)") }}</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+    <label for="confirm_password">{{ _("Repeat initial password") }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
   {% else %}
-    <label for="new_password">Neues Passwort (optional, 8–128 Zeichen)</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
-    <label for="confirm_password">Neues Passwort wiederholen</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
-    <p>Beide Passwortfelder leer lassen, um das bisherige Passwort beizubehalten. Änderungen an Passwort, E-Mail, Rolle oder Aktivstatus beenden alle bisherigen Sitzungen dieses Kontos. Der letzte aktive Administrator bleibt geschützt.</p>
+    <label for="new_password">{{ _("New password (optional, 8–128 characters)") }}</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+    <label for="confirm_password">{{ _("Repeat new password") }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+    <p>{{ _("Leave both password fields empty to keep the current password. Changes to the password, email, role or account status end all existing sessions for this account. The last active administrator remains protected.") }}</p>
   {% endif %}
-  <button type="submit">{{ 'Benutzer anlegen' if creating else 'Änderungen speichern' }}</button>
+  <button type="submit">{{ _('Create user' if creating else 'Save changes') }}</button>
 </form>
-<p><a href="{{ url_for('accounts.user_list') }}">Zur Benutzerübersicht</a></p>
+<p><a href="{{ url_for('accounts.user_list') }}">{{ _("Back to user list") }}</a></p>
 {% endblock %}

@@ -1,15 +1,15 @@
-# NeoFab2 v0.1.6 – Installation und Entwicklung
+# NeoFab2 v0.1.7 – Installation und Entwicklung
 
-Neu in 0.1.6: [erweiterte Benutzerformulare](Benutzerverwaltung.md) und
-[Sprachwahl](Core_Sprachen.md). Das Update führt die expliziten Migrationen
-`0004_user_locale` und `0005_user_details` aus; bestehende Konten bleiben erhalten.
+Neu in 0.1.7: [Englisch als Ausgangssprache](Core_Sprachen.md),
+englische CLI und Standard `en` für neue Konten. Vorhandene Kontosprachen
+bleiben erhalten. [Nächste Core-Schritte](Core_Naechste_Schritte.md).
 
 ## Umfang und Prüfstand
 
 Startfähiger Core mit Startseite, Version, SQLite-Basis und expliziter
 Alembic-Migration. Der aktuelle Arbeitsstand ergänzt Anmeldung, Administratoren,
 Benutzerverwaltung, Profil und lokalen Passwort-Reset. Selbstregistrierung,
-E-Mail-Verfahren, Plugin-Verwaltung und Benutzerübernahme folgen. SQLite dient der ersten isolierten
+E-Mail-Verfahren, weitere Plugin-Dienste und Benutzerübernahme folgen. SQLite dient der ersten isolierten
 Testinstallation; die endgültige produktive Datenbankentscheidung bleibt offen.
 
 Lokal geprüft unter Windows/Python 3.12: Core, Migration, Sicherung und
@@ -39,7 +39,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.6 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.7 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -153,7 +153,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.6`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.7`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:

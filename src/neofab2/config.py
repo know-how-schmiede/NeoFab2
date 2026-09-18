@@ -30,14 +30,14 @@ def load_config(overrides=None):
         config.update(overrides)
     secret = config.get("SECRET_KEY")
     if not isinstance(secret, str) or len(secret) < 32:
-        raise ValueError("SECRET_KEY muss mindestens 32 Zeichen enthalten. Zuerst neofab2 init-config ausführen.")
+        raise ValueError("SECRET_KEY must contain at least 32 characters. Run neofab2 init-config first.")
     data_dir = Path(config["DATA_DIR"]).expanduser()
     if not data_dir.is_absolute():
-        raise ValueError("DATA_DIR muss ein absoluter Pfad sein.")
+        raise ValueError("DATA_DIR must be an absolute path.")
     config["DATA_DIR"] = str(data_dir)
     for key in ("SESSION_IDLE_SECONDS", "SESSION_MAX_SECONDS", "LOGIN_WINDOW_SECONDS", "LOGIN_ACCOUNT_LIMIT", "LOGIN_IP_LIMIT"):
         if type(config[key]) is not int or config[key] <= 0:
-            raise ValueError(f"{key} muss eine positive ganze Zahl sein.")
+            raise ValueError(f"{key} must be a positive integer.")
     if type(config["SESSION_COOKIE_SECURE"]) is not bool:
-        raise ValueError("SESSION_COOKIE_SECURE muss true oder false sein.")
+        raise ValueError("SESSION_COOKIE_SECURE must be true or false.")
     return config

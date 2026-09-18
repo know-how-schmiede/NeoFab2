@@ -43,7 +43,7 @@ def test_explicit_migration_is_repeatable_and_preserves_data(app):
     page = client.get("/")
     assert page.status_code == 200
     assert __version__.encode() in page.data
-    assert "Grundsystem bereit" in page.text
+    assert "Core ready" in page.text
     assert client.get("/static/branding/neofab2-logo.png").status_code == 200
     assert client.get("/static/core.css").status_code == 200
     assert "frame-ancestors 'none'" in page.headers["Content-Security-Policy"]

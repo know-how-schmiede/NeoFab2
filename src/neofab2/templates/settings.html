@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Systemeinstellungen · NeoFab2{% endblock %}
+{% block title %}{{ _("System settings") }} · NeoFab2{% endblock %}
 {% block content %}
-<h1>Systemeinstellungen</h1>
-<p>Diese Angaben erscheinen auf der öffentlichen Startseite. Die Standarddarstellung gilt für Gäste und Konten ohne eigene Auswahl.</p>
+<h1>{{ _("System settings") }}</h1>
+<p>{{ _("These details appear on the public home page. The default appearance applies to guests and accounts without a personal preference.") }}</p>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="site_name">Werkstattname</label>
+  <label for="site_name">{{ _("Workshop name") }}</label>
   <input id="site_name" name="site_name" value="{{ values.site_name }}" maxlength="80" required>
-  <label for="site_tagline">Kurzbeschreibung</label>
+  <label for="site_tagline">{{ _("Short description") }}</label>
   <input id="site_tagline" name="site_tagline" value="{{ values.site_tagline }}" maxlength="160" required>
-  <label for="welcome_text">Begrüßungstext</label>
+  <label for="welcome_text">{{ _("Welcome text") }}</label>
   <textarea id="welcome_text" name="welcome_text" rows="6" maxlength="2000" required>{{ values.welcome_text }}</textarea>
-  <label for="default_theme">Standarddarstellung</label>
+  <label for="default_theme">{{ _("Default appearance") }}</label>
   <select id="default_theme" name="default_theme">
-    <option value="dark" {% if values.default_theme == 'dark' %}selected{% endif %}>Dunkel</option>
-    <option value="light" {% if values.default_theme == 'light' %}selected{% endif %}>Hell</option>
+    <option value="dark" {% if values.default_theme == 'dark' %}selected{% endif %}>{{ _("Dark") }}</option>
+    <option value="light" {% if values.default_theme == 'light' %}selected{% endif %}>{{ _("Light") }}</option>
   </select>
-  <button type="submit">Einstellungen speichern</button>
+  <button type="submit">{{ _("Save settings") }}</button>
 </form>
 {% endblock %}

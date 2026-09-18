@@ -1,4 +1,8 @@
-# Systemeinstellungen und Darstellung – v0.1.6
+# Systemeinstellungen und Darstellung – v0.1.7
+
+Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
+in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
+[Sprachwahl und Migration 0006](Core_Sprachen.md).
 
 Umfang: S04/S01 und der Darstellungsteil von U07. Seit 0.1.6 gibt es eine
 [Sprachwahl für Navigation, Login und Profil](Core_Sprachen.md). Weitere
@@ -7,7 +11,7 @@ werden in späteren Core-Schritten ergänzt.
 
 ## Update und Migration
 
-Voraussetzung: Änderungen zu 0.1.6 manuell in GitHub Desktop committen und
+Voraussetzung: Änderungen zu 0.1.7 manuell in GitHub Desktop committen und
 auf den verwendeten Remote-Branch übertragen. Danach als **root im Container**:
 
 ```bash
@@ -30,7 +34,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl status neofab2.service --no-pager
 ```
 
-Erwartet: Version 0.1.5, Datenbank und Schema bereit, aktiver Dienst.
+Erwartet: Version 0.1.7, `Database and schema ready.`, aktiver Dienst.
 Die HTTP-Einstellung `SESSION_COOKIE_SECURE = false` im isolierten Testnetz
 und die Plugin-Aktivierung werden durch diesen Schritt nicht verändert.
 
@@ -43,8 +47,8 @@ zugewiesen; direkter Zugriff von Benutzern/Mitarbeitern wird mit 403 abgewiesen.
 | Einstellung | Standard | Grenze / Verwendung |
 |---|---|---|
 | Werkstattname | NeoFab2 | 1–80 Zeichen, Überschrift der Startseite |
-| Kurzbeschreibung | Werkstatt & Makerspace | 1–160 Zeichen, Kopfzeile |
-| Begrüßungstext | Der neue Ausgangspunkt für unsere Werkstatt und unseren Makerspace. | 1–2000 Zeichen, Startseite; Zeilenumbrüche bleiben sichtbar |
+| Kurzbeschreibung | Workshop & Makerspace | 1–160 Zeichen, Kopfzeile |
+| Begrüßungstext | The new starting point for our workshop and makerspace. | 1–2000 Zeichen, Startseite; Zeilenumbrüche bleiben sichtbar |
 | Standarddarstellung | Dunkel | Hell oder Dunkel; für Gäste und Konten mit Systemvorgabe |
 
 Alle Textfelder sind öffentlich sichtbar. Sie unterstützen Klartext; HTML

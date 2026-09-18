@@ -1,5 +1,80 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.7 – 2026-09-18
+
+Bereich: englische Ausgangssprache, Übersetzungsschlüssel und Core-Arbeitsplan
+(S02/U07, S01, U05, S04, N01, S12, X05–X07).
+
+### Änderungen
+
+- Englische Ausgangstexte in Core-Oberfläche, Administration, Testplugins,
+  Validierungs-/Zugangsmeldungen und CLI. Englische Schlüssel in `MESSAGES`;
+  Deutsch wird wie Französisch als Übersetzung behandelt.
+- Englisch als Standard für Gäste ohne Auswahl, neue Konten und fehlende
+  Übersetzungen/ungültige gespeicherte Sprachcodes. Bestehende Kontosprachen
+  und bisherige französische Übersetzungen bleiben erhalten.
+- Bisher fest deutsche Admin- und Testplugin-Texte für Übersetzung markiert.
+  Platzhalter bleiben HTML-maskiert; technische Formularwerte bleiben unverändert.
+- Neue öffentliche Standardtexte sind englisch. Individuelle Einstellungen und
+  Benutzerinhalte werden nicht automatisch übersetzt oder überschrieben.
+- Priorisierter Core-Plan mit Funktions-IDs und Abnahmekriterien in
+  `doku/Core_Naechste_Schritte.md`: zunächst Versanddienst/persistente Aufgaben,
+  dann E-Mail-Kontoverfahren, Audit, übrige Core-Dienste, Import und Betriebsabnahme.
+  Diese Schritte sind geplant, nicht in 0.1.7 implementiert.
+- Version 0.1.7, deutsche Anleitungen und Umsetzungsnachweis aktualisiert.
+
+### Betrieb und Migration
+
+`0006_english_default` setzt den Datenbank-Standard für neue Konten auf `en`.
+SQLite baut die Benutzertabelle explizit über Alembic neu auf. Kontosprachen,
+Hashes, Zusatzfelder und Einstellungen bleiben erhalten; bestehende Sitzungen
+werden während des Tabellenumbaus gegen die vorhandene CASCADE-Regel gesichert
+und innerhalb derselben Transaktion wiederhergestellt. E-Mail-Eindeutigkeit und
+Fremdschlüsselkonsistenz sind geprüft. Reguläres Update-Skript mit Sicherung
+verwenden; keine Migration beim Webstart.
+
+Bestehende deutsche Konten können unter **Mein Profil → Sprache → English**
+umgestellt werden. Benutzerdefinierte deutsche Startseitentexte bei Bedarf in
+**System settings** bearbeiten. Shell-Betriebsskripte und Anleitungen bleiben
+deutsch; CLI-Ausgaben sind englisch. Siehe `doku/Core_Sprachen.md`.
+
+Französische Admin-/Plugin-Texte und einzelne dynamische technische Diagnosen
+verwenden weiterhin englischen Fallback; eigene Plugin-Kataloge folgen später.
+Keine produktiven Daten verändert, keine Fachplugins hinzugefügt. Keine vollständige
+S02- oder Core-Abnahme; interaktive Browser- und Container-Abnahme stehen aus.
+
+### Prüfungen
+
+- 117 Tests unter Windows/Python 3.12 bestanden: Anmeldung, Rechte, CSRF,
+  Benutzerverwaltung, Sprachwahl/-persistenz, Fallback, HTML-Maskierung,
+  englische Core-/Admin-/Testplugin-Seiten, Migrationen und Betriebssteuerung.
+- Nach abschließenden Ergänzungen 10 Sprach-/Migrationstests einschließlich
+  Sitzungserhaltung sowie 16 Plugin-/Admin-CLI-Tests erneut bestanden.
+- Wheel und sdist 0.1.7 gebaut; separat installiertes Wheel aus neutralem
+  Verzeichnis mit Migration, Core-/Plugin-Templates, CSS, Logo und Plugin-Neustart
+  geprüft. CLI meldet 0.1.7 und englische Hilfe. `git diff --check` ohne Befund.
+- Tests ausschließlich mit synthetischen Daten. Temporäres Testverzeichnis im
+  Repository, da das vorhandene Windows-pytest-Tempverzeichnis gesperrt war.
+- Kein eigener LXC-/systemd-Lauf, kein interaktiver Browsertest, kein Commit/Push.
+
+### Commit für GitHub Desktop
+
+```text
+0.1.7: Englisch als Ausgangssprache und Core-Fahrplan ergänzen
+```
+
+```text
+Core-Oberfläche, Administration, Testplugins und CLI auf englische Ausgangstexte umstellen.
+Englische Übersetzungsschlüssel und Fallback verwenden; Deutsch als Übersetzung erhalten.
+Migration 0006_english_default für neue Konten ergänzen und bestehende Kontodaten sowie Sitzungen erhalten.
+Core-Fahrplan mit priorisierten Paketen, Funktions-IDs und Abnahmekriterien dokumentieren.
+117 Tests sowie abschließende gezielte Prüfungen, Paketbau und installiertes Wheel geprüft.
+Deutsche Betriebsanleitungen, Versionshistorie und Funktionsnachweise aktualisieren.
+Französische Ergänzungen, Container-/Browserprüfung und vollständige Core-Abnahme bleiben offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.6 – 2026-09-18
 
 Bereich: Benutzerformulare und Sprachwahl (U05, S02/U07, X05–X07).

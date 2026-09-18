@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Verwaltungs-Testplugin · NeoFab2{% endblock %}
+{% block title %}{{ _("Management test plugin") }} · NeoFab2{% endblock %}
 {% block content %}
-<h1>Verwaltungs-Testplugin</h1>
-<p>Dieses zusätzliche Testplugin benötigt das Core-Testplugin. Es prüft die Aktivierung, Abhängigkeiten und geschützte Formulare.</p>
+<h1>{{ _("Management test plugin") }}</h1>
+<p>{{ _("This additional test plugin requires the core test plugin. It checks activation, dependencies and protected forms.") }}</p>
 <form method="post" action="{{ url_for('plugin_management_test.check') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button type="submit">Formularzugriff testen</button>
+  <button type="submit">{{ _("Test form access") }}</button>
 </form>
-<p>Der Test zeigt nur eine Bestätigung; es werden keine Fachdaten angelegt.</p>
+<p>{{ _("The test only displays a confirmation; no business data is created.") }}</p>
 {% endblock %}

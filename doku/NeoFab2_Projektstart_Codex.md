@@ -1,6 +1,6 @@
 # NeoFab2 – Projektstart für Codex
 
-Stand: 17.09.2026. Übergabe aus dem bisherigen Repository NeoFab in das neu anzulegende Repository NeoFab2.
+Stand: 18.09.2026. Ursprüngliche Projektübergabe, ergänzt um den Plugin-Umsetzungsplan für das bestehende NeoFab2-Repository.
 
 ## Zweck und Verwendung
 
@@ -13,6 +13,13 @@ Vorbereitete Unterlagen aus diesem Repository in das neue Repository übernehmen
    Die [Funktionsmatrix](NeoFab2_Funktionsmatrix.md) ebenfalls nach `doku/NeoFab2_Funktionsmatrix.md` übernehmen; sie liefert Funktions-IDs, Zuordnungen, Quellanker und Prüfkriterien für die Arbeitspakete.
 3. Die bisherigen `script/README.md`, `script/setupNeoFab`, `script/setupNeoFabService`, `script/upDateNeoFabService`, `script/resetAdminPassword` und `doku/SETUP.md` als Referenzen zugänglich machen, beispielsweise aus dem lokalen alten Checkout. Nicht ungeprüft als funktionsfähige NeoFab2-Skripte ausweisen.
 4. Keine produktive Datenbank, Upload-Verzeichnisse, Konfigurationsgeheimnisse oder Benutzerexporte ins neue Repository kopieren. Referenzcode auf dem dokumentierten Quellstand lesen.
+
+## Ergänzung für alle weiteren Plugin-Arbeitspakete
+
+Vor Umsetzung zusätzlich den [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md) lesen.
+Er hält die übernommene Planung zu 3D-Druck, Rollen, gemeinsamen Datei-/Viewer-
+Komponenten und dem späteren PrintFleet-Anschluss fest. Geplante Funktionen
+sind damit nicht implementiert. Die vollständige Core-Abnahme bleibt Pflicht.
 
 ## Ausgangspunkt
 
@@ -28,7 +35,10 @@ Vorbereitete Unterlagen aus diesem Repository in das neue Repository übernehmen
 - Zuerst ein ohne Fachplugins lauffähiger Core. Kein produktives Fachplugin vor dessen Abnahme.
 - Gemeinsame Anwendung und Datenbank, Application Factory, explizite versionierte Migrationen und dokumentierter Plugin-Vertrag.
 - Core: Benutzer, Anmeldung, Rechte, Oberfläche, Sprache, Einstellungen, technische Dienste, Plugin-Verwaltung und Benutzerimport.
-- Erstes Fachplugin: Workshops/Schulungen mit Anmeldung und Teilnehmerinformationen.
+- Erstes Fach-/Referenzplugin: `printing3d` nach Core-Abnahme und minimaler `orders`-Basis; MVP ohne PrintFleet. Workshops/Schulungen folgen später.
+- STL-/3D-Viewer, Upload und Dateivorschau als gemeinsame technische Komponenten, keine sichtbaren Fachplugins; Flask/Jinja bleibt Grundlage, React-Beispiele begründen keinen Stack-Wechsel.
+- Rollen: `user`, `staff`, `admin`; `employee` aus dem Planungsgespräch entspricht `staff`. Mehrere Plugin-Rechte und Besitzerprüfung vor Fachplugin-Start mit Testplugins nachweisen.
+- Slicing extern; NeoFab2 analysiert G-Code und kalkuliert. Später PrintFleet für konkrete Druckerauswahl/Steuerung und lesenden Statusrückkanal.
 - Weitere eigenständige Plugins: **3D-Druck, Plotten, Transferdruck, Beschaffung/Bestellung und CNC/Fräsen**. Gemeinsame Auftragsfunktionen liegen im späteren `orders`-Modul.
 - Weitere mögliche Module: Lernmaterialien und Terminverwaltung; gemeinsame Kalenderanzeige später, fachliche Termine bleiben ihren Modulen zugeordnet.
 - Transferdruck ist ein eigener Bereich; Verfahren und Erstumfang vor dessen Implementierung klären.
@@ -59,7 +69,8 @@ Die ausführliche Projektbeschreibung ist die Spezifikation. Bei der Initialisie
 - Unterstützte Laufzeitversionen und produktive Datenbank; bisheriger Betriebsweg Debian auf LXC/VM/Server mit systemd bleibt Planungsbasis.
 - Erledigt am 17.09.2026: Anfangsversion `0.1.0`, Versionsschema MAJOR.MINOR.PATCH; zentrale Quelle `src/neofab2/version.py`.
 - Registrierung, Zuordnung alter Rollen, Behandlung gelöschter Benutzer und Konflikte beim Import.
-- Konkreter Umstellungstermin und priorisierte Plugins nach Workshops.
+- Konkreter Umstellungstermin und Plugin-Reihenfolge nach dem 3D-Druck-Referenzplugin; Laser/Scan noch nicht beschlossen.
+- Vor dem 3D-Druck-MVP Kostenformel, Statusübergänge, Dateigrenzen und Slicerformate konkretisieren; vor PrintFleet-Anschluss tatsächlichen API-Vertrag klären.
 - Optionale Übernahme von Stammdaten jeweils vor Umsetzung des betroffenen Plugins.
 
 Die Erstellung dieser Übergabe startet noch keine Implementierung, Versionsänderung oder Migration. Nach Anlage des neuen Repositories kann der oben formulierte Auftrag dort verwendet werden.

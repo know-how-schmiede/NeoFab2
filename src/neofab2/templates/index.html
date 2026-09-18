@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<p class="eyebrow">GEMEINSAM IDEEN VERWIRKLICHEN</p>
-<h1>Willkommen bei {{ site_settings.site_name }}.</h1>
+<p class="eyebrow">{{ _("BRINGING IDEAS TO LIFE TOGETHER") }}</p>
+<h1>{{ _("Welcome to {site_name}.", site_name=site_settings.site_name) }}</h1>
 <p class="intro multiline">{{ site_settings.welcome_text }}</p>
 <section aria-labelledby="status-title">
-  <span class="badge">{{ 'Grundsystem bereit' if ready else 'Einrichtung ausstehend' }}</span>
-  <h2 id="status-title">Ein Fundament für die nächsten Schritte.</h2>
-  {% if ready %}<p>Das Grundsystem ist gestartet. Melde dich mit deinem Werkstattkonto an, um dein Profil zu verwalten.</p>
-  {% else %}<p>Die Einrichtung ist noch nicht abgeschlossen. Bitte wende dich an die Administration.</p>{% endif %}
-  <p>Workshops und Fertigungsbereiche folgen später als eigenständige Erweiterungen.</p>
+  <span class="badge">{{ _('Core ready' if ready else 'Setup pending') }}</span>
+  <h2 id="status-title">{{ _("A foundation for the next steps.") }}</h2>
+  {% if ready %}<p>{{ _("The core is running. Sign in with your workshop account to manage your profile.") }}</p>
+  {% else %}<p>{{ _("Setup is not complete yet. Please contact the administration.") }}</p>{% endif %}
+  <p>{{ _("Workshops and manufacturing areas will follow as separate extensions.") }}</p>
 </section>
 {% endblock %}

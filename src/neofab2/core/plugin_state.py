@@ -20,10 +20,10 @@ def _read(connection, fallback):
     try:
         enabled = json.loads(value)
     except (ValueError, TypeError) as error:
-        raise ValueError("Gespeicherte Plugin-Auswahl ist ungültig. Lokalen Wiederherstellungsbefehl verwenden.") from error
+        raise ValueError("The saved plugin selection is invalid. Use the local recovery command.") from error
     if (not isinstance(enabled, list) or any(not isinstance(key, str) for key in enabled)
             or len(set(enabled)) != len(enabled)):
-        raise ValueError("Gespeicherte Plugin-Auswahl muss eindeutige Plugin-Kennungen enthalten.")
+        raise ValueError("The saved plugin selection must contain unique plugin IDs.")
     return enabled, "database"
 
 
@@ -41,10 +41,10 @@ def read_selection(app):
 def change_selection(app, actor_id, plugin_id, action):
     registry = app.extensions["neofab2_plugins"]
     if plugin_id not in registry.available or action not in {"enable", "disable"}:
-        raise ValueError("Unbekanntes Plugin oder ungültige Aktion.")
+        raise ValueError("Unknown plugin or invalid action.")
     with write_transaction(app) as connection:
         if not has_permission(get_user(connection, actor_id), "core.plugins.manage"):
-            raise PermissionError("Keine Berechtigung zur Plugin-Verwaltung.")
+            raise PermissionError("You do not have permission to manage plugins.")
         enabled, _source = _read(connection, app.config["ENABLED_PLUGINS"])
         # Jeweils auf dem aktuellen DB-Stand ändern, nicht auf einem alten Formular.
         selected = set(enabled)

@@ -3,6 +3,17 @@
 Dieses Arbeitspaket setzt N01 sowie Teile von S01, S12 und U06 um. Es enthält
 zwei synthetische Testplugins, keine produktiven Fachplugins.
 
+## Zielbild für die nächsten Plugin-Schritte
+
+Vor Fachplugin-Arbeiten den [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md) lesen.
+Erstes Referenzplugin wird `printing3d` nach vollständiger Core-Abnahme und
+minimaler `orders`-Basis. Zunächst den Vertrag für mehrere Rechte und
+Besitzerprüfung mit Testplugins ausbauen. `employee` aus der Planung entspricht
+dem vorhandenen `staff`; API 1 implementiert diese feineren Rechte noch nicht.
+Datei-Upload und STL-/3D-Viewer sind interne gemeinsame Komponenten. Der MVP
+bleibt ohne PrintFleet; Slicing erfolgt extern. PrintFleet-Anschluss und
+weitere Viewer-/Dateiformate sind separat zu spezifizieren.
+
 ## Vertrag
 
 `neofab2.plugin_api.Plugin` beschreibt Kennung, Anzeigename, eigene Version
@@ -94,7 +105,7 @@ cd /opt/neofab2
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 plugin-task management_test self_check
 ```
 
-Erwartet: `Verwaltungs-Testplugin: Aufgabe erfolgreich ausgeführt.` Dieser lokale
+Erwartet: `Management test plugin: task completed successfully.` Dieser lokale
 Betriebszugang verwendet keine Browserrolle; Zugriff auf Dienstkonto und
 Konfiguration ist seine Berechtigungsgrenze. Aufgaben sind benannte Callables ohne
 Parameter. Es gibt noch keine Warteschlange, Fälligkeitsplanung oder automatischen Jobs.
@@ -154,3 +165,7 @@ Künftige Plugin-Schemata benötigen explizite versionierte Migrationen in der
 zentralen Migrationenkette. Plugin-Einstellungen, Benachrichtigungs-/Dateidienste,
 persistente Aufgaben und feinere Rechte
 sind noch nicht Teil von API 1. Die vollständige Core-Abnahme steht aus.
+
+Ab 0.1.7 sind Plugin-Namen, Testseiten und CLI-Meldungen im Quelltext englisch.
+Die Oberfläche verwendet englische Übersetzungsschlüssel und Englisch als Fallback.
+Die zentrale Core-Version ist 0.1.7; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.

@@ -88,7 +88,7 @@ Ein gemeinsamer technischer Dienst besitzt keine fachlichen Rechteentscheidungen
 | ID | Aktuell in NeoFab | Ziel in NeoFab2 | Quellbezug | Prüfkriterium / Umsetzungshinweis |
 |---|---|---|---|---|
 | D01 | 3D-Modell-Uploads, Mengen, Material-/Farbzuordnung und Dateiverwaltung | Plugin `printing3d` | MODELS: `OrderFile`; APP: `order_detail`, `set_file_color` | Fachmetadaten im Plugin; Dateien nur mit Berechtigung lesbar und änderbar |
-| D02 | STL-/3MF-Viewer, Anzeigeoptionen und Modell-Thumbnails | Plugin `printing3d` | APP: `order_file_preview`, `generate_stl_thumbnails`; UI und `neofab/static/` | Repräsentative STL-/3MF-Dateien und fehlerhafte Dateien prüfen; verfügbare Anzeigeoptionen dokumentieren |
+| D02 | STL-/3MF-Viewer, Anzeigeoptionen und Modell-Thumbnails | Gemeinsame interne 3D-Viewer-Komponente; fachliche Einbindung durch `printing3d` | APP: `order_file_preview`, `generate_stl_thumbnails`; UI und `neofab/static/` | STL für ersten MVP; 3MF/OBJ und weitere Formate später separat prüfen. Rechte/Fehlerfälle testen; kein eigenständiges sichtbares Viewer-Plugin |
 | D03 | Druckaufträge, G-Code-Dateien, Maschinenzuordnung, Zeiten und Druckstatus | Plugin `printing3d` | MODELS: `OrderPrintJob`; APP: Aktionen `upload_print_job`, `update_print_job`, `delete_print_job` | Druckstatus und Auftragstatus getrennt modellieren; Zugriffe und Löschverhalten prüfen |
 | D04 | G-Code-Analyse für Druckdauer, Filamentlänge/-gewicht und Ergänzung fehlender Werte | Plugin `printing3d` | APP: `extract_gcode_metadata`, `apply_gcode_metadata_to_job`; `doku/GCode_Druckparameter_Automatik.md` | Mehrere Slicer-Kommentare und fehlende Daten prüfen; manuelle Eingaben nicht unbeabsichtigt überschreiben |
 | D05 | Druckerprofile, Materialien, Filamente und Farben einschließlich Import/Export | Plugin `printing3d` | MODELS: `PrinterProfile`, `Material`, `FilamentMaterial`, `Color`; ADMIN: zugehörige CRUD-/Import-/Export-Routen | Fachliche Stammdaten und aktive Referenzen prüfen; Materialkatalog nicht vorsorglich in Core verschieben |
@@ -143,6 +143,17 @@ Ein gemeinsamer technischer Dienst besitzt keine fachlichen Rechteentscheidungen
 | N06 | Gemeinsame jährliche Bereinigung über Plugin-Grenzen | Core-Vertrag + Löschregeln der Plugins, tatsächliche Bereinigung später | Vorschau/Stichtag, berechtigte Bestätigung, zugehörige Dateien, Fehlerwiederaufnahme; Benutzer/Stammdaten getrennt |
 | N07 | Gemeinsame Kalenderanzeige verschiedener Fachbereiche | Spätere Erweiterung, Grenze noch offen | Auftrags- und Workshop-Termine bleiben getrennte Fachmodelle; noch kein Auftrag für ein allgemeines Kalenderplugin |
 | N08 | Wartelisten, Erinnerungen, Serientermine und Qualifikationsnachweise | Spätere Erweiterung von `workshops` | Erstumfang separat vereinbaren; Aufbewahrung von Qualifikationen unabhängig von Veranstaltungsdaten regeln |
+| N09 | Übergabe freigegebener 3D-Druckaufträge an PrintFleet und lesender Statusrückkanal | Anschlussausbau von `printing3d`, nach lokalem MVP | Tatsächliche API erst klären; externe Druckerauswahl/Steuerung, Job-Zuordnung, Wiederholung, Timeout, Statusmapping und Deaktivierung mit Testadapter prüfen |
+
+## Ergänzte Plugin-Planung vom 18.09.2026
+
+Maßgeblich ist der [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md): `printing3d`
+als erstes Fach-/Referenzplugin nach vollständiger Core-Abnahme, davor minimale
+`orders`-Basis und gemeinsame Datei-/Viewer-Komponenten. Workshops folgen später.
+`employee` entspricht dem bestehenden `staff`; API-1-Ausbau mit mehreren Rechten
+und Besitzerprüfung ist geplant. Kein React-Wechsel, keine automatische
+Freigabe von Laser-/Scan-Plugins. G-Code-Analyse und lokale Kosten/Status gehören
+zum MVP, PrintFleet erst zum Anschlussausbau.
 
 ## Migrationsregeln
 
@@ -176,7 +187,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.6 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.7 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
 | S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `core/plugins.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Core-/Plugin-Navigation per HTTP-Test geprüft | Infoseite und interaktive visuelle Browserprüfung offen |
 | S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html`, `templates/plugins.html` | Core-Versionsanzeige, Paketmetadaten und separate Plugin-Versionen geprüft | Weiterer Ausbau der Systeminformationen offen |
@@ -188,7 +199,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | U01 | geprüft | `src/neofab2/core/auth.py`, `accounts.py`, `tests/core/test_accounts.py` | Gültige/falsche/unbekannte/deaktivierte Logins, Logout, scrypt-Hashing, CSRF und serverseitige Anmeldebegrenzung geprüft | Keine Selbstregistrierung/E-Mail-Verfahren in diesem Teilumfang |
 | U05 | in Arbeit | `src/neofab2/core/users.py`, `accounts.py`, `tests/core/test_accounts.py` | Anlegen/Bearbeiten/Aktivieren/Deaktivieren, doppelte E-Mail, serverseitige Rechte und paralleler Letzter-Admin-Schutz geprüft | Benutzerlöschung mit Auswirkungen auf Plugins bleibt offen |
 | U06 | in Arbeit | `src/neofab2/core/users.py`, `auth.py`, `plugins.py`, `plugin_api/` | Rollen Benutzer/Mitarbeiter/Administrator, explizite Plugin-Rechte, Direktzugriff und Profil-Eskalation geprüft | Rollenpflege, feinere Plugin-Rechte und Altrollen-Zuordnung folgen |
-| U07 | in Arbeit | `src/neofab2/core/accounts.py`, `core/users.py`, `templates/profile.html`, `static/core.css` | Eigener Anzeigename, Passwortwechsel und dauerhafte persönliche Darstellung Hell/Dunkel/Systemvorgabe geprüft | Sprache folgt |
+| U07 | in Arbeit | `src/neofab2/core/accounts.py`, `core/users.py`, `core/i18n.py`, `templates/profile.html`, `static/core.css` | Anzeigename, Passwortwechsel, dauerhafte Darstellung und Sprachwahl geprüft; seit 0.1.7 englische Ausgangssprache und Fallback | Vollständige Übersetzungen und visuelle Abnahme offen |
 | U08 | geprüft | `src/neofab2/core/auth.py`, `config.py`, `tests/core/test_accounts.py` | Server-Inaktivitätsfrist, absolute Laufzeit, Cookie-Replay nach Logout und unveränderte Frist bei Health-/Static-Anfragen geprüft | Keine dauerhaften Remember-me-Sitzungen vorgesehen |
 | N01 | in Arbeit | `src/neofab2/plugin_api/`, `src/neofab2/core/plugins.py`, `core/plugin_state.py`, `src/neofab2/plugins/`, `tests/plugin_contract/` | API 1: Metadaten, Abhängigkeiten, Rechte, Navigation, Backend-Auswahl und Aktivierung nach Neustart; zwei Testplugins und lokale Aufgaben geprüft | Weitere Dienstverträge, fachliche Plugin-Einstellungen und persistente Aufgaben offen |
 
@@ -244,6 +255,25 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | X07 | geprüft (Teilumfang) | `migrations/versions/0004_user_locale.py`, `0005_user_details.py`, `tests/core/test_i18n.py`, `tests/core/test_user_details.py` | Explizite Upgrades, Wiederholung und Erhalt von Hash/Darstellung/Sprache geprüft; Zusatzfelder standardmäßig leer | Keine Übernahme realer Daten aus Screenshot oder NeoFab |
 | X05, X06 | geprüft (Teilumfang) | `doku/Core_Sprachen.md`, `doku/Benutzerverwaltung.md`, `doku/Version_Timeline.md`, `src/neofab2/version.py` | 0.1.6 dokumentiert; Paketbau, installiertes Wheel einschließlich neuer Benutzerfelder und CLI geprüft | Eigener Container-Test und interaktive visuelle Abnahme offen; kein Commit/Push |
 | N01 | implementiert | `doku/plugin-development.md` | Nutzer meldet 0.1.5 als funktionierend | Keine vollständige Core-Abnahme daraus abgeleitet |
+
+### Englische Ausgangssprache und Core-Arbeitsplan 0.1.7 (18.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| S02, U07 | geprüft (Teilumfang) | `src/neofab2/core/i18n.py`, `core/accounts.py`, `core/users.py`, `templates/`, `tests/core/test_i18n.py` | Englische Ausgangsschlüssel, Standard/Fallback, deutsche Übersetzung, bestehendes Französisch, Kontovorrang, Persistenz, CSRF und Platzhalter-Maskierung geprüft | Vollständiges Französisch und eigene Plugin-Kataloge offen; individuelle Inhalte unverändert |
+| S01, U05, S04, N01 | geprüft (Teilumfang) | `src/neofab2/templates/`, `core/settings.py`, `core/plugins.py`, `core/plugin_state.py`, `plugin_api/registry.py`, `plugins/`, `cli.py`, `config.py` | Englische Core-/Admin-/Testplugin-Seiten und CLI; bestehende Rechte-/Formular-/Plugin-Tests auf englische Meldungen aktualisiert | Technische dynamische Plugin-Diagnosen teils nur englisch; weitere Funktionsumfänge der IDs bleiben offen |
+| X07 | geprüft (Teilumfang) | `migrations/versions/0006_english_default.py`, `tests/core/test_i18n.py` | Upgrade von 0005, Wiederholung, Datenbank-Standard en, Erhalt DE/EN/FR, Hashes, Zusatzdaten, Einstellungen und Sitzungen sowie E-Mail-Eindeutigkeit/Fremdschlüssel geprüft | Nur synthetische SQLite-Daten, kein Produktivupdate |
+| X05, X06, S12 | geprüft (Teilumfang) | `src/neofab2/version.py`, `README.md`, `doku/Core_Sprachen.md`, `doku/SETUP.md`, `script/README.md`, `doku/Version_Timeline.md` | 117 Gesamttests, danach 10 Sprach-/Migrationstests und 16 Plugin-/CLI-Tests; Wheel/sdist und separat installiertes Wheel geprüft; Version 0.1.7 | Keine Container-/interaktive Browser-Abnahme; kein Commit/Push |
+| S05, S06, N05, U02–U04, S09, U09, N04, N01, X01–X07 | geplant (weitere Pakete) | `doku/Core_Naechste_Schritte.md`, `doku/NeoFab2_Projektbeschreibung.md`, `doku/architecture.md` | Reihenfolge, Abhängigkeiten, Funktions-IDs und Prüfkriterien dokumentiert | Planung; keine Implementierung dieser weiteren Pakete in 0.1.7; Fachplugins erst nach Core-Abnahme |
+
+### Plugin-Spezifikation ergänzt (18.09.2026, weiterhin 0.1.7)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| X05 | geprüft (Dokumentation) | `doku/Plugin_Umsetzungsplan.md`, `NeoFab2_Projektstart_Codex.md`, `NeoFab2_Projektbeschreibung.md`, `Core_Naechste_Schritte.md`, `plugin-development.md`, `architecture.md`, `README.md` | Eingefügtes Planungsgespräch abgeglichen; Querverweise und widerspruchsfreie neue Reihenfolge geprüft | Reine Planung; keine Versions-/Code-/Schemaänderung in diesem Nachtrag |
+| N01, U06, S10, D01–D07, O01, O10 | geplant (Präzisierung) | `doku/Plugin_Umsetzungsplan.md` | Rollenmatrix, API-1-Lücke, gemeinsame STL-Komponente, MVP-Grenzen und Abnahmekriterien dokumentiert | `staff` bleibt gespeicherter Rollenwert; konkrete Kosten-/Status-/Formatregeln offen; Core-Abnahme bleibt Pflicht |
+| N09 | geplant | `doku/Plugin_Umsetzungsplan.md` | PrintFleet als Anschlussausbau mit lesendem Statusrückkanal abgegrenzt | Keine geprüfte API, kein Adapter und keine echte Druckersteuerung implementiert |
+| N02 | geplant (nachrangig) | `doku/NeoFab2_Projektbeschreibung.md`, `doku/Plugin_Umsetzungsplan.md` | Workshops bleiben erhalten; 3D-Druck ersetzt ihre frühere Erstpriorität | Weitere Reihenfolge offen; Laser/Scan nur Modulideen |
 
 Alle übrigen IDs bleiben geplant. U02–U04 (Registrierung/E-Mail-Verfahren),
 Benutzerlöschung, weitere Sprachabdeckung und Plugin-Dienste sind offen.

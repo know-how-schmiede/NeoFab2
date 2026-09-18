@@ -1,4 +1,8 @@
-# Architektur – Stand v0.1.6
+# Architektur – Stand v0.1.7
+
+Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
+in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
+[Sprachwahl und Migration 0006](Core_Sprachen.md).
 
 ## Erster Core-Schritt
 
@@ -95,22 +99,22 @@ laufende Skriptdatei selbst aktualisiert werden kann.
 
 ## Nächste Arbeitspakete
 
-0.1.6: `core/i18n.py` stellt Sprachwahl und deutschen Fallback für
-Navigation, Login und Profil bereit. `0004_user_locale` speichert die Kontosprache.
+0.1.7: `core/i18n.py` verwendet englische Ausgangsschlüssel und englischen Fallback
+für Core-Oberfläche, Administration und Testplugins. Deutsch ist eine Übersetzungssprache. `0004_user_locale` speichert die Kontosprache.
 `0005_user_details` ergänzt optionale administrative Benutzerangaben. Sie werden
 nicht in den allgemeinen Auth-Kontext geladen. Passwortänderungen im Admin-Formular
 werden atomar mit den übrigen Feldern gespeichert und widerrufen bestehende Sitzungen.
 [Umfang und offene Punkte](Core_Sprachen.md).
 
-1. Sprachübersetzungen und weitere Systemeinstellungen ausbauen.
-2. Selbstregistrierung und E-Mail-Verfahren mit dem Versanddienst umsetzen.
-3. Plugin-Vertrag um technische Dienste und persistente Aufgaben erweitern.
-4. Technische Dienste und Benutzerimport mit abgestimmten Konfliktregeln.
-5. Echter Debian-/Proxmox-Installations-, Update- und Wiederherstellungstest;
-   vollständige Core-Abnahme vor Fachplugins.
+Priorisierter Plan mit Funktions-IDs und Prüfkriterien: [Nächste Core-Schritte](Core_Naechste_Schritte.md).
+Nach der Planungspräzisierung zunächst Plugin-Rechte und minimale Datei-Verträge
+mit Testplugins vervollständigen; danach Versanddienst und E-Mail-Kontoverfahren.
+Nach vollständiger Core-Abnahme `orders` minimal und `printing3d` als Referenzplugin.
+Gemeinsame Upload-/STL-Viewer-Komponenten bleiben technische Infrastruktur;
+PrintFleet folgt nach dem lokalen MVP. [Verbindliche Abgrenzung](Plugin_Umsetzungsplan.md).
 
 Offen: Registrierungsregeln, Rollen-/Konfliktzuordnung beim Import, produktive
-Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.5.
+Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.7.
 
 ## Referenzen
 

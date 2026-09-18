@@ -40,26 +40,22 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     @app.errorhandler(CSRFError)
     def csrf_error(error):
         if error.description == "The CSRF session token is missing.":
-            message = (
-                "Die Sitzung zum Formular fehlt. Bitte Cookies für diese Website zulassen "
-                "und die Anmeldung neu öffnen. Bei einem HTTP-Testzugang muss die Administration "
-                "die Cookie-Einstellung prüfen; sichere Cookies benötigen HTTPS."
-            )
+            message = "The form session is missing. Allow cookies for this site and reopen the sign-in page. For an HTTP test connection, the administration must check the cookie setting; secure cookies require HTTPS."
         else:
-            message = "Die Formularsitzung ist abgelaufen oder ungültig. Bitte die Anmeldung neu öffnen und erneut versuchen."
+            message = "The form session has expired or is invalid. Reopen the sign-in page and try again."
         return render_template("error.html", message=message, login_recovery=True), 400
 
     @app.errorhandler(PermissionError)
     def permission_error(_error):
-        return render_template("error.html", message="Für diese Aktion fehlt die Berechtigung."), 403
+        return render_template("error.html", message="You do not have permission for this action."), 403
 
     @app.errorhandler(403)
     def forbidden(_error):
-        return render_template("error.html", message="Für diese Seite fehlt die Berechtigung."), 403
+        return render_template("error.html", message="You do not have permission to view this page."), 403
 
     @app.errorhandler(503)
     def unavailable(_error):
-        return render_template("error.html", message="Das System ist noch nicht bereit. Bitte die Administration informieren."), 503
+        return render_template("error.html", message="The system is not ready yet. Please contact the administration."), 503
 
     @app.after_request
     def security_headers(response):

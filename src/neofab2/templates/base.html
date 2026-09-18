@@ -7,23 +7,23 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='core.css') }}">
 </head>
 <body>
-  <header><a href="{{ url_for('core.index') }}" aria-label="{{ _('NeoFab2 Startseite') }}"><img src="{{ url_for('static', filename='branding/neofab2-logo.png') }}" alt="NeoFab2" width="240"></a><span>{{ site_settings.site_tagline }}</span></header>
-  <nav aria-label="{{ _('Hauptnavigation') }}">
-    <a href="{{ url_for('core.index') }}">{{ _('Startseite') }}</a>
+  <header><a href="{{ url_for('core.index') }}" aria-label="{{ _('NeoFab2 home') }}"><img src="{{ url_for('static', filename='branding/neofab2-logo.png') }}" alt="NeoFab2" width="240"></a><span>{{ site_settings.site_tagline }}</span></header>
+  <nav aria-label="{{ _('Main navigation') }}">
+    <a href="{{ url_for('core.index') }}">{{ _('Home') }}</a>
     {% if current_user %}
-      <a href="{{ url_for('accounts.profile') }}">{{ _('Mein Profil') }}</a>
-      {% if has_permission(current_user, 'core.users.manage') %}<a href="{{ url_for('accounts.user_list') }}">{{ _('Benutzerverwaltung') }}</a>{% endif %}
+      <a href="{{ url_for('accounts.profile') }}">{{ _('My profile') }}</a>
+      {% if has_permission(current_user, 'core.users.manage') %}<a href="{{ url_for('accounts.user_list') }}">{{ _('User management') }}</a>{% endif %}
       {% if has_permission(current_user, 'core.plugins.view') %}<a href="{{ url_for('plugins.overview') }}">{{ _('Plugins') }}</a>{% endif %}
-      {% if has_permission(current_user, 'core.settings.manage') %}<a href="{{ url_for('settings.edit') }}">{{ _('Systemeinstellungen') }}</a>{% endif %}
-      {% for plugin in plugin_navigation %}<a href="{{ url_for('plugin_' ~ plugin.plugin_id ~ '.index') }}">{{ plugin.name }}</a>{% endfor %}
-      <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">{{ _('Abmelden') }}</button></form>
-    {% else %}<a href="{{ url_for('accounts.login') }}">{{ _('Anmelden') }}</a>{% endif %}
+      {% if has_permission(current_user, 'core.settings.manage') %}<a href="{{ url_for('settings.edit') }}">{{ _('System settings') }}</a>{% endif %}
+      {% for plugin in plugin_navigation %}<a href="{{ url_for('plugin_' ~ plugin.plugin_id ~ '.index') }}">{{ _(plugin.name) }}</a>{% endfor %}
+      <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">{{ _('Sign out') }}</button></form>
+    {% else %}<a href="{{ url_for('accounts.login') }}">{{ _('Sign in') }}</a>{% endif %}
   </nav>
   <main>
     {% for message in get_flashed_messages() %}<p class="notice" role="status">{{ _(message) }}</p>{% endfor %}
     {% if error %}<p class="error" role="alert">{{ _(error) }}</p>{% endif %}
     {% block content %}{% endblock %}
   </main>
-  <footer>NeoFab2 · Version {{ version }} · {{ _('Core im Aufbau') }}</footer>
+  <footer>NeoFab2 · Version {{ version }} · {{ _('Core under development') }}</footer>
 </body>
 </html>

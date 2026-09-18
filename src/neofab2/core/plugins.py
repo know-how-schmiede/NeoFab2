@@ -34,7 +34,7 @@ def change(plugin_id):
         change_selection(current_app, g.current_user["id"], plugin_id, request.form.get("action"))
     except ValueError as error:
         return render_overview(str(error), 400)
-    flash("Plugin-Auswahl gespeichert. Änderungen werden beim nächsten Start der Anwendungsprozesse übernommen.")
+    flash("Plugin selection saved. Changes take effect when the application processes next start.")
     return redirect(url_for("plugins.overview"))
 
 
@@ -43,7 +43,7 @@ def register_plugins(app, registry):
     for plugin in registry.ordered:
         blueprint = plugin.blueprint_factory()
         if blueprint.name != f"plugin_{plugin.plugin_id}":
-            raise ValueError(f"Falscher Blueprint-Namensraum: {plugin.plugin_id}")
+            raise ValueError(f"Incorrect blueprint namespace: {plugin.plugin_id}")
 
         def guard(permission=plugin.permission):
             if not g.get("current_user"):
@@ -55,7 +55,7 @@ def register_plugins(app, registry):
         blueprint.before_request_funcs.setdefault(None, []).insert(0, guard)
         app.register_blueprint(blueprint, url_prefix=f"/plugins/{plugin.plugin_id}")
         if f"{blueprint.name}.index" not in app.view_functions:
-            raise ValueError(f"Plugin-Einstiegsseite fehlt: {plugin.plugin_id}")
+            raise ValueError(f"Plugin entry page missing: {plugin.plugin_id}")
     app.register_blueprint(bp)
 
     @app.context_processor

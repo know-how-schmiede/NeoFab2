@@ -13,18 +13,18 @@ def blueprint():
 
     @bp.post("/check")
     def check():
-        flash("Verwaltungstest erfolgreich: Geschützter Formularaufruf ausgeführt.")
+        flash("Management test successful: protected form submitted.")
         return redirect(url_for("plugin_management_test.index"))
 
     return bp
 
 
 def self_check():
-    return "Verwaltungs-Testplugin: Aufgabe erfolgreich ausgeführt."
+    return "Management test plugin: task completed successfully."
 
 
 plugin = Plugin(
-    plugin_id="management_test", name="Verwaltungs-Testplugin", version="0.1.0",
+    plugin_id="management_test", name="Management test plugin", version="0.1.0",
     api_version=1, permission="management_test.access", roles=("admin",),
     blueprint_factory=blueprint, dependencies=(Dependency("core_test", "0.1.0"),),
     tasks=(("self_check", self_check),),

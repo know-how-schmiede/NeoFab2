@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}{{ _('Anmelden') }} · NeoFab2{% endblock %}
+{% block title %}{{ _('Sign in') }} · NeoFab2{% endblock %}
 {% block content %}
-<h1>{{ _('Anmelden') }}</h1>
-<p>{{ _('Deinen Zugang erhältst du von der Werkstatt-Administration.') }}</p>
+<h1>{{ _('Sign in') }}</h1>
+<p>{{ _('Contact the workshop administration for an account.') }}</p>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="email">{{ _('E-Mail') }}</label><input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
-  <label for="password">{{ _('Passwort') }}</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
-  <button type="submit">{{ _('Anmelden') }}</button>
+  <label for="email">{{ _('Email') }}</label><input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
+  <label for="password">{{ _('Password') }}</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+  <button type="submit">{{ _('Sign in') }}</button>
 </form>
-<p>{{ _('Passwort vergessen? Bitte die Administration kontaktieren.') }}</p>
+<p>{{ _('Forgot your password? Please contact the administration.') }}</p>
 <form method="post" action="{{ url_for('language.choose_language') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="locale">{{ _('Sprache') }} / Language / Langue</label>
+  <label for="locale">{{ _('Language') }}</label>
   <select id="locale" name="locale">
-    {% for key, label in languages.items() %}<option value="{{ key }}" {% if locale == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    {% for key, label in languages.items() %}<option value="{{ key }}" {% if locale == key %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}
   </select>
-  <button type="submit">{{ _('Sprache übernehmen') }}</button>
+  <button type="submit">{{ _('Apply language') }}</button>
 </form>
 {% endblock %}

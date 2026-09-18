@@ -1,8 +1,8 @@
-# NeoFab2 – Installation und Wartung (v0.1.6)
+# NeoFab2 – Installation und Wartung (v0.1.7)
 
-0.1.6 ergänzt [Benutzerattribute](../doku/Benutzerverwaltung.md) und
-[Sprachwahl](../doku/Core_Sprachen.md). Das reguläre Update führt die Migrationen
-`0004_user_locale` und `0005_user_details` aus.
+Neu in 0.1.7: [Englisch als Ausgangssprache](../doku/Core_Sprachen.md),
+englische CLI und Standard `en` für neue Konten. Vorhandene Kontosprachen
+bleiben erhalten. [Nächste Core-Schritte](../doku/Core_Naechste_Schritte.md).
 
 Als **root in einem neuen Debian-13-Container**, nicht auf dem Proxmox-Host:
 
@@ -14,7 +14,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.6 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.7 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,

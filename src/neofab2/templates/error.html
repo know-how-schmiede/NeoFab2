@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ _('Hinweis') }} · NeoFab2{% endblock %}
-{% block content %}<h1>{{ _('Aktion nicht möglich') }}</h1><p role="alert">{{ _(message) }}</p>
-{% if login_recovery %}<p><a href="{{ url_for('accounts.login') }}">{{ _('Anmeldung neu öffnen') }}</a></p>{% endif %}
-<a href="{{ url_for('core.index') }}">{{ _('Zur Startseite') }}</a>{% endblock %}
+{% block title %}{{ _('Notice') }} · NeoFab2{% endblock %}
+{% block content %}<h1>{{ _('Action unavailable') }}</h1><p role="alert">{{ _(message) }}</p>
+{% if login_recovery %}<p><a href="{{ url_for('accounts.login') }}">{{ _('Open sign-in page') }}</a></p>{% endif %}
+<a href="{{ url_for('core.index') }}">{{ _('Back to home') }}</a>{% endblock %}

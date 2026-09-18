@@ -6,18 +6,19 @@ from sqlalchemy.dialects.sqlite import insert
 
 from neofab2.database import database_ready
 from .auth import permission_required
+from .i18n import translate
 from .users import get_user, has_permission, write_transaction
 
 settings = Table("core_settings", MetaData(),
                  Column("key", String(100), primary_key=True), Column("value", Text, nullable=False))
 DEFAULTS = {
     "site_name": "NeoFab2",
-    "site_tagline": "Werkstatt & Makerspace",
-    "welcome_text": "Der neue Ausgangspunkt für unsere Werkstatt und unseren Makerspace.",
+    "site_tagline": "Workshop & Makerspace",
+    "welcome_text": "The new starting point for our workshop and makerspace.",
     "default_theme": "dark",
 }
-LABELS = {"site_name": "Werkstattname", "site_tagline": "Kurzbeschreibung",
-          "welcome_text": "Begrüßungstext", "default_theme": "Standarddarstellung"}
+LABELS = {"site_name": "Workshop name", "site_tagline": "Short description",
+          "welcome_text": "Welcome text", "default_theme": "Default appearance"}
 LIMITS = {"site_name": 80, "site_tagline": 160, "welcome_text": 2000}
 PREFIX = "core.presentation."
 bp = Blueprint("settings", __name__)
@@ -25,17 +26,18 @@ bp = Blueprint("settings", __name__)
 
 def validate(values):
     if set(values) != set(DEFAULTS):
-        raise ValueError("Unbekannte oder fehlende Systemeinstellung.")
+        raise ValueError("Unknown or missing system setting.")
     result = {}
     for key, value in values.items():
         if not isinstance(value, str):
-            raise ValueError("Einstellungen müssen Text enthalten.")
+            raise ValueError("Settings must contain text.")
         value = value.strip()
         if key == "default_theme":
             if value not in {"light", "dark"}:
-                raise ValueError("Bitte eine gültige Standarddarstellung wählen.")
+                raise ValueError("Please select a valid default appearance.")
         elif not 1 <= len(value) <= LIMITS[key]:
-            raise ValueError(f"{LABELS[key]} muss 1 bis {LIMITS[key]} Zeichen enthalten.")
+            raise ValueError(translate("{label} must contain 1 to {limit} characters.",
+                                       label=translate(LABELS[key]), limit=LIMITS[key]))
         result[key] = value
     return result
 
@@ -60,7 +62,7 @@ def save_settings(app, actor_id, values):
     values = validate(values)
     with write_transaction(app) as connection:
         if not has_permission(get_user(connection, actor_id), "core.settings.manage"):
-            raise PermissionError("Keine Berechtigung für Systemeinstellungen.")
+            raise PermissionError("You do not have permission to manage system settings.")
         for key, value in values.items():
             statement = insert(settings).values(key=PREFIX + key, value=value)
             connection.execute(statement.on_conflict_do_update(
@@ -80,7 +82,7 @@ def edit():
         except ValueError as error:
             return render_template("settings.html", values={**values, **{
                 key: value for key, value in submitted.items() if key in DEFAULTS}}, error=str(error)), 400
-        flash("Systemeinstellungen gespeichert.")
+        flash("System settings saved.")
         return redirect(url_for("settings.edit"))
     return render_template("settings.html", values=values)
 

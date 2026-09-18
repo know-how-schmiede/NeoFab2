@@ -1,8 +1,13 @@
 # NeoFab2 – Projektbeschreibung und Umsetzungsauftrag
 
-Stand: 17.09.2026. Dieses Dokument beschreibt die Planung; es implementiert keine Anwendung und autorisiert keine Löschung von Bestandsdaten.
+Stand: 18.09.2026. Dieses Dokument beschreibt die Planung; es implementiert keine Anwendung und autorisiert keine Löschung von Bestandsdaten.
 
 Die [Funktionsmatrix](NeoFab2_Funktionsmatrix.md) ergänzt diese Spezifikation um den erfassten NeoFab-Bestand, stabile Funktions-IDs, Zielzuordnungen, Quellanker und Prüfkriterien. Codex soll sie vor jedem Arbeitspaket lesen und den Umsetzungsnachweis bei Änderungen fortführen. Als Vorschlag markierte Modulgrenzen sind vor Umsetzung zu entscheiden.
+
+Die [Plugin-Spezifikation für Codex](Plugin_Umsetzungsplan.md) konkretisiert seit
+18.09.2026 die weitere Umsetzung: `printing3d` zuerst, gemeinsame Datei-/Viewer-
+Komponenten und PrintFleet erst nach dem MVP. Sie ersetzt die frühere Priorität
+„Workshops zuerst“; die vollständige Core-Abnahme bleibt Voraussetzung.
 
 ## 1. Ziel und verbindliche Rahmenbedingungen
 
@@ -32,7 +37,7 @@ Stammdaten wie Maschinen, Materialien und Kostenstellen sind keine automatisch z
 | CNC/Fräsen | Kategorien und allgemeine Arbeitsaufträge vorhanden | Fachlicher Umfang vor Plugin-Umsetzung klären; keine Gleichwertigkeit mit 3D-Druck unterstellen |
 | Termine | Auftragsgebundene Anfragen, Vorschläge, Auswahl, Bestätigung und Kalenderdarstellung | Später abgrenzen; kein bestehendes allgemeines Veranstaltungsmodell |
 | Lernmaterialien | Trainingsvideos, Playlists und PDF-Anhänge | Optionales Lernmaterial-Plugin |
-| Workshops | Kein eigenständiges Veranstaltungs- und Anmeldemodell erkennbar | Erstes neues Fachplugin |
+| Workshops | Kein eigenständiges Veranstaltungs- und Anmeldemodell erkennbar | Späteres Fachplugin nach dem 3D-Druck-Referenzplugin |
 | Betrieb | Einstellungen, SMTP, Benachrichtigungen, Zeitbehandlung, Audit-Logs, Setup-/Update-Skripte | Core-Dienste und neue Betriebsdokumentation |
 
 Wichtige Codebezüge im bisherigen Repository:
@@ -72,7 +77,7 @@ NeoFab2/
       orders/               # gemeinsame Auftragsbasis, später
       plotting/             # später
       procurement/          # später
-      printing3d/           # eigenständiges 3D-Druck-Plugin, später
+      printing3d/           # erstes Fach-/Referenzplugin nach Core-Abnahme
       transfer_printing/    # eigenständiges Transferdruck-Plugin, später
       milling/              # später
     templates/
@@ -117,7 +122,7 @@ Anwendungsstart und Schemaänderungen werden getrennt. Versionierte Migrationen,
 - Rollen als Bündel von Berechtigungen; Ausgangsrollen Benutzer, Mitarbeiter und Administrator. Bisherige Rollenwerte beim Import explizit zuordnen.
 - Zentrale Rechteprüfung auch auf Serverseite. Plugins deklarieren Rechte wie `workshops.manage_own` und `workshops.manage_all`; Objektbesitz wird zusätzlich geprüft.
 - Gemeinsames responsives Layout, Navigation, Startseite ohne Auftragsabhängigkeit, Profil- und Admin-Seiten.
-- Sprachunterstützung DE/EN/FR mit definiertem Fallback sowie konsistente UTC-Speicherung und konfigurierbare lokale Anzeige.
+- Englische Ausgangstexte und englischer Standard/Fallback; Deutsch und Französisch als Übersetzungssprachen sowie konsistente UTC-Speicherung und konfigurierbare lokale Anzeige.
 - Systemeinstellungen, SMTP-Konfiguration mit Testversand, konfigurierbare Impressums-/Datenschutzinhalte.
 - Technischer Benachrichtigungsdienst: persistente Versandaufträge, Zustellstatus und kontrollierte Wiederholungen. Fachliche Empfänger und Texte kommen aus dem jeweiligen Modul.
 - Minimale Ausführung fälliger Aufgaben über einen dokumentierten Worker oder CLI-Aufruf; kein eigener umfangreicher Workflow-Baukasten.
@@ -167,7 +172,7 @@ Das Abschalten oder Löschen des bisherigen Systems ist eine spätere explizite 
 
 ## 8. Weitere Ausbaustufen
 
-### Erstes Fachplugin: Workshops und Schulungen
+### Späteres Fachplugin: Workshops und Schulungen
 
 - Mitarbeiter und Admins erstellen Entwürfe und veröffentlichen Veranstaltungen.
 - Titel, Beschreibung, Veranstalter, Ort, Beginn/Ende, Teilnehmerlimit und Anmeldeschluss.
@@ -181,9 +186,9 @@ Das Abschalten oder Löschen des bisherigen Systems ist eine spätere explizite 
 
 Vor dem ersten auftragsbasierten Plugin entsteht ein gemeinsames `orders`-Modul für Auftragsnummer, Besitzer, grundlegenden Lebenszyklus und gemeinsame Kommunikation. Plotten, Beschaffung, 3D-Druck, Transferdruck und Fräsen werden jeweils als eigenständige Plugins umgesetzt und ergänzen ihre Fachdaten, Formulare und Abläufe. Welche Funktionen tatsächlich gemeinsam sind, wird anhand der ersten beiden Plugins überprüft statt vorab umfassend abstrahiert.
 
-### Eigenständiges Plugin: 3D-Druck
+### Erstes Fach- und Referenzplugin: 3D-Druck
 
-`printing3d` kapselt Modell-Uploads und Vorschauen, G-Code und Metadaten, Druckaufträge, Druckerprofile, Filamente, Farben, Druckstatus und Kostenberechnung. Vorhandene Logik ist eine Referenz, kein verpflichtender Komplettumfang der ersten Plugin-Version. Der konkrete Erstumfang wird vor Implementierung festgelegt. Der Core enthält keine druckspezifischen Felder oder Abläufe; das Plugin verwendet die gemeinsame Auftragsbasis und technische Core-Dienste.
+`printing3d` kapselt Modell-Uploads und Vorschauen, G-Code und Metadaten, Druckaufträge, Druckerprofile, Filamente, Farben, Druckstatus und Kostenberechnung. Vorhandene Logik ist eine Referenz, kein verpflichtender Komplettumfang der ersten Plugin-Version. Der MVP umfasst Auftragserfassung, Bearbeitung, externe G-Code-Erzeugung, Analyse/Kosten, Freigabe und lokalen Status. PrintFleet folgt als Anschlussausbau; dort erfolgen konkrete Druckerauswahl und Drucksteuerung, der Status fließt lesend zurück. STL-Vorschau wird eine gemeinsame interne UI-Komponente, kein separat aktivierbares Fachplugin. Konkrete Kosten-/Statusregeln sind vor Umsetzung gemäß [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md) festzulegen. Der Core enthält keine druckspezifischen Felder oder Abläufe; das Plugin verwendet die gemeinsame Auftragsbasis und technische Core-Dienste.
 
 ### Eigenständiges Plugin: Transferdruck
 
@@ -191,7 +196,7 @@ Vor dem ersten auftragsbasierten Plugin entsteht ein gemeinsames `orders`-Modul 
 
 ### Reihenfolge und Termine
 
-Priorität nach Workshops vorschlagsweise Plotten oder Beschaffung, dann weitere Dienste nach Semesterbedarf. Reihenfolge und Umfang sind noch nicht verbindlich. Bestehende Berechnungen dürfen mit repräsentativen Prüffällen übernommen werden.
+Nach vollständiger Core-Abnahme zuerst die minimale `orders`-Basis und `printing3d` als Referenzplugin umsetzen. PrintFleet erst nach dem lokalen MVP anbinden. Workshops, Plotten, Beschaffung und weitere Dienste folgen; ihre Reihenfolge ist noch offen. Laser und Scan sind neue Modulideen und benötigen eine gesonderte Entscheidung. Bestehende Berechnungen dürfen mit repräsentativen Prüffällen übernommen werden.
 
 Auftragstermine und Workshop-Termine bleiben fachlich getrennt. Ein späterer gemeinsamer Kalender kann beide über definierte Schnittstellen darstellen.
 
@@ -208,6 +213,10 @@ Qualifikationsnachweise können andere Aufbewahrungsregeln benötigen als Verans
 Folgender Startauftrag kann zusammen mit diesem Dokument verwendet werden:
 
 > Lies zuerst `doku/NeoFab2_Projektstart_Codex.md` und `doku/NeoFab2_Projektbeschreibung.md`. Baue NeoFab2 gemäß diesen Vorgaben. Implementiere zunächst ausschließlich die erste Ausbaustufe Core einschließlich Benutzerimport und minimalem Plugin-Vertrag. Verwende ein Testplugin zum Nachweis der Erweiterbarkeit; implementiere noch keine produktiven Fachplugins. Prüfe zuerst das Repository und vorhandene AGENTS.md-Anweisungen. Halte Architekturentscheidungen, den Umsetzungsstand und offene Entscheidungen im Repository fest. Arbeite in kleinen, überprüfbaren Schritten, prüfe Berechtigungen, Migrationen, Import und Plugin-Lifecycle mit aussagekräftigen Tests und dokumentiere Installation und Betrieb. Behalte die Skript-Bedienung und Dokumentationsweise gemäß Abschnitt 11 bei. Bei einer angeforderten Versionsänderung aktualisiere automatisch die Versionshistorie und bereite Commit-Titel und Commit-Beschreibung gemäß Abschnitt 12 vor; führe keinen Git-Commit oder Push aus. Verwende nur synthetische Testdaten. Ändere weder das alte NeoFab noch produktive Datenbanken. Produktivmigration, Veröffentlichung und Löschung sind nicht Teil dieses Auftrags. Melde den Core erst als abgeschlossen, wenn seine Abnahmekriterien erfüllt sind; benenne verbleibende Einschränkungen ausdrücklich.
+
+Vor Plugin-Arbeitspaketen zusätzlich [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md) lesen. Die Gesprächsrolle `employee` entspricht dem vorhandenen `staff`; keine stillschweigende Rollenumbenennung. API 1 benötigt vor dem Fachplugin einen nachgewiesenen Ausbau um mehrere Rechte und Besitzerprüfung.
+
+Aktueller priorisierter Arbeitsplan ab 0.1.7: [Nächste Core-Schritte](Core_Naechste_Schritte.md).
 
 Empfohlene Arbeitspakete für den Core:
 

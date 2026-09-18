@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-{% block title %}{{ _('Mein Profil') }} · NeoFab2{% endblock %}
+{% block title %}{{ _('My profile') }} · NeoFab2{% endblock %}
 {% block content %}
-<h1>{{ _('Mein Profil') }}</h1>
+<h1>{{ _('My profile') }}</h1>
 <p>{{ current_user.email }} · {{ _(roles[current_user.role]) }}</p>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="display_name">{{ _('Anzeigename') }}</label><input id="display_name" name="display_name" value="{{ current_user.display_name }}" autocomplete="name" maxlength="100" required>
-  <label for="theme">{{ _('Darstellung') }}</label>
+  <label for="display_name">{{ _('Display name') }}</label><input id="display_name" name="display_name" value="{{ current_user.display_name }}" autocomplete="name" maxlength="100" required>
+  <label for="theme">{{ _('Appearance') }}</label>
   <select id="theme" name="theme">
-    <option value="system" {% if current_user.theme == 'system' %}selected{% endif %}>{{ _('Systemvorgabe') }}</option>
-    <option value="dark" {% if current_user.theme == 'dark' %}selected{% endif %}>{{ _('Dunkel') }}</option>
-    <option value="light" {% if current_user.theme == 'light' %}selected{% endif %}>{{ _('Hell') }}</option>
+    <option value="system" {% if current_user.theme == 'system' %}selected{% endif %}>{{ _('System default') }}</option>
+    <option value="dark" {% if current_user.theme == 'dark' %}selected{% endif %}>{{ _('Dark') }}</option>
+    <option value="light" {% if current_user.theme == 'light' %}selected{% endif %}>{{ _('Light') }}</option>
   </select>
-  <label for="locale">{{ _('Sprache') }}</label>
+  <label for="locale">{{ _('Language') }}</label>
   <select id="locale" name="locale">
-    {% for key, label in languages.items() %}<option value="{{ key }}" {% if current_user.locale == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    {% for key, label in languages.items() %}<option value="{{ key }}" {% if current_user.locale == key %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}
   </select>
-  <button type="submit">{{ _('Profil speichern') }}</button>
+  <button type="submit">{{ _('Save profile') }}</button>
 </form>
-<h2>{{ _('Passwort ändern') }}</h2>
-<p>{{ _('8 bis 128 Zeichen. Nach der Änderung musst du dich auf allen Geräten neu anmelden.') }}</p>
+<h2>{{ _('Change password') }}</h2>
+<p>{{ _('8 to 128 characters. After changing it, sign in again on all devices.') }}</p>
 <form method="post" action="{{ url_for('accounts.password') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="old_password">{{ _('Aktuelles Passwort') }}</label><input id="old_password" name="old_password" type="password" autocomplete="current-password" maxlength="128" required>
-  <label for="new_password">{{ _('Neues Passwort') }}</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
-  <label for="confirm_password">{{ _('Neues Passwort wiederholen') }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
-  <button type="submit">{{ _('Passwort ändern') }}</button>
+  <label for="old_password">{{ _('Current password') }}</label><input id="old_password" name="old_password" type="password" autocomplete="current-password" maxlength="128" required>
+  <label for="new_password">{{ _('New password') }}</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <label for="confirm_password">{{ _('Repeat new password') }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <button type="submit">{{ _('Change password') }}</button>
 </form>
 {% endblock %}

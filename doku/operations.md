@@ -1,4 +1,8 @@
-# Betrieb und Wiederherstellung – v0.1.6
+# Betrieb und Wiederherstellung – v0.1.7
+
+Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
+in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
+[Sprachwahl und Migration 0006](Core_Sprachen.md).
 
 Plugin-Auswahl wird im Backend unter **Plugins** gespeichert und ab dem nächsten
 Prozessstart übernommen. Den erforderlichen Container-Neustart führt der

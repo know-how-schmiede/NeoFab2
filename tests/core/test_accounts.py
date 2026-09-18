@@ -59,7 +59,7 @@ def test_login_logout_and_cookie_replay(app, admin):
     page = client.get("/profile")
     assert page.status_code == 200
     assert page.headers["Cache-Control"] == "no-store"
-    assert "Benutzerverwaltung" in page.text
+    assert "User management" in page.text
     assert PASSWORD not in page.text
     cookie = client.get_cookie("neofab2_session").value
     assert client.get("/logout").status_code == 405
@@ -81,7 +81,7 @@ def test_invalid_and_inactive_login_same_response(app, admin):
     inactive = login(client)
     for response in (invalid, missing, inactive):
         assert response.status_code == 401
-        assert "Anmeldung nicht möglich" in response.text
+        assert "Unable to sign in" in response.text
         assert PASSWORD not in response.text
     assert client.get("/profile").location == "/login"
 
@@ -91,7 +91,7 @@ def test_admin_routes_deny_non_admin_and_profile_cannot_escalate(app, admin, rol
     user_id = create_user(app, "person@example.org", "Person", PASSWORD, role, actor_id=admin)
     client = app.test_client()
     assert login(client, "person@example.org").status_code == 302
-    assert "Benutzerverwaltung" not in client.get("/profile").text
+    assert "User management" not in client.get("/profile").text
     for path in ("/admin/users", "/admin/users/new", f"/admin/users/{admin}/edit"):
         assert client.get(path).status_code == 403
     token = csrf(client, "/profile")
@@ -139,7 +139,7 @@ def test_last_admin_guard_over_http(app, admin, role, active):
         data["active"] = "on"
     response = post(client, f"/admin/users/{admin}/edit", data)
     assert response.status_code == 400
-    assert "letzte aktive Administrator" in response.text
+    assert "last active administrator" in response.text
     assert row(app, admin)["active"] and row(app, admin)["role"] == "admin"
 
 
@@ -270,7 +270,7 @@ def test_password_length_boundaries(length, valid):
     if valid:
         assert check_password_hash(hash_password(password), password)
     else:
-        with pytest.raises(ValueError, match="8 bis 128"):
+        with pytest.raises(ValueError, match="8 to 128"):
             hash_password(password)
 
 
@@ -297,7 +297,7 @@ def test_missing_cookie_explains_session_error_without_bypassing_csrf(app, admin
     token = csrf(client, "/login")
     response = client.post("/login", data={"csrf_token": token, "email": "admin@example.org", "password": PASSWORD})
     assert response.status_code == 400
-    assert "Die Sitzung zum Formular fehlt" in response.text
+    assert "The form session is missing" in response.text
     assert "HTTPS" in response.text and 'href="/login"' in response.text
     assert PASSWORD not in response.text
     with app.extensions["neofab2_db"].connect() as connection:
@@ -340,14 +340,14 @@ def test_login_over_http_with_cookie_policy(app, admin, secure, credentials):
             body = response.read().decode()
             if secure:
                 assert response.status == 400
-                assert "Die Sitzung zum Formular fehlt" in body
+                assert "The form session is missing" in body
             elif credentials == "correct":
                 assert response.status == 200
                 assert response.url.endswith("/profile")
             else:
                 assert response.status == 401
-                assert "Zugangsdaten" in body
-                assert "Die Sitzung zum Formular fehlt" not in body
+                assert "credentials" in body
+                assert "The form session is missing" not in body
     finally:
         server.shutdown()
         thread.join(timeout=5)

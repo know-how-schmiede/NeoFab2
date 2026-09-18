@@ -15,11 +15,11 @@ def blueprint():
 
 
 def self_check():
-    return "Testplugin: Aufgabe erfolgreich ausgeführt."
+    return "Test plugin: task completed successfully."
 
 
 plugin = Plugin(
-    plugin_id="core_test", name="Core-Testplugin", version="0.1.0",
+    plugin_id="core_test", name="Core test plugin", version="0.1.0",
     api_version=1, permission="core_test.access", roles=("admin",),
     blueprint_factory=blueprint, tasks=(("self_check", self_check),),
 )

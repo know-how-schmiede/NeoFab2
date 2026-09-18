@@ -1,4 +1,8 @@
-# Benutzer anlegen und bearbeiten – v0.1.6
+# Benutzer anlegen und bearbeiten – v0.1.7
+
+Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
+in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
+[Sprachwahl und Migration 0006](Core_Sprachen.md).
 
 Als **NeoFab2-Administrator** unter **Benutzerverwaltung** ein Konto anlegen
 oder **Bearbeiten** öffnen. Beide Formulare enthalten die Felder der bereitgestellten
@@ -9,7 +13,7 @@ Vorlage; der bisherige Anzeigename bleibt für bestehende Konten erhalten.
 | Anzeigename | Pflichtfeld, 1–100 Zeichen |
 | E-Mail | Pflichtfeld, validiert und eindeutig |
 | Rolle | Benutzer, Mitarbeiter oder Administrator |
-| Sprache | Deutsch, Englisch oder Französisch; Standard Deutsch |
+| Sprache | Deutsch, Englisch oder Französisch; Standard Englisch (`en`); bestehende Sprachwahl bleibt erhalten |
 | Konto aktiv | Neue Konten standardmäßig aktiv; kann abgewählt werden |
 | Anrede | Optionaler Freitext, höchstens 50 Zeichen |
 | Vorname / Nachname | Jeweils optional, höchstens 100 Zeichen |

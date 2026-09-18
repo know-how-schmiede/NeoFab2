@@ -59,31 +59,31 @@ def test_backend_selection_applies_on_restart_and_config_is_fallback(app, config
     assert change(client, "management_test", "enable").status_code == 302
     assert read_selection(app) == (["core_test", "management_test"], "database")
     assert app.config["ENABLED_PLUGINS"] == []
-    assert "Neustart erforderlich" in client.get("/admin/plugins").text
+    assert "Restart required" in client.get("/admin/plugins").text
     assert client.get("/plugins/management_test/").status_code == 404
     assert "/plugins/management_test/" not in client.get("/profile").text
     restarted = create_app(config)
     try:
         new_client = restarted.test_client()
         new_client.set_cookie("neofab2_session", client.get_cookie("neofab2_session").value)
-        assert "Neustart erforderlich" not in new_client.get("/admin/plugins").text
+        assert "Restart required" not in new_client.get("/admin/plugins").text
         assert new_client.get("/plugins/management_test/").status_code == 200
         assert "/plugins/management_test/" in new_client.get("/profile").text
         assert new_client.post("/plugins/management_test/check").status_code == 400
         result = new_client.post("/plugins/management_test/check", data={
             "csrf_token": token(new_client, "/plugins/management_test/")}, follow_redirects=True)
-        assert "Verwaltungstest erfolgreich" in result.text
-        assert "erfolgreich" in restarted.extensions["neofab2_plugins"].run_task("management_test", "self_check")
+        assert "Management test successful" in result.text
+        assert "successfully" in restarted.extensions["neofab2_plugins"].run_task("management_test", "self_check")
         assert change(new_client, "management_test", "disable").status_code == 302
         assert change(new_client, "core_test", "disable").status_code == 302
         # Laufende Prozesse behalten ihre Registrierung, bis sie neu starten.
         assert new_client.get("/plugins/management_test/").status_code == 200
-        assert "Neustart erforderlich" in new_client.get("/admin/plugins").text
+        assert "Restart required" in new_client.get("/admin/plugins").text
         disabled = create_app({**config, "ENABLED_PLUGINS": ["core_test"]})
         try:
             assert disabled.extensions["neofab2_plugins"].enabled == frozenset()
             assert disabled.test_client().get("/plugins/management_test/").status_code == 404
-            with pytest.raises(ValueError, match="nicht aktiv"):
+            with pytest.raises(ValueError, match="not active"):
                 disabled.extensions["neofab2_plugins"].run_task("management_test", "self_check")
         finally:
             disabled.extensions["neofab2_db"].dispose()
@@ -95,13 +95,13 @@ def test_dependency_failures_do_not_change_saved_state(app):
     client = app.test_client()
     login(client)
     result = change(client, "management_test", "enable")
-    assert result.status_code == 400 and "benötigt" in result.text
+    assert result.status_code == 400 and "requires" in result.text
     assert read_selection(app) == ([], "config")
     assert change(client, "core_test", "enable").status_code == 302
     assert change(client, "management_test", "enable").status_code == 302
     before = read_selection(app)
     result = change(client, "core_test", "disable")
-    assert result.status_code == 400 and "benötigt" in result.text
+    assert result.status_code == 400 and "requires" in result.text
     assert read_selection(app) == before
 
 
@@ -131,7 +131,7 @@ def test_reverted_pending_change_needs_no_restart(app):
     login(client)
     assert change(client, "core_test", "enable").status_code == 302
     assert change(client, "core_test", "disable").status_code == 302
-    assert "Neustart erforderlich" not in client.get("/admin/plugins").text
+    assert "Restart required" not in client.get("/admin/plugins").text
     assert read_selection(app) == ([], "database")
 
 
@@ -177,7 +177,7 @@ def test_corrupt_state_fails_closed_and_cli_recovery(app, config, tmp_path, monk
     with app.extensions["neofab2_db"].begin() as connection:
         connection.execute(settings.insert().values(key=STATE_KEY, value="not-json"))
         connection.execute(settings.insert().values(key="unrelated", value="retained"))
-    with pytest.raises(ValueError, match="Plugin-Auswahl"):
+    with pytest.raises(ValueError, match="plugin selection"):
         create_app(config)
     filename = tmp_path / "config.toml"
     filename.write_text(f'SECRET_KEY = "{"s" * 64}"\nDATA_DIR = {json.dumps(config["DATA_DIR"])}\nENABLED_PLUGINS = ["core_test"]\n', encoding="utf-8")
@@ -186,7 +186,7 @@ def test_corrupt_state_fails_closed_and_cli_recovery(app, config, tmp_path, monk
     assert runner.invoke(main, ["plugins-restore-config"], input="n\n").exit_code == 1
     result = runner.invoke(main, ["plugins-restore-config"], input="y\n")
     assert result.exit_code == 0, result.output
-    assert "neu starten" in result.output
+    assert "Restart" in result.output
     recovered = create_app()
     try:
         assert recovered.extensions["neofab2_plugins"].enabled == {"core_test"}

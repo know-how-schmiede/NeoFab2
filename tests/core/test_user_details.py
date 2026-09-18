@@ -102,7 +102,7 @@ def test_admin_fields_escape_html_and_self_profile_cannot_modify_them(app):
     assert post(person, "/profile", {"display_name": "Updated", "note": "injected", "cost_center": "injected"}).status_code == 302
     row = record(app, "test@example.org")
     assert row["note"] == "<script>private</script>" and row["cost_center"] == ""
-    with pytest.raises(ValueError, match="letzte aktive"):
+    with pytest.raises(ValueError, match="last active"):
         edit_user(app, 1, "admin@example.org", "Admin", "user", True, actor_id=1, new_password="Changed!")
     assert check_password_hash(record(app, "admin@example.org")["password_hash"], "Test123!")
 

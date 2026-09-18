@@ -24,7 +24,7 @@ def submitted_details():
 def submitted_active(default):
     values = request.form.getlist("active")
     if set(values) - {"on", "off"}:
-        raise ValueError("Ungültiger Kontostatus.")
+        raise ValueError("Invalid account status.")
     return "on" in values if values else default
 
 
@@ -45,7 +45,7 @@ def login():
             session.clear()
             session["auth_token"] = token
             return redirect(url_for("accounts.profile"))
-        return render_template("login.html", error="Anmeldung nicht möglich. Zugangsdaten prüfen oder später erneut versuchen."), 401
+        return render_template("login.html", error="Unable to sign in. Check your credentials or try again later."), 401
     return render_template("login.html")
 
 
@@ -66,7 +66,7 @@ def profile():
                            request.form.get("theme"), request.form.get("locale"))
         except ValueError as error:
             return render_template("profile.html", roles=ROLES, error=str(error)), 400
-        flash("Profil gespeichert.")
+        flash("Profile saved.")
         return redirect(url_for("accounts.profile"))
     return render_template("profile.html", roles=ROLES)
 
@@ -76,14 +76,14 @@ def profile():
 def password():
     try:
         if request.form.get("new_password") != request.form.get("confirm_password"):
-            raise ValueError("Die neuen Passwörter stimmen nicht überein.")
+            raise ValueError("The new passwords do not match.")
         change_password(current_app, g.current_user["id"], request.form.get("old_password", ""), request.form.get("new_password", ""))
     except ValueError as error:
         return render_template("profile.html", roles=ROLES, error=str(error)), 400
     locale = current_language()
     session.clear()
     session["locale"] = locale
-    flash("Passwort geändert. Bitte neu anmelden; alle bisherigen Sitzungen wurden beendet.")
+    flash("Password changed. Please sign in again; all previous sessions have ended.")
     return redirect(url_for("accounts.login"))
 
 
@@ -104,15 +104,15 @@ def user_new():
     if request.method == "POST":
         try:
             if request.form.get("password") != request.form.get("confirm_password"):
-                raise ValueError("Die Passwörter stimmen nicht überein.")
+                raise ValueError("The passwords do not match.")
             create_user(current_app, request.form.get("email", ""), request.form.get("display_name", ""),
                         request.form.get("password", ""), request.form.get("role", "user"), actor_id=g.current_user["id"],
-                        details=submitted_details(), locale=request.form.get("locale", "de"), active=submitted_active(True))
+                        details=submitted_details(), locale=request.form.get("locale", "en"), active=submitted_active(True))
         except ValueError as error:
             return render_template("user_form.html", entry=request.form, creating=True, roles=ROLES, error=str(error)), 400
-        flash("Benutzer angelegt. Das Startpasswort persönlich über einen sicheren Weg übergeben.")
+        flash("User created. Provide the initial password personally through a secure channel.")
         return redirect(url_for("accounts.user_list"))
-    return render_template("user_form.html", entry={"role": "user", "locale": "de", "active": True}, creating=True, roles=ROLES)
+    return render_template("user_form.html", entry={"role": "user", "locale": "en", "active": True}, creating=True, roles=ROLES)
 
 
 @bp.route("/admin/users/<int:user_id>/edit", methods=["GET", "POST"])
@@ -125,7 +125,7 @@ def user_edit(user_id):
     if request.method == "POST":
         try:
             if request.form.get("new_password", "") != request.form.get("confirm_password", ""):
-                raise ValueError("Die neuen Passwörter stimmen nicht überein.")
+                raise ValueError("The new passwords do not match.")
             edit_user(current_app, user_id, request.form.get("email", ""), request.form.get("display_name", ""),
                       request.form.get("role", ""), submitted_active(False), actor_id=g.current_user["id"],
                       details=submitted_details(), locale=request.form.get("locale"),
@@ -135,6 +135,6 @@ def user_edit(user_id):
             submitted = {**entry, **{key: request.form[key] for key in safe_fields if key in request.form},
                          "active": "on" in request.form.getlist("active")}
             return render_template("user_form.html", entry=submitted, creating=False, roles=ROLES, error=str(error)), 400
-        flash("Benutzer gespeichert. Geänderte Zugangsdaten, Rolle oder Kontostatus beenden bisherige Sitzungen.")
+        flash("User saved. Changes to credentials, role or account status end existing sessions.")
         return redirect(url_for("accounts.user_list"))
     return render_template("user_form.html", entry=entry, creating=False, roles=ROLES)
