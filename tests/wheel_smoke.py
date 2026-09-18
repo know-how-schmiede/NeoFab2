@@ -25,12 +25,15 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.get("/static/branding/neofab2-logo.png").status_code == 200
         assert client.get("/static/core.css").status_code == 200
         assert (Path(folder) / "neofab2.sqlite3").is_file()
-        create_user(app, "wheel@example.org", "Wheel Test", "Synthetic wheel password!", "admin", bootstrap=True)
+        create_user(app, "wheel@example.org", "Wheel Test", "Synthetic wheel password!", "admin", bootstrap=True,
+                    details={"first_name": "Wheel", "note": "Synthetic admin note"})
         login_page = client.get("/login")
         token = re.search(r'name="csrf_token" value="([^"]+)"', login_page.text).group(1)
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
+        assert "Synthetic admin note" in client.get("/admin/users/1/edit").text
+        assert 'name="study_program"' in client.get("/admin/users/new").text
         assert client.get("/admin/plugins").status_code == 200
         assert client.get("/admin/settings").status_code == 200
         from neofab2.core.settings import DEFAULTS, save_settings

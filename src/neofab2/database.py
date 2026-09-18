@@ -47,7 +47,8 @@ def database_ready(app):
             expected = set(ScriptDirectory.from_config(migration_config()).get_heads())
             actual = set(MigrationContext.configure(connection).get_current_heads())
             connection.execute(text("SELECT key, value FROM core_settings LIMIT 0"))
-            connection.execute(text("SELECT id, email, display_name, password_hash, role, active, created_at, theme FROM core_users LIMIT 0"))
+            connection.execute(text("SELECT id, email, display_name, password_hash, role, active, created_at, theme, locale FROM core_users LIMIT 0"))
+            connection.execute(text("SELECT salutation, first_name, last_name, address, position, cost_center, study_program, note FROM core_users LIMIT 0"))
             connection.execute(text("SELECT token_hash, user_id, created_at, last_seen FROM core_sessions LIMIT 0"))
             connection.execute(text("SELECT key, count, window_start FROM core_login_attempts LIMIT 0"))
             return actual == expected

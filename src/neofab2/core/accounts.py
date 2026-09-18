@@ -5,10 +5,27 @@ from sqlalchemy import select
 
 from neofab2.database import database_ready
 from .auth import authenticate, permission_required, revoke_session
+from .i18n import current_language
 from .users import (ROLES, PUBLIC_COLUMNS, users, get_user, create_user, edit_user,
-                    update_profile, change_password)
+                    update_profile, change_password, DETAIL_FIELDS, get_admin_user)
 
 bp = Blueprint("accounts", __name__)
+
+
+@bp.app_context_processor
+def user_form_fields():
+    return {"detail_fields": DETAIL_FIELDS}
+
+
+def submitted_details():
+    return {key: request.form[key] for key in DETAIL_FIELDS if key in request.form}
+
+
+def submitted_active(default):
+    values = request.form.getlist("active")
+    if set(values) - {"on", "off"}:
+        raise ValueError("Ungültiger Kontostatus.")
+    return "on" in values if values else default
 
 
 @bp.before_request
@@ -34,7 +51,9 @@ def login():
 
 @bp.post("/logout")
 def logout():
+    locale = current_language()
     revoke_session(current_app)
+    session["locale"] = locale
     return redirect(url_for("accounts.login"))
 
 
@@ -43,7 +62,8 @@ def logout():
 def profile():
     if request.method == "POST":
         try:
-            update_profile(current_app, g.current_user["id"], request.form.get("display_name", ""), request.form.get("theme"))
+            update_profile(current_app, g.current_user["id"], request.form.get("display_name", ""),
+                           request.form.get("theme"), request.form.get("locale"))
         except ValueError as error:
             return render_template("profile.html", roles=ROLES, error=str(error)), 400
         flash("Profil gespeichert.")
@@ -60,7 +80,9 @@ def password():
         change_password(current_app, g.current_user["id"], request.form.get("old_password", ""), request.form.get("new_password", ""))
     except ValueError as error:
         return render_template("profile.html", roles=ROLES, error=str(error)), 400
+    locale = current_language()
     session.clear()
+    session["locale"] = locale
     flash("Passwort geändert. Bitte neu anmelden; alle bisherigen Sitzungen wurden beendet.")
     return redirect(url_for("accounts.login"))
 
@@ -84,27 +106,35 @@ def user_new():
             if request.form.get("password") != request.form.get("confirm_password"):
                 raise ValueError("Die Passwörter stimmen nicht überein.")
             create_user(current_app, request.form.get("email", ""), request.form.get("display_name", ""),
-                        request.form.get("password", ""), request.form.get("role", "user"), actor_id=g.current_user["id"])
+                        request.form.get("password", ""), request.form.get("role", "user"), actor_id=g.current_user["id"],
+                        details=submitted_details(), locale=request.form.get("locale", "de"), active=submitted_active(True))
         except ValueError as error:
             return render_template("user_form.html", entry=request.form, creating=True, roles=ROLES, error=str(error)), 400
         flash("Benutzer angelegt. Das Startpasswort persönlich über einen sicheren Weg übergeben.")
         return redirect(url_for("accounts.user_list"))
-    return render_template("user_form.html", entry={"role": "user"}, creating=True, roles=ROLES)
+    return render_template("user_form.html", entry={"role": "user", "locale": "de", "active": True}, creating=True, roles=ROLES)
 
 
 @bp.route("/admin/users/<int:user_id>/edit", methods=["GET", "POST"])
 @permission_required("core.users.manage")
 def user_edit(user_id):
     with current_app.extensions["neofab2_db"].connect() as connection:
-        entry = get_user(connection, user_id)
+        entry = get_admin_user(connection, user_id)
     if not entry:
         abort(404)
     if request.method == "POST":
         try:
+            if request.form.get("new_password", "") != request.form.get("confirm_password", ""):
+                raise ValueError("Die neuen Passwörter stimmen nicht überein.")
             edit_user(current_app, user_id, request.form.get("email", ""), request.form.get("display_name", ""),
-                      request.form.get("role", ""), request.form.get("active") == "on", actor_id=g.current_user["id"])
+                      request.form.get("role", ""), submitted_active(False), actor_id=g.current_user["id"],
+                      details=submitted_details(), locale=request.form.get("locale"),
+                      new_password=request.form.get("new_password", ""))
         except ValueError as error:
-            return render_template("user_form.html", entry=entry, creating=False, roles=ROLES, error=str(error)), 400
+            safe_fields = set(DETAIL_FIELDS) | {"display_name", "email", "role", "locale"}
+            submitted = {**entry, **{key: request.form[key] for key in safe_fields if key in request.form},
+                         "active": "on" in request.form.getlist("active")}
+            return render_template("user_form.html", entry=submitted, creating=False, roles=ROLES, error=str(error)), 400
         flash("Benutzer gespeichert. Geänderte Zugangsdaten, Rolle oder Kontostatus beenden bisherige Sitzungen.")
         return redirect(url_for("accounts.user_list"))
     return render_template("user_form.html", entry=entry, creating=False, roles=ROLES)

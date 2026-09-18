@@ -1,12 +1,13 @@
-# Systemeinstellungen und Darstellung – v0.1.5
+# Systemeinstellungen und Darstellung – v0.1.6
 
-Umfang: S04/S01 und der Darstellungsteil von U07. Die Oberfläche bleibt deutsch;
-Sprachwahl und Übersetzungen, Import/Export von Einstellungen, SMTP sowie
-Impressum/Datenschutz werden in späteren Core-Schritten ergänzt.
+Umfang: S04/S01 und der Darstellungsteil von U07. Seit 0.1.6 gibt es eine
+[Sprachwahl für Navigation, Login und Profil](Core_Sprachen.md). Weitere
+Übersetzungen, Import/Export von Einstellungen, SMTP sowie Impressum/Datenschutz
+werden in späteren Core-Schritten ergänzt.
 
 ## Update und Migration
 
-Voraussetzung: Änderungen zu 0.1.5 manuell in GitHub Desktop committen und
+Voraussetzung: Änderungen zu 0.1.6 manuell in GitHub Desktop committen und
 auf den verwendeten Remote-Branch übertragen. Danach als **root im Container**:
 
 ```bash

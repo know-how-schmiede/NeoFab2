@@ -9,11 +9,19 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 metadata = MetaData()
+DETAIL_FIELDS = {
+    "salutation": ("Anrede", 50), "first_name": ("Vorname", 100),
+    "last_name": ("Nachname", 100), "address": ("Adresse", 500),
+    "position": ("Position", 150), "cost_center": ("Kostenstelle", 100),
+    "study_program": ("Studiengang", 150), "note": ("Notiz", 2000),
+}
 users = Table("core_users", metadata,
     Column("id", Integer, primary_key=True), Column("email", String(254)),
     Column("display_name", String(100)), Column("password_hash", Text),
     Column("role", String(20)), Column("active", Boolean), Column("created_at", BigInteger),
-    Column("theme", String(10), server_default="system"))
+    Column("theme", String(10), server_default="system"),
+    Column("locale", String(2), server_default="de"),
+    *(Column(key, String(limit), server_default="") for key, (_label, limit) in DETAIL_FIELDS.items()))
 sessions = Table("core_sessions", metadata,
     Column("token_hash", String(64), primary_key=True), Column("user_id", Integer),
     Column("created_at", BigInteger), Column("last_seen", BigInteger))
@@ -26,7 +34,7 @@ ROLE_PERMISSIONS = {
     "staff": frozenset({"core.profile"}),
     "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.plugins.manage", "core.settings.manage"}),
 }
-PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme]
+PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme, users.c.locale]
 
 
 def has_permission(user, permission):
@@ -77,15 +85,46 @@ def get_user(connection, user_id):
     return connection.execute(select(*PUBLIC_COLUMNS).where(users.c.id == user_id)).mappings().first()
 
 
+def get_admin_user(connection, user_id):
+    # Zusatzdaten, insbesondere Notizen, nicht in die allgemeine Auth-Sitzung laden.
+    return connection.execute(select(*PUBLIC_COLUMNS, *(users.c[key] for key in DETAIL_FIELDS))
+                              .where(users.c.id == user_id)).mappings().first()
+
+
+def validate_details(details):
+    if details is None:
+        return {}
+    if set(details) - set(DETAIL_FIELDS):
+        raise ValueError("Unbekanntes Benutzerattribut.")
+    values = {}
+    for key, value in details.items():
+        label, limit = DETAIL_FIELDS[key]
+        if not isinstance(value, str) or len(value.strip()) > limit:
+            raise ValueError(f"{label} darf höchstens {limit} Zeichen enthalten.")
+        values[key] = value.strip()
+    return values
+
+
+def validate_locale(locale):
+    if locale not in {"de", "en", "fr"}:
+        raise ValueError("Bitte eine gültige Sprache wählen.")
+    return locale
+
+
 def require_actor(connection, actor_id):
     if not has_permission(get_user(connection, actor_id), "core.users.manage"):
         raise PermissionError("Keine Berechtigung zur Benutzerverwaltung.")
 
 
-def create_user(app, email, display_name, password, role="user", *, actor_id=None, bootstrap=False):
+def create_user(app, email, display_name, password, role="user", *, actor_id=None, bootstrap=False,
+                details=None, locale="de", active=True):
     email, display_name = normalize_email(email), validate_name(display_name)
     if role not in ROLES:
         raise ValueError("Unbekannte Rolle.")
+    if type(active) is not bool or (bootstrap and not active):
+        raise ValueError("Ungültiger Kontostatus.")
+    extra = validate_details(details)
+    locale = validate_locale(locale)
     password_hash = hash_password(password)
     try:
         with write_transaction(app) as connection:
@@ -95,16 +134,22 @@ def create_user(app, email, display_name, password, role="user", *, actor_id=Non
             else:
                 require_actor(connection, actor_id)
             result = connection.execute(users.insert().values(email=email, display_name=display_name,
-                password_hash=password_hash, role=role, active=True, created_at=int(time.time())))
+                password_hash=password_hash, role=role, active=active, created_at=int(time.time()),
+                locale=locale, **extra))
             return result.inserted_primary_key[0]
     except IntegrityError as error:
         raise ValueError("Diese E-Mail-Adresse wird bereits verwendet.") from error
 
 
-def edit_user(app, user_id, email, display_name, role, active, *, actor_id):
+def edit_user(app, user_id, email, display_name, role, active, *, actor_id, details=None, locale=None, new_password=""):
     email, display_name = normalize_email(email), validate_name(display_name)
     if role not in ROLES or type(active) is not bool:
         raise ValueError("Ungültige Rolle oder ungültiger Kontostatus.")
+    extra = validate_details(details)
+    if locale is not None:
+        extra["locale"] = validate_locale(locale)
+    if new_password:
+        extra["password_hash"] = hash_password(new_password)
     try:
         with write_transaction(app) as connection:
             require_actor(connection, actor_id)
@@ -117,17 +162,23 @@ def edit_user(app, user_id, email, display_name, role, active, *, actor_id):
                 if not other:
                     raise ValueError("Der letzte aktive Administrator kann nicht deaktiviert oder herabgestuft werden.")
             connection.execute(update(users).where(users.c.id == user_id).values(
-                email=email, display_name=display_name, role=role, active=active))
-            if target["email"] != email or target["role"] != role or target["active"] != active:
+                email=email, display_name=display_name, role=role, active=active, **extra))
+            if new_password or target["email"] != email or target["role"] != role or target["active"] != active:
                 connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
+            if new_password:
+                from .auth import attempt_key
+                connection.execute(delete(attempts).where(attempts.c.key.in_([
+                    attempt_key(app, "account", target["email"]), attempt_key(app, "account", email)])))
     except IntegrityError as error:
         raise ValueError("Diese E-Mail-Adresse wird bereits verwendet.") from error
 
 
-def update_profile(app, user_id, display_name, theme=None):
+def update_profile(app, user_id, display_name, theme=None, locale=None):
     display_name = validate_name(display_name)
     if theme is not None and theme not in {"system", "light", "dark"}:
         raise ValueError("Bitte eine gültige Darstellung wählen.")
+    if locale is not None and locale not in {"de", "en", "fr"}:
+        raise ValueError("Bitte eine gültige Sprache wählen.")
     with write_transaction(app) as connection:
         user = get_user(connection, user_id)
         if not user or not user["active"]:
@@ -135,6 +186,8 @@ def update_profile(app, user_id, display_name, theme=None):
         values = {"display_name": display_name}
         if theme is not None:
             values["theme"] = theme
+        if locale is not None:
+            values["locale"] = locale
         connection.execute(update(users).where(users.c.id == user_id).values(**values))
 
 

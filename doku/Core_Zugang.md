@@ -1,6 +1,6 @@
-# Core-Zugang – aktueller Arbeitsstand v0.1.5
+# Core-Zugang – aktueller Arbeitsstand v0.1.6
 
-Die zentrale Version dieses Arbeitspakets ist `0.1.5`.
+Die zentrale Version dieses Arbeitspakets ist `0.1.6`.
 Dieses Arbeitspaket erweitert U01, U05–U08 und X04. Es ist keine vollständige
 Core-Abnahme; insbesondere E-Mail-Verfahren und weitere technische Dienste fehlen noch.
 API 1 ist unter [Plugin-Vertrag](plugin-development.md) dokumentiert.
@@ -155,7 +155,7 @@ für Benutzer und Mitarbeiter gehören noch zum offenen Self-Service-Arbeitspake
 
 ## Nachweise und Grenzen
 
-95 Tests unter Windows/Python 3.12 bestanden. Bash-Syntax und ShellCheck für
+114 Tests unter Windows/Python 3.12 bestanden. Bash-Syntax und ShellCheck für
 alle fünf Shell-Dateien bestanden; Wheel und sdist gebaut. Das installierte
 Wheel wurde einschließlich Migration, Login, Profil und Benutzerübersicht geprüft.
 

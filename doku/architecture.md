@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.5
+# Architektur – Stand v0.1.6
 
 ## Erster Core-Schritt
 
@@ -94,6 +94,13 @@ Der Update-Funktionskörper wird vor Git vollständig eingelesen, damit die
 laufende Skriptdatei selbst aktualisiert werden kann.
 
 ## Nächste Arbeitspakete
+
+0.1.6: `core/i18n.py` stellt Sprachwahl und deutschen Fallback für
+Navigation, Login und Profil bereit. `0004_user_locale` speichert die Kontosprache.
+`0005_user_details` ergänzt optionale administrative Benutzerangaben. Sie werden
+nicht in den allgemeinen Auth-Kontext geladen. Passwortänderungen im Admin-Formular
+werden atomar mit den übrigen Feldern gespeichert und widerrufen bestehende Sitzungen.
+[Umfang und offene Punkte](Core_Sprachen.md).
 
 1. Sprachübersetzungen und weitere Systemeinstellungen ausbauen.
 2. Selbstregistrierung und E-Mail-Verfahren mit dem Versanddienst umsetzen.

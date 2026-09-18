@@ -1,4 +1,4 @@
-# Betrieb und Wiederherstellung – v0.1.5
+# Betrieb und Wiederherstellung – v0.1.6
 
 Plugin-Auswahl wird im Backend unter **Plugins** gespeichert und ab dem nächsten
 Prozessstart übernommen. Den erforderlichen Container-Neustart führt der

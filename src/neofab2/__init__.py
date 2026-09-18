@@ -14,6 +14,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     from .core.auth import register_auth
     from .core.plugins import register_plugins
     from .core.settings import register_presentation
+    from .core.i18n import register_i18n
     from .core.plugin_state import read_selection
     from .plugin_api import builtin_plugins
     from .plugin_api.registry import Registry
@@ -33,6 +34,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     app.register_blueprint(accounts_bp)
     register_plugins(app, registry)
     register_presentation(app)
+    register_i18n(app)
     app.context_processor(lambda: {"version": __version__})
 
     @app.errorhandler(CSRFError)

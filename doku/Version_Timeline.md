@@ -1,5 +1,66 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.6 – 2026-09-18
+
+Bereich: Benutzerformulare und Sprachwahl (U05, S02/U07, X05–X07).
+
+### Änderungen
+
+- Sprachwahl Deutsch/Englisch/Französisch für Navigation, Login, Profil,
+  Passwortwechsel und zentrale Zugangsfehlermeldungen.
+- Gast-Sprachwahl per CSRF-geschütztem POST; dauerhafte Kontosprache im Profil.
+  Kontosprache hat nach Anmeldung Vorrang. Abmeldung und Passwortwechsel erhalten
+  die Sprache für die Anmeldeseite.
+- Deutsche Ausgangstexte als Fallback; unbekannte Sprachcodes beim Speichern
+  abweisen. Übersetzungstexte weiterhin HTML-maskiert.
+- Zentrale Version 0.1.6 und Arbeitsstand dokumentiert. Nutzer bestätigt 0.1.5.
+- Beide Benutzerformulare um Anrede, Vorname, Nachname, Adresse, Position,
+  Kostenstelle als Freitext, Studiengang und administrative Notiz ergänzt.
+- Sprache und Aktivstatus auch beim Anlegen setzen; optionales neues Passwort
+  beim Bearbeiten mit Wiederholung. Leere Passwortfelder erhalten den bisherigen Hash.
+- Alle Admin-Änderungen atomar; Passwortänderung widerruft Sitzungen.
+  Private Zusatzdaten werden nicht in den allgemeinen Auth-Kontext geladen.
+
+### Betrieb und Migration
+
+Explizite Migration `0004_user_locale` ergänzt die Kontosprache mit Standard `de`.
+`0005_user_details` ergänzt leere optionale Zusatzfelder. Bestehende Konten,
+Hashes und Darstellung bleiben erhalten. Update über das reguläre Skript.
+Sprachabdeckung
+für weitere Admin-Seiten, Startseiten- und Plugin-Inhalte steht noch aus;
+keine vollständige S02- oder Core-Abnahme. Details: `doku/Core_Sprachen.md`
+und `doku/Benutzerverwaltung.md`. Aktivierungslink-Versand bleibt dem E-Mail-Schritt
+vorbehalten. Es wurden keine Daten aus NeoFab oder dem Screenshot übernommen.
+
+### Prüfungen
+
+- 114 Tests unter Windows/Python 3.12 bestanden, darunter Gast-/Kontosprache,
+  Vorrang und Persistenz, CSRF, deutsche Rückfalltexte, Maskierung und Upgrade
+  vom bisherigen Schema mit Erhalt der Bestandswerte, beide Benutzerformulare,
+  Feldgrenzen, private Notizen, Passwortwechsel und Schutz des letzten Admins.
+- Wheel und sdist 0.1.6 gebaut; installiertes Wheel mit Migration und vorhandenem
+  Core-/Plugin-Smoke-Test geprüft. CLI meldet 0.1.6.
+- Keine Container- oder interaktive Browserprüfung. Kein Commit oder Push.
+
+### Commit für GitHub Desktop
+
+```text
+0.1.6: Benutzerformulare erweitern und Sprachwahl ergänzen
+```
+
+```text
+Deutsch, Englisch und Französisch für Navigation, Login und Profil ergänzen.
+Kontosprache mit Migration 0004_user_locale dauerhaft speichern.
+Benutzerformulare um Kontakt-/Organisationsangaben, Notiz und Sprache ergänzen.
+Migration 0005_user_details erhält bestehende Konten und legt leere Zusatzfelder an.
+Optionalen Admin-Passwortwechsel mit Wiederholung und Sitzungswiderruf umsetzen.
+Gast-Sprachwahl, Vorrang der Kontosprache und deutschen Fallback prüfen.
+114 Tests sowie Paketbau und Prüfung des installierten Wheels bestanden.
+Dokumentation und Umsetzungsnachweise aktualisieren; Container-Abnahme noch offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.5 – 2026-09-17
 
 Bereich: Plugin-Verwaltung im Backend, Neustartablauf und zweites Testplugin

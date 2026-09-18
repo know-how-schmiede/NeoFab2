@@ -176,7 +176,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.5 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.6 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
 | S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `core/plugins.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Core-/Plugin-Navigation per HTTP-Test geprüft | Infoseite und interaktive visuelle Browserprüfung offen |
 | S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html`, `templates/plugins.html` | Core-Versionsanzeige, Paketmetadaten und separate Plugin-Versionen geprüft | Weiterer Ausbau der Systeminformationen offen |
@@ -235,8 +235,18 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | X05, X06 | geprüft (Teilumfang) | `doku/plugin-development.md`, `doku/SETUP.md`, `script/README.md`, `doku/Version_Timeline.md`, `src/neofab2/cli.py` | Version 0.1.5, manuellen Proxmox-Neustart und bestätigte lokale Wiederherstellung dokumentiert; Wheel/sdist und CLI geprüft | Kein eigener Container-Neustart oder interaktiver Browsertest; keine neue Schema-Revision; kein Commit/Push |
 | S04, U07 | implementiert | `doku/Core_Einstellungen.md` | Nutzer meldet vorherigen Schritt 0.1.4 als lauffähig | Keine zusätzliche vollständige Core-Abnahme aus dieser Rückmeldung abgeleitet |
 
+### Abschluss des Arbeitspakets 0.1.6 (18.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| U05 | in Arbeit | `src/neofab2/templates/user_form.html`, `core/users.py`, `core/accounts.py`, `tests/core/test_user_details.py` | Screenshot-Felder in beiden Formularen, Sprache/Aktivstatus, optionales neues Passwort, Grenzen, Datenerhalt, Maskierung und Sitzungswiderruf geprüft | Benutzerlöschung offen; Aktivierungslink benötigt Versanddienst. Kostenstelle ausdrücklich als Benutzer-Freitext, keine Fachplugin-Abhängigkeit |
+| S02, U07 | in Arbeit | `src/neofab2/core/i18n.py`, `core/accounts.py`, `core/users.py`, `templates/base.html`, `templates/login.html`, `templates/profile.html`, `tests/core/test_i18n.py` | Navigation, Login, Profil und Zugangsfehler DE/EN/FR; Persistenz, CSRF, Priorität und Fallback geprüft; 114 Gesamttests bestanden | Weitere Admin-Seiten, Startseiten- und Plugin-Inhalte noch nicht vollständig übersetzt |
+| X07 | geprüft (Teilumfang) | `migrations/versions/0004_user_locale.py`, `0005_user_details.py`, `tests/core/test_i18n.py`, `tests/core/test_user_details.py` | Explizite Upgrades, Wiederholung und Erhalt von Hash/Darstellung/Sprache geprüft; Zusatzfelder standardmäßig leer | Keine Übernahme realer Daten aus Screenshot oder NeoFab |
+| X05, X06 | geprüft (Teilumfang) | `doku/Core_Sprachen.md`, `doku/Benutzerverwaltung.md`, `doku/Version_Timeline.md`, `src/neofab2/version.py` | 0.1.6 dokumentiert; Paketbau, installiertes Wheel einschließlich neuer Benutzerfelder und CLI geprüft | Eigener Container-Test und interaktive visuelle Abnahme offen; kein Commit/Push |
+| N01 | implementiert | `doku/plugin-development.md` | Nutzer meldet 0.1.5 als funktionierend | Keine vollständige Core-Abnahme daraus abgeleitet |
+
 Alle übrigen IDs bleiben geplant. U02–U04 (Registrierung/E-Mail-Verfahren),
-Benutzerlöschung, Sprache und weitere Plugin-Dienste sind offen.
+Benutzerlöschung, weitere Sprachabdeckung und Plugin-Dienste sind offen.
 Keine vollständige Core-Abnahme.
 
 Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsänderungen zusätzlich gemäß Projektbeschreibung in `doku/Version_Timeline.md` dokumentieren, einschließlich Commit-Titel und Commit-Beschreibung für den manuellen Commit. Diese Matrix allein ersetzt weder Tests noch die Versionshistorie.

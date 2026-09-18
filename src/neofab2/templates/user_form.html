@@ -7,13 +7,22 @@
   <label for="display_name">Anzeigename</label><input id="display_name" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>
   <label for="email">E-Mail</label><input id="email" name="email" type="email" value="{{ entry.email|default('') }}" maxlength="254" required>
   <label for="role">Rolle</label><select id="role" name="role">{% for value, label in roles.items() %}<option value="{{ value }}" {% if entry.role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <label for="locale">Sprache</label><select id="locale" name="locale">{% for value, label in languages.items() %}<option value="{{ value }}" {% if entry.locale|default('de') == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <input type="hidden" name="active" value="off">
+  <label class="checkbox"><input name="active" type="checkbox" value="on" {% if entry.active == true or (entry.getlist is defined and 'on' in entry.getlist('active')) %}checked{% endif %}> Konto aktiv</label>
+  {% for key, specification in detail_fields.items() %}
+    <label for="{{ key }}">{{ specification[0] }}</label>
+    {% if key == 'note' %}<textarea id="{{ key }}" name="{{ key }}" maxlength="{{ specification[1] }}" rows="4">{{ entry[key]|default('') }}</textarea>
+    {% else %}<input id="{{ key }}" name="{{ key }}" value="{{ entry[key]|default('') }}" maxlength="{{ specification[1] }}">{% endif %}
+  {% endfor %}
   {% if creating %}
     <p>Das Startpasswort über einen sicheren Weg persönlich übergeben. Es wird keine E-Mail verschickt.</p>
     <label for="password">Startpasswort (8–128 Zeichen)</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
     <label for="confirm_password">Startpasswort wiederholen</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
   {% else %}
-    <label class="checkbox"><input name="active" type="checkbox" {% if entry.active %}checked{% endif %}> Konto aktiv</label>
-    <p>Änderungen an E-Mail, Rolle oder Aktivstatus beenden alle bisherigen Sitzungen dieses Kontos. Der letzte aktive Administrator bleibt geschützt.</p>
+    <label for="new_password">Neues Passwort (optional, 8–128 Zeichen)</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+    <label for="confirm_password">Neues Passwort wiederholen</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+    <p>Beide Passwortfelder leer lassen, um das bisherige Passwort beizubehalten. Änderungen an Passwort, E-Mail, Rolle oder Aktivstatus beenden alle bisherigen Sitzungen dieses Kontos. Der letzte aktive Administrator bleibt geschützt.</p>
   {% endif %}
   <button type="submit">{{ 'Benutzer anlegen' if creating else 'Änderungen speichern' }}</button>
 </form>

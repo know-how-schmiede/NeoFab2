@@ -1,13 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Anmelden · NeoFab2{% endblock %}
+{% block title %}{{ _('Anmelden') }} · NeoFab2{% endblock %}
 {% block content %}
-<h1>Anmelden</h1>
-<p>Deinen Zugang erhältst du von der Werkstatt-Administration.</p>
+<h1>{{ _('Anmelden') }}</h1>
+<p>{{ _('Deinen Zugang erhältst du von der Werkstatt-Administration.') }}</p>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="email">E-Mail</label><input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
-  <label for="password">Passwort</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
-  <button type="submit">Anmelden</button>
+  <label for="email">{{ _('E-Mail') }}</label><input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
+  <label for="password">{{ _('Passwort') }}</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+  <button type="submit">{{ _('Anmelden') }}</button>
 </form>
-<p>Passwort vergessen? Bitte die Administration kontaktieren.</p>
+<p>{{ _('Passwort vergessen? Bitte die Administration kontaktieren.') }}</p>
+<form method="post" action="{{ url_for('language.choose_language') }}" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="locale">{{ _('Sprache') }} / Language / Langue</label>
+  <select id="locale" name="locale">
+    {% for key, label in languages.items() %}<option value="{{ key }}" {% if locale == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <button type="submit">{{ _('Sprache übernehmen') }}</button>
+</form>
 {% endblock %}
