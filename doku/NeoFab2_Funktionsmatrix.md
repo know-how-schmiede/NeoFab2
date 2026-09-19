@@ -315,3 +315,16 @@ Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsände
 | S01, U06 | geprüft (Teilumfang) | `src/neofab2/core/routes.py`, `core/i18n.py`, `templates/base.html`, `administration.html`, `ui_icons.html`, `tests/plugin_contract/test_files.py` | Administrationseinstieg, drei Buttons mit Icons, ausgeblendete direkte Hauptmenülinks, direkter Zugriff für Gäste/Benutzer/Mitarbeiter/Admin geprüft | Interaktive visuelle Browser-Abnahme offen |
 | X07 | geprüft (Teilumfang) | `migrations/versions/0008_core_files.py`, `src/neofab2/database.py`, `tests/plugin_contract/test_files.py`, `tests/core/test_foundation.py` | Explizites Upgrade von 0007, Wiederholung, Kontenerhalt, leere Dateitabelle, fehlende Migration nicht bereit; SQLite-Sicherung mit Dateiinhalt geprüft | Nur synthetische Daten; kein Produktivupdate oder echter LXC-Lauf |
 | S12, X05, X06 | geprüft (Teilumfang) | `src/neofab2/version.py`, `pyproject.toml`, `doku/Core_Dateien_und_Rechte.md`, `Core_Naechste_Schritte.md`, `Version_Timeline.md`, `script/README.md`, `doku/SETUP.md` | Version 0.1.10; 160 Tests bestanden, Wheel/sdist gebaut, installiertes Wheel einschließlich Administration/Icons/Upload/Download geprüft; `git diff --check` bestanden; Paket 1 als nächster Schritt dokumentiert | Kein Commit/Push; vollständige Core-Abnahme bleibt offen |
+
+### CheckDesign 0.1.0 in NeoFab2 0.1.11 (19.09.2026)
+
+Entscheidung: Auf ausdrücklichen Benutzerauftrag neues technisches Core-Testplugin
+zur Designprüfung; kein produktives Fachplugin. Auswahl als Menüpunkt für
+Mitarbeiter/Admins, Aktivierung weiterhin durch Administratoren.
+
+| IDs | Status | Umsetzungsnachweis | Prüfungen | Abweichungen/offen |
+|---|---|---|---|---|
+| S01, U07 | geprüft (Galerie/HTML) | `src/neofab2/plugins/checkdesign.py`, `plugins/templates/checkdesign/index.html`, `plugins/static/checkdesign/gallery.css`, `templates/base.html`, `templates/ui_icons.html` | 15 Designfarben und alle Icons aus gemeinsamen Quellen; Komponenten/Zustände, Beschriftungen und Hilfen; Hell/Dunkel nur im Renderkontext; Konten/Einstellungen unverändert | Keine interaktive visuelle Abnahme, kein Browser verbunden; native Browsercontrols variieren; Themewechsel setzt Beispiele zurück |
+| N01, U06 | geprüft (Teilumfang) | `src/neofab2/plugin_api/__init__.py`, `plugins/checkdesign.py`, `tests/plugin_contract/test_checkdesign.py` | API 1, keine Abhängigkeiten, Rollen staff/admin, normale Benutzer 403, Gäste Login, geschützte Assets, Menü und Direktzugriffe nach Deaktivierung/Neustart gesperrt | Keine automatische Aktivierung; technische Galerie, keine Fachfunktionen |
+| S02 | geprüft (Teilumfang) | `src/neofab2/core/i18n.py`, `plugins/templates/checkdesign/index.html` | Englische Ausgangstexte, deutsche Bereichs-/Bedienbezeichnungen im gerenderten Plugin geprüft | Weitere Detailtexte und Französisch weiterhin englischer Fallback |
+| S12, X05, X06 | geprüft (Teilumfang) | `src/neofab2/version.py`, `plugins/checkdesign.py`, `pyproject.toml`, `tests/wheel_smoke.py`, `doku/CheckDesign.md`, `UI_Gestaltungsregeln.md`, `Version_Timeline.md` | Core 0.1.11, Plugin 0.1.0; 166 Tests bestanden, Wheel/sdist gebaut und installiertes Wheel einschließlich Galerie/Stylesheet geprüft | Keine neue Migration; kein eigener LXC-Lauf, kein Commit/Push; Core-Abnahme weiter offen |

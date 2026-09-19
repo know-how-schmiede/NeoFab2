@@ -1,9 +1,14 @@
-# Gestaltung von Buttons und Oberflächen – v0.1.10
+# Gestaltung von Buttons und Oberflächen – v0.1.11
 
 Diese Regeln gelten für Core und Plugin-Oberflächen. Gemeinsame Umsetzung:
 `src/neofab2/static/core.css`, Icons: `src/neofab2/templates/ui_icons.html`.
 Bestehende Templates erweitern `base.html`; dadurch ist `icon()` verfügbar.
 Keine externen Icon-Schriften, CDNs oder JavaScript-Abhängigkeiten erforderlich.
+
+Die [CheckDesign-Galerie](CheckDesign.md) zeigt seit NeoFab2 0.1.11 die vorhandenen
+Komponenten direkt aus diesen Quellen. Mitarbeiter und Administratoren können
+dort unabhängig von Profil-/Systemeinstellungen Hell/Dunkel prüfen. Die Galerie
+liest den gemeinsamen Iconbestand aus `ui_icons.html` und zeigt alle Farbvariablen.
 
 ## Buttons und Links
 

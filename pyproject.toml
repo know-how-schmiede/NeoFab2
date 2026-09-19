@@ -34,7 +34,7 @@ include-package-data = false
 
 [tool.setuptools.package-data]
 neofab2 = ["templates/*.html", "static/*.css", "static/branding/*.png"]
-"neofab2.plugins" = ["templates/*/*.html"]
+"neofab2.plugins" = ["templates/*/*.html", "static/checkdesign/*.css"]
 
 [tool.setuptools.dynamic]
 version = {attr = "neofab2.version.__version__"}

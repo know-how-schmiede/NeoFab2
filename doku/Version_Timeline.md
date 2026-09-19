@@ -1,5 +1,74 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.11 – 2026-09-19
+
+Bereich: ausdrücklich beauftragtes technisches Core-Testplugin CheckDesign
+(S01, U07, N01, S12, X05/X06). Die zentrale Anwendungsversion ist **0.1.11**;
+CheckDesign hat unabhängig davon die eigene Version **0.1.0**, Plugin-API 1.
+
+### Änderungen
+
+- Neues unabhängig aktivierbares Plugin `checkdesign`, Anzeigename **CheckDesign**,
+  ohne Fachfunktion, Plugin-Abhängigkeiten oder eigene Tabellen.
+- Auswahl als Hauptmenüpunkt ausschließlich für Mitarbeiter (`staff`) und
+  Administratoren (`admin`). Normale Benutzer erhalten HTTP 403, Gäste werden
+  zur Anmeldung weitergeleitet; Seiten und Stylesheet verwenden dieselbe Prüfung.
+- Galerie für alle vorhandenen gemeinsamen Designelemente: Typografie, 15
+  Farbvariablen, Flächen, Buttons/Links einschließlich deaktivierter Varianten,
+  alle Icons, Formulare und Zustände, Meldungen/Badges, Tabellen, Navigation,
+  Karten sowie gemeinsamer Kopf-/Fußbereich. Native Zusatzfelder sind gekennzeichnet.
+- Eigene Hell-/Dunkel-Buttons mit Sonne-/Mond-Icon und aktivem Zustand.
+  GET-Vorschauparameter gilt nur für die Plugin-Seite; keine Änderung an Profil,
+  Systemeinstellungen oder anderen Sitzungen. Rückkehr zur regulären Darstellung
+  über eigenen Link. Kein JavaScript erforderlich.
+- Beispielfelder werden nicht gespeichert, ausgewählte Dateien weder gelesen
+  noch hochgeladen. Themewechsel lädt die Seite neu und setzt Beispiele zurück.
+- Gemeinsames Icon-Makro stellt seinen Bestand für die Galerie bereit;
+  Plugin-Stylesheet ergänzt ausschließlich Galerieanordnung/Farbmuster.
+  Core-Template besitzt einen Stylesheet-Erweiterungsblock.
+- Deutsche Bedienungs-/Bereichsbezeichnungen, englische Ausgangstexte und
+  Fallback. Vollständige Detail-/FR-Übersetzung bleibt offen.
+- [CheckDesign-Anleitung](CheckDesign.md), Gestaltungsregeln, Paketierung und
+  aktuelle Versionsangaben ergänzt. Paket 1 des Core-Plans bleibt unverändert
+  als nächster offener Schritt eingeplant.
+
+### Betrieb und Migration
+
+**Keine neue Schema-Revision** gegenüber 0.1.10; weiterhin `0008_core_files`.
+Normales Update nach manuellem Commit/Push gemäß [Setup](SETUP.md). CheckDesign
+ist standardmäßig nicht aktiv; bestehende Auswahlen bleiben erhalten.
+Als Administrator unter **Administration → Plugins** CheckDesign aktivieren und
+alle Anwendungsprozesse kontrolliert neu starten. Danach können Mitarbeiter und
+Admins den Menüpunkt **CheckDesign** öffnen. Deaktivierung sperrt nach Neustart
+auch direkte Seiten-/Stylesheet-Aufrufe. Keine Produktivdaten verändert.
+
+### Prüfungen
+
+- **166 Tests bestanden** unter Windows/Python 3.12 (123,85 s).
+- Sechs neue Plugin-Tests: Rollen und Navigation, geschützte Assets,
+  Theme-/Sitzungsisolation, Kontodesign als Ausgangswert, keine Änderung von
+  Konten/Systemeinstellungen, abgelehnte Theme-Werte, fehlender Schreibendpunkt,
+  Aktivierung/Deaktivierung nach Neustart sowie Galerieprüfung in Hell/Dunkel.
+- Gerenderte Galerie: eindeutige IDs, zugeordnete Labels/Hilfen, beschriftete
+  Buttons mit dekorativen Icons, vollständiger Icon-/Farbbestand und CSP-Konformität.
+- Wheel und sdist 0.1.11 gebaut; installiertes Wheel einschließlich
+  CheckDesign-Seite, Vorschauwechsel, Icons und Plugin-Stylesheet geprüft.
+- Interaktive visuelle Abnahme nicht durchgeführt: kein Browser verbunden.
+  Kein eigener Debian-/LXC-Lauf, keine vollständige Core-Abnahme.
+
+### Kopierbarer Commit-Text
+
+```text
+feat: release NeoFab2 0.1.11 with CheckDesign plugin 0.1.0
+
+Add a staff/admin design gallery using shared UI components, colors and icons.
+Preview light and dark themes locally without changing profile or system settings.
+Keep sample controls read-only and protect plugin pages and assets by role.
+Document activation, design checks and remaining visual acceptance.
+Validation: 166 tests passed; wheel/sdist and installed plugin assets checked.
+No schema change; no automatic commit or push.
+```
+
 ## Version 0.1.10 – 2026-09-19
 
 Bereich: Paket 0 des Core-Arbeitsplans und Administration (N01, U06, S10,

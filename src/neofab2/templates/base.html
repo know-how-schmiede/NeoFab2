@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}NeoFab2{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='core.css') }}">
+  {% block extra_styles %}{% endblock %}
 </head>
 <body>
   <header><a href="{{ url_for('core.index') }}" aria-label="{{ _('NeoFab2 home') }}"><img src="{{ url_for('static', filename='branding/neofab2-logo.png') }}" alt="NeoFab2" width="240"></a><span>{{ site_settings.site_tagline }}</span></header>

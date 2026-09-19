@@ -64,4 +64,5 @@ def builtin_plugins():
     """Fester Lieferumfang; kein Importpfad oder Code-Upload aus Konfiguration."""
     from neofab2.plugins.core_test import plugin
     from neofab2.plugins.management_test import plugin as management_plugin
-    return (plugin, management_plugin)
+    from neofab2.plugins.checkdesign import plugin as design_plugin
+    return (plugin, management_plugin, design_plugin)

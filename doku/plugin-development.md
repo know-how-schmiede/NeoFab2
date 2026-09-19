@@ -1,7 +1,7 @@
-# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.10
+# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.11
 
 Dieses Arbeitspaket setzt N01 sowie Teile von S01, S12 und U06 um. Es enthält
-zwei synthetische Testplugins, keine produktiven Fachplugins.
+drei technische Testplugins, keine produktiven Fachplugins.
 
 ## Zielbild für die nächsten Plugin-Schritte
 
@@ -69,12 +69,17 @@ Webprozesse mit `systemctl restart neofab2.service` neu starten. Falls künftig
 separate Aufgabenprozesse laufen, müssen auch diese neu gestartet werden.
 Der vollständige manuelle Container-Neustart bleibt der einfache Betriebsweg.
 
-## Zwei Testplugins prüfen
+## Technische Testplugins prüfen
 
 | Plugin | Version / API | Abhängigkeit | Zweck |
 |---|---|---|---|
 | Core-Testplugin (`core_test`) | 0.1.0 / 1 | keine | einfache Seite und lokale Testaufgabe |
 | Verwaltungs-Testplugin (`management_test`) | 0.1.0 / 1 | `core_test` ab 0.1.0 | Abhängigkeiten, mehrere Rechte, Besitzerprüfung, geschütztes Formular und Testdateien |
+| CheckDesign (`checkdesign`) | 0.1.0 / 1 | keine | Galerie aller vorhandenen Designelemente für Mitarbeiter/Admins mit lokaler Hell-/Dunkel-Vorschau |
+
+CheckDesign wird unabhängig aktiviert und besitzt keine Schreibfunktionen.
+[Aktivierung und Bedienung](CheckDesign.md). Die folgende Abhängigkeitsprüfung
+betrifft weiterhin die ersten beiden Testplugins.
 
 1. Zunächst beim Core-Testplugin **Aktivierung vormerken** wählen, sofern es noch
    nicht ausgewählt ist. Danach das Verwaltungs-Testplugin vormerken. Es reicht,
@@ -173,7 +178,7 @@ Die vollständige Core-Abnahme steht aus.
 
 Ab 0.1.7 sind Plugin-Namen, Testseiten und CLI-Meldungen im Quelltext englisch.
 Die Oberfläche verwendet englische Übersetzungsschlüssel und Englisch als Fallback.
-Die zentrale Core-Version ist 0.1.10; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
+Die zentrale Core-Version ist 0.1.11; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
 
 Für Plugin-Oberflächen gelten die [UI-Gestaltungsregeln](UI_Gestaltungsregeln.md).
 Alle Buttons enthalten sichtbaren übersetzbaren Text und ein passendes Icon aus

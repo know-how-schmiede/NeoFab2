@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "ui_icons.html" import icon_paths %}
+{% block title %}CheckDesign · NeoFab2{% endblock %}
+{% block extra_styles %}<link rel="stylesheet" href="{{ url_for('plugin_checkdesign.static', filename='gallery.css') }}">{% endblock %}
+{% block content %}
+<div class="checkdesign">
+  <p class="eyebrow">{{ _('Design preview') }} · {{ plugin_version }}</p>
+  <h1>CheckDesign</h1>
+  <p class="intro">{{ _('Explore the shared interface elements in light and dark appearance.') }}</p>
+  <p>{{ _('Preview only. Your profile and system settings are not changed. Sample controls do not save or upload data.') }}</p>
+  <form method="get" action="{{ url_for('plugin_checkdesign.index') }}" class="design-toolbar" aria-label="{{ _('Preview appearance') }}">
+    <button type="submit" name="theme" value="light" class="secondary" aria-pressed="{{ 'true' if theme == 'light' else 'false' }}">{{ icon('sun') }} {{ _('Light') }}</button>
+    <button type="submit" name="theme" value="dark" class="secondary" aria-pressed="{{ 'true' if theme == 'dark' else 'false' }}">{{ icon('moon') }} {{ _('Dark') }}</button>
+    <a href="{{ url_for('plugin_checkdesign.index') }}">{{ _('Use current appearance') }}</a>
+  </form>
+  <p class="field-help">{{ _('Switching appearance reloads the preview and resets sample inputs. Use Tab to inspect focus, hover with the pointer, and hold a button to inspect its pressed state.') }}</p>
+  <nav aria-label="{{ _('Design sections') }}">
+    <a href="#typography">{{ _('Typography') }}</a><a href="#colors">{{ _('Colors and surfaces') }}</a>
+    <a href="#buttons">{{ _('Buttons and links') }}</a><a href="#icons">{{ _('Icons') }}</a>
+    <a href="#forms">{{ _('Form controls') }}</a><a href="#messages">{{ _('Messages and badges') }}</a>
+    <a href="#tables">{{ _('Tables and navigation') }}</a><a href="#layout">{{ _('Cards and layout') }}</a>
+  </nav>
+
+  <section id="typography" aria-labelledby="typography-title">
+    <h2 id="typography-title">{{ _('Typography') }}</h2>
+    <p class="eyebrow">{{ _('Eyebrow label') }}</p>
+    <h3>{{ _('Section heading') }}</h3>
+    <h4>{{ _('Subheading') }}</h4>
+    <p class="intro">{{ _('Introductory text with a larger font and comfortable line spacing.') }}</p>
+    <p>{{ _('Body text') }} · <strong>{{ _('Bold text') }}</strong> · <em>{{ _('Emphasized text') }}</em> · <a href="#forms">{{ _('Text link') }}</a></p>
+    <small class="field-help">{{ _('Secondary text and field help remain readable in both appearances.') }}</small>
+    <p class="multiline">{{ _('Multiline text') }}
+{{ _('A second line with preserved line breaks.') }}</p>
+    <ul><li>{{ _('Unordered list item') }}</li><li>{{ _('Another list item') }}</li></ul>
+    <ol><li>{{ _('First step') }}</li><li>{{ _('Second step') }}</li></ol>
+    <p><code>example.txt</code> · <kbd>Tab</kbd> · <kbd>Enter</kbd></p>
+  </section>
+
+  <section id="colors" aria-labelledby="colors-title">
+    <h2 id="colors-title">{{ _('Colors and surfaces') }}</h2>
+    <p>{{ _('These swatches use the shared theme colors directly.') }}</p>
+    <ul class="design-grid design-swatches">{% for name in color_tokens %}
+      <li><span class="design-swatch design-swatch-{{ name }}" aria-hidden="true"></span><code>--{{ name }}</code></li>
+    {% endfor %}</ul>
+  </section>
+
+  <section id="buttons" aria-labelledby="buttons-title">
+    <h2 id="buttons-title">{{ _('Buttons and links') }}</h2>
+    <p>{{ _('Sample buttons have no action. Only the appearance controls change this preview.') }}</p>
+    <div class="design-actions">
+      <button type="button">{{ icon('save') }} {{ _('Primary button') }}</button>
+      <button type="button" class="secondary">{{ icon('settings') }} {{ _('Secondary button') }}</button>
+      <button type="button" disabled>{{ icon('save') }} {{ _('Disabled primary button') }}</button>
+      <button type="button" class="secondary" disabled>{{ icon('settings') }} {{ _('Disabled secondary button') }}</button>
+      <a class="button" href="#forms">{{ icon('user-plus') }} {{ _('Primary navigation button') }}</a>
+      <a class="button secondary" href="#tables">{{ icon('database') }} {{ _('Secondary navigation button') }}</a>
+      <a class="button secondary" role="link" aria-disabled="true">{{ icon('database') }} {{ _('Disabled navigation button') }}</a>
+      <a href="#typography">{{ _('Text link') }}</a>
+      <button type="button">{{ icon('shield') }} {{ _('A deliberately long button label to inspect wrapping on narrow screens') }}</button>
+    </div>
+  </section>
+
+  <section id="icons" aria-labelledby="icons-title">
+    <h2 id="icons-title">{{ _('Icons') }}</h2>
+    <p>{{ _('All shared icons, each with a visible label.') }}</p>
+    <ul class="design-grid design-icon-list">{% for name in icon_paths %}<li>{{ icon(name) }} <span>{{ name }}</span></li>{% endfor %}</ul>
+  </section>
+
+  <section id="forms" aria-labelledby="forms-title">
+    <h2 id="forms-title">{{ _('Form controls') }}</h2>
+    <p>{{ _('Try typing, selecting and focusing these sample fields. There is no save action.') }}</p>
+    <div class="card-form">
+      <label for="sample-name">{{ _('Text field') }} *</label><input id="sample-name" type="text" placeholder="{{ _('Example name') }}" required maxlength="100" autocomplete="off" aria-describedby="sample-name-help">
+      <small id="sample-name-help" class="field-help">{{ _('Required sample field, maximum 100 characters.') }}</small>
+      <label for="sample-email">{{ _('Email') }}</label><input id="sample-email" type="email" placeholder="design@example.org" autocomplete="off" aria-describedby="sample-email-help">
+      <small id="sample-email-help" class="field-help">{{ _('Synthetic example address only.') }}</small>
+      <label for="sample-password">{{ _('Password field') }}</label><input id="sample-password" type="password" autocomplete="new-password" aria-describedby="sample-password-help">
+      <small id="sample-password-help" class="field-help">{{ _('Use sample text, never a real password.') }}</small>
+      <label for="sample-number">{{ _('Number') }}</label><input id="sample-number" type="number" value="3" min="0" max="10" aria-describedby="sample-number-help">
+      <small id="sample-number-help" class="field-help">{{ _('Sample range: 0 to 10.') }}</small>
+      <label for="sample-select">{{ _('Selection') }}</label><select id="sample-select" aria-describedby="sample-select-help"><option>{{ _('First option') }}</option><option>{{ _('Second option') }}</option><option disabled>{{ _('Disabled option') }}</option></select>
+      <small id="sample-select-help" class="field-help">{{ _('Choose an option to inspect the native selection control.') }}</small>
+      <label for="sample-textarea">{{ _('Multiline input') }}</label><textarea id="sample-textarea" rows="3" aria-describedby="sample-textarea-help">{{ _('Synthetic preview text.') }}</textarea>
+      <small id="sample-textarea-help" class="field-help">{{ _('The field can be resized vertically.') }}</small>
+      <label class="checkbox" for="sample-checkbox"><input id="sample-checkbox" type="checkbox" checked aria-describedby="sample-checkbox-help">{{ _('Checkbox') }}</label>
+      <small id="sample-checkbox-help" class="field-help">{{ _('Toggle this sample checkbox.') }}</small>
+      <label class="checkbox" for="sample-checkbox-disabled"><input id="sample-checkbox-disabled" type="checkbox" disabled>{{ _('Disabled checkbox') }}</label>
+      <fieldset><legend>{{ _('Radio selection') }}</legend>
+        <label class="checkbox" for="sample-radio-one"><input id="sample-radio-one" type="radio" name="sample-radio" checked>{{ _('First option') }}</label>
+        <label class="checkbox" for="sample-radio-two"><input id="sample-radio-two" type="radio" name="sample-radio">{{ _('Second option') }}</label>
+      </fieldset>
+      <label for="sample-file">{{ _('File selection') }}</label><input id="sample-file" type="file" aria-describedby="sample-file-help">
+      <small id="sample-file-help" class="field-help">{{ _('Local selection only. The file is not uploaded or read.') }}</small>
+      <label for="sample-readonly">{{ _('Read-only field') }}</label><input id="sample-readonly" value="{{ _('Read-only example') }}" readonly>
+      <label for="sample-disabled">{{ _('Disabled field') }}</label><input id="sample-disabled" value="{{ _('Disabled example') }}" disabled>
+      <label for="sample-invalid">{{ _('Invalid field') }}</label><input id="sample-invalid" value="{{ _('Sample invalid value') }}" aria-invalid="true" aria-describedby="sample-invalid-help">
+      <small id="sample-invalid-help" class="field-help">{{ _('Example validation message: please check this value.') }}</small>
+      <label for="sample-disabled-select">{{ _('Disabled selection') }}</label><select id="sample-disabled-select" disabled><option>{{ _('First option') }}</option></select>
+    </div>
+    <details><summary>{{ _('Additional native browser controls') }}</summary>
+      <p>{{ _('These controls use the browser appearance; rendering can differ between browsers.') }}</p>
+      <div class="card-form">
+        <label for="sample-search">{{ _('Search') }}</label><input id="sample-search" type="search" placeholder="{{ _('Search') }}">
+        <label for="sample-date">{{ _('Date') }}</label><input id="sample-date" type="date" value="2026-09-19">
+        <label for="sample-time">{{ _('Time') }}</label><input id="sample-time" type="time" value="10:30">
+        <label for="sample-range">{{ _('Range') }}</label><input id="sample-range" type="range" min="0" max="100" value="50">
+        <label for="sample-progress">{{ _('Progress') }}</label><progress id="sample-progress" max="100" value="60">60%</progress>
+      </div>
+    </details>
+  </section>
+
+  <section id="messages" aria-labelledby="messages-title">
+    <h2 id="messages-title">{{ _('Messages and badges') }}</h2>
+    <p class="notice" role="status">{{ _('Sample notification: your example action completed.') }}</p>
+    <p class="error" role="alert">{{ _('Sample error: this is a visual example, not a real failure.') }}</p>
+    <span class="badge">{{ _('Sample badge') }}</span>
+    <p class="field-help">{{ _('Status is described with text as well as color.') }}</p>
+  </section>
+
+  <section id="tables" aria-labelledby="tables-title">
+    <h2 id="tables-title">{{ _('Tables and navigation') }}</h2>
+    <div class="table-scroll"><table><caption>{{ _('Synthetic records') }}</caption>
+      <thead><tr><th scope="col">{{ _('Name') }}</th><th scope="col">{{ _('Status') }}</th><th scope="col">{{ _('Action') }}</th></tr></thead>
+      <tbody><tr><td>{{ _('Example Alpha') }}</td><td><span class="badge">{{ _('Active') }}</span></td><td><a href="#forms">{{ _('Edit') }}<span class="sr-only">: {{ _('Example Alpha') }}</span></a></td></tr>
+      <tr><td>{{ _('Example with a deliberately long name to inspect table wrapping') }}</td><td>{{ _('Disabled') }}</td><td><a href="#forms">{{ _('Edit') }}<span class="sr-only">: {{ _('Example Beta') }}</span></a></td></tr></tbody>
+    </table></div>
+    <nav aria-label="{{ _('Sample pagination') }}"><a href="#tables">{{ _('Previous') }}</a><a href="#tables" aria-current="page">1</a><a href="#tables">2</a><a href="#tables">{{ _('Next') }}</a></nav>
+    <div class="table-scroll"><table><caption>{{ _('Empty table') }}</caption><thead><tr><th scope="col">{{ _('Name') }}</th><th scope="col">{{ _('Status') }}</th></tr></thead><tbody><tr><td colspan="2">{{ _('No entries available. This is an empty-state example.') }}</td></tr></tbody></table></div>
+  </section>
+
+  <section id="layout" aria-labelledby="layout-title">
+    <h2 id="layout-title">{{ _('Cards and layout') }}</h2>
+    <p>{{ _('The page header, navigation, logo and footer use the real shared layout.') }}</p>
+    <div class="card-form"><h3>{{ _('Sample card') }}</h3><p>{{ _('Panel background, border, spacing and rounded corners follow the shared styles.') }}</p><a class="button secondary" href="#buttons">{{ icon('settings') }} {{ _('Inspect buttons') }}</a></div>
+    <a href="#">{{ _('Back to top') }}</a>
+  </section>
+</div>
+{% endblock %}

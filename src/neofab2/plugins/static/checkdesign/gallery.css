@@ -1,0 +1,27 @@
+/* Gallery layout only. Components and theme values come from core.css. */
+.checkdesign section { max-width: none; scroll-margin-top: 1rem; }
+.checkdesign .design-toolbar, .checkdesign .design-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.checkdesign .design-toolbar button[aria-pressed="true"] { background: var(--accent); color: var(--background); }
+.checkdesign .design-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 16px; list-style: none; padding: 0; }
+.checkdesign .design-swatches li { min-width: 0; overflow-wrap: anywhere; }
+.checkdesign .design-swatch { display: block; height: 64px; border: 1px solid var(--input-border); border-radius: 7px; margin-bottom: 8px; }
+.checkdesign .design-icon-list li { display: flex; align-items: center; gap: .5rem; padding: 12px; border: 1px solid var(--border); border-radius: 7px; }
+.checkdesign fieldset { min-width: 0; border: 1px solid var(--input-border); border-radius: 6px; }
+.checkdesign summary { cursor: pointer; padding: 12px 0; }
+.checkdesign summary:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
+.checkdesign progress { width: 100%; accent-color: var(--accent); }
+.checkdesign .design-swatch-background { background: var(--background); }
+.checkdesign .design-swatch-text { background: var(--text); }
+.checkdesign .design-swatch-line { background: var(--line); }
+.checkdesign .design-swatch-muted { background: var(--muted); }
+.checkdesign .design-swatch-accent { background: var(--accent); }
+.checkdesign .design-swatch-border { background: var(--border); }
+.checkdesign .design-swatch-panel { background: var(--panel); }
+.checkdesign .design-swatch-subtle { background: var(--subtle); }
+.checkdesign .design-swatch-link { background: var(--link); }
+.checkdesign .design-swatch-badge { background: var(--badge); }
+.checkdesign .design-swatch-input-border { background: var(--input-border); }
+.checkdesign .design-swatch-notice { background: var(--notice); }
+.checkdesign .design-swatch-error-border { background: var(--error-border); }
+.checkdesign .design-swatch-error-text { background: var(--error-text); }
+.checkdesign .design-swatch-error-bg { background: var(--error-bg); }

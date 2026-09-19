@@ -1,4 +1,11 @@
-# Architektur – Stand v0.1.10
+# Architektur – Stand v0.1.11
+
+Seit 0.1.11 ergänzt das ausdrücklich beauftragte technische Testplugin
+`plugins/checkdesign.py` eine Designgalerie für `staff` und `admin`.
+Es verwendet Core-CSS und das gemeinsame Icon-Makro, eigenes CSS nur für die
+Galerieanordnung. Die Theme-Vorschau überschreibt allein den Renderkontext der
+Plugin-Seite; keine Profil-/Systemänderung, kein JavaScript und keine Migration.
+[Bedienung](CheckDesign.md).
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.

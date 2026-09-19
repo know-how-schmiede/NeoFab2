@@ -1,9 +1,14 @@
-# Nächste Schritte für das Core-System – Stand 0.1.10
+# Nächste Schritte für das Core-System – Stand 0.1.11
 
 Stand: 19.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn
 Abnahmekriterien in der [Projektbeschreibung](NeoFab2_Projektbeschreibung.md)
 und der [Umsetzungsnachweis](NeoFab2_Funktionsmatrix.md).
+
+Zusätzlich auf Benutzerauftrag in 0.1.11: [CheckDesign 0.1.0](CheckDesign.md)
+als technische Designgalerie für Mitarbeiter/Admins. Die Galerie unterstützt die
+spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 bleibt der nächste
+offene Schritt dieser Liste.
 
 | Reihenfolge | Geplanter Umfang / Funktions-IDs | Erforderlicher Nachweis |
 |---|---|---|
