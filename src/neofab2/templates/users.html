@@ -3,6 +3,11 @@
 {% block content %}
 <h1>{{ _("User management") }}</h1>
 <p><a class="button" href="{{ url_for('accounts.user_new') }}">{{ _("Create user") }}</a></p>
+<nav aria-label="{{ _('User field options') }}">
+  <a href="{{ url_for('user_options.manage', kind='position') }}">{{ _('Positions') }}</a>
+  <a href="{{ url_for('user_options.manage', kind='study_program') }}">{{ _('Study programs') }}</a>
+  <a href="{{ url_for('user_options.manage', kind='cost_center') }}">{{ _('Cost centers') }}</a>
+</nav>
 <div class="table-scroll"><table><caption>{{ _("User accounts · Page") }} {{ page }}</caption>
   <thead><tr><th scope="col">{{ _("Name") }}</th><th scope="col">{{ _("Email") }}</th><th scope="col">{{ _("Role") }}</th><th scope="col">{{ _("Status") }}</th><th scope="col">{{ _("Action") }}</th></tr></thead>
   <tbody>{% for entry in entries %}<tr><td>{{ entry.display_name }}</td><td>{{ entry.email }}</td><td>{{ _(roles[entry.role]) }}</td><td>{{ _('Active' if entry.active else 'Disabled') }}</td><td><a href="{{ url_for('accounts.user_edit', user_id=entry.id) }}">{{ _("Edit") }}<span class="sr-only">: {{ entry.display_name }}</span></a></td></tr>{% endfor %}</tbody>

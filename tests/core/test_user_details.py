@@ -40,6 +40,9 @@ def test_both_forms_round_trip_all_fields_and_clear(app):
     client = app.test_client()
     assert login(client).status_code == 302
     details = {key: "Synthetic " + key for key in DETAIL_FIELDS}
+    from neofab2.core.user_options import KINDS, save_option
+    for kind in KINDS:
+        save_option(app, 1, kind, details[kind], True)
     data = {**details, "email": "test@example.org", "display_name": "Test", "role": "user",
             "locale": "fr", "active": "off", "password": "Test123!", "confirm_password": "Test123!"}
     page = client.get("/admin/users/new")

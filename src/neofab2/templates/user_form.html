@@ -4,24 +4,43 @@
 <h1>{{ _('Create user' if creating else 'Edit user') }}</h1>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="display_name">{{ _("Display name") }}</label><input id="display_name" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>
-  <label for="email">{{ _("Email") }}</label><input id="email" name="email" type="email" value="{{ entry.email|default('') }}" maxlength="254" required>
-  <label for="role">{{ _("Role") }}</label><select id="role" name="role">{% for value, label in roles.items() %}<option value="{{ value }}" {% if entry.role == value %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}</select>
-  <label for="locale">{{ _("Language") }}</label><select id="locale" name="locale">{% for value, label in languages.items() %}<option value="{{ value }}" {% if entry.locale|default('en') == value %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}</select>
+  <label for="display_name">{{ _("Display name") }}</label><input id="display_name" aria-describedby="display_name-help" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>
+  <small id="display_name-help" class="field-help">{{ _("Enter the name other people should see. Use 1 to 100 characters.") }}</small>
+  <label for="email">{{ _("Email") }}</label><input id="email" aria-describedby="email-help" name="email" type="email" value="{{ entry.email|default('') }}" maxlength="254" required>
+  <small id="email-help" class="field-help">{{ _("Enter the email address used to sign in to this account.") }}</small>
+  <label for="role">{{ _("Role") }}</label><select id="role" aria-describedby="role-help" name="role">{% for value, label in roles.items() %}<option value="{{ value }}" {% if entry.role == value %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}</select>
+  <small id="role-help" class="field-help">{{ _("Choose the access level. Administrators can manage users and system settings.") }}</small>
+  <label for="locale">{{ _("Language") }}</label><select id="locale" aria-describedby="locale-help" name="locale">{% for value, label in languages.items() %}<option value="{{ value }}" {% if entry.locale|default('en') == value %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}</select>
+  <small id="locale-help" class="field-help">{{ _("Choose the interface language. Missing translations appear in English.") }}</small>
   <input type="hidden" name="active" value="off">
-  <label class="checkbox"><input name="active" type="checkbox" value="on" {% if entry.active == true or (entry.getlist is defined and 'on' in entry.getlist('active')) %}checked{% endif %}> {{ _("Account active") }}</label>
+  <label class="checkbox"><input id="active" aria-describedby="active-help" name="active" type="checkbox" value="on" {% if entry.active == true or (entry.getlist is defined and 'on' in entry.getlist('active')) %}checked{% endif %}>
+   {{ _("Account active") }}</label>
+  <small id="active-help" class="field-help">{{ _("An inactive account cannot sign in. Disabling an account ends its existing sessions.") }}</small>
   {% for key, specification in detail_fields.items() %}
     <label for="{{ key }}">{{ _(specification[0]) }}</label>
-    {% if key == 'note' %}<textarea id="{{ key }}" name="{{ key }}" maxlength="{{ specification[1] }}" rows="4">{{ entry[key]|default('') }}</textarea>
-    {% else %}<input id="{{ key }}" name="{{ key }}" value="{{ entry[key]|default('') }}" maxlength="{{ specification[1] }}">{% endif %}
+    {% if key in choices %}
+      <select id="{{ key }}" name="{{ key }}" aria-describedby="{{ key }}-help">
+        <option value="">{{ _('Not specified') }}</option>
+        {% for option in choices[key] %}{% if option.active or entry[key]|default('') == option.name %}
+          <option value="{{ option.name }}" {% if entry[key]|default('') == option.name %}selected{% endif %}>{{ option.name }}{% if not option.active %} · {{ _('Inactive') }}{% endif %}</option>
+        {% endif %}{% endfor %}
+      </select>
+      <small id="{{ key }}-help" class="field-help">{{ _(detail_help[key]) }} <a href="{{ url_for('user_options.manage', kind=key) }}">{{ _('Manage options') }}</a></small>
+    {% elif key == 'note' %}<textarea id="{{ key }}" name="{{ key }}" maxlength="{{ specification[1] }}" rows="4" aria-describedby="{{ key }}-help">{{ entry[key]|default('') }}</textarea>
+    {% else %}<input id="{{ key }}" name="{{ key }}" value="{{ entry[key]|default('') }}" maxlength="{{ specification[1] }}" aria-describedby="{{ key }}-help">{% endif %}
+    {% if key not in choices %}<small id="{{ key }}-help" class="field-help">{{ _(detail_help[key]) }}</small>{% endif %}
   {% endfor %}
   {% if creating %}
     <p>{{ _("Provide the initial password personally through a secure channel. No email is sent.") }}</p>
-    <label for="password">{{ _("Initial password (8–128 characters)") }}</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
-    <label for="confirm_password">{{ _("Repeat initial password") }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+    <label for="password">{{ _("Initial password (8–128 characters)") }}</label><input id="password" aria-describedby="password-help" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <small id="password-help" class="field-help">{{ _("Use 8 to 128 characters and share the initial password through a secure channel.") }}</small>
+    <label for="confirm_password">{{ _("Repeat initial password") }}</label><input id="confirm_password" aria-describedby="confirm_password-help" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <small id="confirm_password-help" class="field-help">{{ _("Enter the same new password again to avoid typing mistakes.") }}</small>
   {% else %}
-    <label for="new_password">{{ _("New password (optional, 8–128 characters)") }}</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
-    <label for="confirm_password">{{ _("Repeat new password") }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+    <label for="new_password">{{ _("New password (optional, 8–128 characters)") }}</label><input id="new_password" aria-describedby="new_password-help" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+  <small id="new_password-help" class="field-help">{{ _("Optional: leave both password fields empty to keep the current password. Otherwise use 8 to 128 characters.") }}</small>
+    <label for="confirm_password">{{ _("Repeat new password") }}</label><input id="confirm_password" aria-describedby="confirm_password-help" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+  <small id="confirm_password-help" class="field-help">{{ _("Enter the same new password again to avoid typing mistakes.") }}</small>
     <p>{{ _("Leave both password fields empty to keep the current password. Changes to the password, email, role or account status end all existing sessions for this account. The last active administrator remains protected.") }}</p>
   {% endif %}
   <button type="submit">{{ _('Create user' if creating else 'Save changes') }}</button>

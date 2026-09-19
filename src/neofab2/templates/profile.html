@@ -5,26 +5,32 @@
 <p>{{ current_user.email }} · {{ _(roles[current_user.role]) }}</p>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="display_name">{{ _('Display name') }}</label><input id="display_name" name="display_name" value="{{ current_user.display_name }}" autocomplete="name" maxlength="100" required>
+  <label for="display_name">{{ _('Display name') }}</label><input id="display_name" aria-describedby="display_name-help" name="display_name" value="{{ current_user.display_name }}" autocomplete="name" maxlength="100" required>
+  <small id="display_name-help" class="field-help">{{ _("Enter the name other people should see. Use 1 to 100 characters.") }}</small>
   <label for="theme">{{ _('Appearance') }}</label>
-  <select id="theme" name="theme">
+  <select id="theme" aria-describedby="theme-help" name="theme">
     <option value="system" {% if current_user.theme == 'system' %}selected{% endif %}>{{ _('System default') }}</option>
     <option value="dark" {% if current_user.theme == 'dark' %}selected{% endif %}>{{ _('Dark') }}</option>
     <option value="light" {% if current_user.theme == 'light' %}selected{% endif %}>{{ _('Light') }}</option>
   </select>
+  <small id="theme-help" class="field-help">{{ _("Choose a personal appearance, or follow the system default.") }}</small>
   <label for="locale">{{ _('Language') }}</label>
-  <select id="locale" name="locale">
+  <select id="locale" aria-describedby="locale-help" name="locale">
     {% for key, label in languages.items() %}<option value="{{ key }}" {% if current_user.locale == key %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}
   </select>
+  <small id="locale-help" class="field-help">{{ _("Choose the interface language. Missing translations appear in English.") }}</small>
   <button type="submit">{{ _('Save profile') }}</button>
 </form>
 <h2>{{ _('Change password') }}</h2>
 <p>{{ _('8 to 128 characters. After changing it, sign in again on all devices.') }}</p>
 <form method="post" action="{{ url_for('accounts.password') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="old_password">{{ _('Current password') }}</label><input id="old_password" name="old_password" type="password" autocomplete="current-password" maxlength="128" required>
-  <label for="new_password">{{ _('New password') }}</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
-  <label for="confirm_password">{{ _('Repeat new password') }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <label for="old_password">{{ _('Current password') }}</label><input id="old_password" aria-describedby="old_password-help" name="old_password" type="password" autocomplete="current-password" maxlength="128" required>
+  <small id="old_password-help" class="field-help">{{ _("Enter your current password to confirm this change.") }}</small>
+  <label for="new_password">{{ _('New password') }}</label><input id="new_password" aria-describedby="new_password-help" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <small id="new_password-help" class="field-help">{{ _("Use 8 to 128 characters. Avoid reusing a password from another service.") }}</small>
+  <label for="confirm_password">{{ _('Repeat new password') }}</label><input id="confirm_password" aria-describedby="confirm_password-help" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+  <small id="confirm_password-help" class="field-help">{{ _("Enter the same new password again to avoid typing mistakes.") }}</small>
   <button type="submit">{{ _('Change password') }}</button>
 </form>
 {% endblock %}

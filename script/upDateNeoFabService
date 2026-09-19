@@ -4,6 +4,7 @@ set -Eeuo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=script/common.sh
 source "$SCRIPT_DIR/common.sh"
+start_summary 'Update'
 main() {
 # Funktionskörper wird vor dem Git-Update vollständig eingelesen, auch wenn
 # das Update diese Skriptdatei ersetzt.
@@ -18,7 +19,11 @@ as_app git -C "$APP_DIR" fetch origin
 TARGET=$(as_app git -C "$APP_DIR" rev-parse --verify "refs/remotes/origin/$BRANCH^{commit}")
 OLD_REV=$(as_app git -C "$APP_DIR" rev-parse HEAD)
 as_app git -C "$APP_DIR" merge-base --is-ancestor "$OLD_REV" "$TARGET" || die 'Kein Fast-Forward möglich; lokale Commits manuell klären.'
-if [[ $OLD_REV == "$TARGET" ]]; then printf 'Bereits auf aktuellem Git-Stand.\n'; exit 0; fi
+if [[ $OLD_REV == "$TARGET" ]]; then
+  printf 'Bereits auf aktuellem Git-Stand.\n'
+  SUMMARY_RESULT='Keine Aktualisierung nötig; Git-Stand bereits aktuell.'
+  exit 0
+fi
 printf 'Update: %s -> %s\n' "$OLD_REV" "$TARGET"
 prompt CONFIRM 'Service stoppen, sichern und aktualisieren? (j/n)' 'n'
 [[ $CONFIRM == j ]] || exit 0
@@ -45,6 +50,7 @@ as_app "$APP_DIR/.venv/bin/python" -m pip freeze > "$BACKUP/requirements.txt"
 tar -C "$APP_DIR" --exclude='./.venv' --exclude='./.git' -czf "$BACKUP/source.tar.gz" .
 # Vollständige alte venv für die Wiederherstellung am selben Pfad.
 tar -C "$APP_DIR" -czf "$BACKUP/venv.tar.gz" .venv
+SUMMARY_BACKUP_COMPLETE=1
 as_app git -C "$APP_DIR" merge --ff-only "$TARGET"
 as_app "$APP_DIR/.venv/bin/python" -m pip install --upgrade "${APP_DIR}[server]"
 app_cli migrate
@@ -54,5 +60,6 @@ wait_ready
 STOPPED=0
 trap - ERR
 printf 'Update erfolgreich. Sicherung aufbewahren: %s\n' "$BACKUP"
+SUMMARY_RESULT='Update erfolgreich; Migration und lokale Bereitschaft geprüft.'
 }
 main "$@"

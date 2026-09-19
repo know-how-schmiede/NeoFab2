@@ -172,5 +172,33 @@ def reset_admin(reactivate):
     click.echo("Administrator password changed; existing sessions ended.")
 
 
+@main.command("maintenance-info")
+def maintenance_info():
+    """Read summary information for local operators without loading plugins."""
+    from .config import load_config
+
+    click.echo(f"NeoFab2 version: {__version__}")
+    try:
+        config = load_config()
+    except (OSError, ValueError, TypeError):
+        raise click.ClickException("Configuration information unavailable.") from None
+    if config["SESSION_COOKIE_SECURE"]:
+        click.echo("Login: HTTPS required. Use the public HTTPS address of your reverse proxy; this script does not configure TLS.")
+    else:
+        click.echo("Login: HTTP enabled for an isolated test network.")
+    database = Path(config["DATA_DIR"]) / "neofab2.sqlite3"
+    try:
+        with sqlite3.connect(database.as_uri() + "?mode=ro", uri=True) as connection:
+            admins = connection.execute("SELECT email, active FROM core_users WHERE role = 'admin' ORDER BY id").fetchall()
+    except sqlite3.Error:
+        click.echo("Administrator emails: unavailable (database or schema not ready).")
+        return
+    if not admins:
+        click.echo("Administrator emails: no administrator account found.")
+    for email, active in admins:
+        safe_email = "".join(char if char.isprintable() else "?" for char in email)
+        click.echo(f"Administrator email: {safe_email} ({'active' if active else 'disabled'})")
+
+
 if __name__ == "__main__":
     main()

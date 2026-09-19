@@ -19,12 +19,15 @@ def test_optional_start_preserves_installation_result(tmp_path, choice, status):
     script = tmp_path / "test-start.sh"
     app = tmp_path / "application with spaces"
     app.mkdir()
-    script.write_text(r'''
+    script.write_text((installer.parent / "common.sh").read_text(encoding="utf-8") + r'''
 set -Eeuo pipefail
+start_summary 'Installation'
 trap 'echo "Installation abgebrochen" >&2' ERR
 APP_DIR="$TEST_APP"
 CONFIG_FILE="$TEST_APP/config.toml"
 PORT=8080
+systemctl() { return 1; }
+hostname() { printf '192.0.2.20\n'; }
 prompt() { printf -v "$1" '%s' "$TEST_CHOICE"; }
 as_app() {
   pwd -P > "$TEST_LOG"
@@ -38,6 +41,7 @@ as_app() {
              "TEST_CHOICE": choice, "TEST_STATUS": str(status)},
     )
     assert "Basisinstallation erfolgreich" in result.stdout
+    assert "ZUSAMMENFASSUNG: Installation" in result.stdout
     assert "Installation abgebrochen" not in result.stderr
     assert result.returncode == (status if choice == "j" and status not in (0, 130) else 0)
     if choice == "n":
@@ -48,5 +52,6 @@ as_app() {
         if status == 3:
             assert "Optionaler Teststart fehlgeschlagen" in result.stderr
             assert "keine Neuinstallation erforderlich" in result.stderr
+            assert "ERGEBNIS: FEHLER / ABBRUCH" in result.stdout
         if status == 130:
             assert "Strg+C beendet" in result.stdout

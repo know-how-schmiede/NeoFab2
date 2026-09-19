@@ -11,6 +11,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     from .database import init_database
     from .core.routes import bp
     from .core.accounts import bp as accounts_bp
+    from .core.user_options import bp as user_options_bp
     from .core.auth import register_auth
     from .core.plugins import register_plugins
     from .core.settings import register_presentation
@@ -32,6 +33,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     CSRFProtect(app)
     app.register_blueprint(bp)
     app.register_blueprint(accounts_bp)
+    app.register_blueprint(user_options_bp)
     register_plugins(app, registry)
     register_presentation(app)
     register_i18n(app)

@@ -34,6 +34,15 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.get("/admin/users").status_code == 200
         assert "Synthetic admin note" in client.get("/admin/users/1/edit").text
         assert 'name="study_program"' in client.get("/admin/users/new").text
+        for kind in ["position", "study_program", "cost_center"]:
+            path = f"/admin/user-options/{kind}"
+            page = client.get(path)
+            assert page.status_code == 200 and "No options yet" in page.text
+            token = re.search(r'name="csrf_token" value="([^"]+)"', page.text).group(1)
+            assert client.post(path, data={"csrf_token": token, "name": "Synthetic option", "active": "on"}).status_code == 302
+        form = client.get("/admin/users/new")
+        assert '<select id="position"' in form.text and 'value="Synthetic option"' in form.text
+        assert 'aria-describedby="position-help"' in form.text
         assert client.get("/admin/plugins").status_code == 200
         assert client.get("/admin/settings").status_code == 200
         from neofab2.core.settings import DEFAULTS, save_settings

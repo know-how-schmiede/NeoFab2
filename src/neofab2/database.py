@@ -51,6 +51,7 @@ def database_ready(app):
             connection.execute(text("SELECT salutation, first_name, last_name, address, position, cost_center, study_program, note FROM core_users LIMIT 0"))
             connection.execute(text("SELECT token_hash, user_id, created_at, last_seen FROM core_sessions LIMIT 0"))
             connection.execute(text("SELECT key, count, window_start FROM core_login_attempts LIMIT 0"))
+            connection.execute(text("SELECT id, kind, name, active FROM core_user_options LIMIT 0"))
             return actual == expected
     except SQLAlchemyError:
         return False

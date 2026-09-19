@@ -1,8 +1,8 @@
-# NeoFab2 – Installation und Wartung (v0.1.7)
+# NeoFab2 – Installation und Wartung (v0.1.8)
 
-Neu in 0.1.7: [Englisch als Ausgangssprache](../doku/Core_Sprachen.md),
-englische CLI und Standard `en` für neue Konten. Vorhandene Kontosprachen
-bleiben erhalten. [Nächste Core-Schritte](../doku/Core_Naechste_Schritte.md).
+Neu in 0.1.8: Abschlussübersichten der Betriebsskripte sowie
+[verwaltete Benutzer-Auswahllisten und englische Feldhilfen](../doku/Core_Auswahllisten.md).
+Die Listen starten leer; alte Freitexte werden nicht übernommen.
 
 Als **root in einem neuen Debian-13-Container**, nicht auf dem Proxmox-Host:
 
@@ -14,7 +14,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.7 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.8 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
@@ -88,3 +88,36 @@ Passwortlänge. [Konkrete Fehlerbehebung und erster Login](../doku/SETUP.md).
 
 [Ausführliche Anleitung und Fehlerhilfe](../doku/SETUP.md) ·
 [Betrieb und Wiederherstellung](../doku/operations.md)
+
+## Abschlussübersicht der Skripte (0.1.8)
+
+`setupNeoFab`, `setupNeoFabService`, `upDateNeoFabService` und
+`resetAdminPassword` geben beim Beenden einen deutlich eingerahmten Block
+**NEOFAB2 – ZUSAMMENFASSUNG** aus. Er nennt Ergebnis/Exit-Code, Installations-,
+Daten- und Konfigurationspfad, Dienstkonto und Servicezustand, ermittelte IPv4-/
+IPv6-Adressen mit Port, installierte Version, Admin-E-Mails mit Aktivstatus,
+gegebenenfalls den Sicherungspfad und kopierbare Wartungs-/Diagnosebefehle.
+
+Die internen HTTP-Adressen sind keine Zusage externer Erreichbarkeit. Bei
+Secure-Cookies nennt die CLI ausdrücklich die HTTPS-Anforderung; die öffentliche
+HTTPS-Adresse stammt aus der eigenen Reverse-Proxy-Konfiguration. Die Skripte
+richten kein TLS ein. Fehlende IP-/Kontodaten werden als nicht verfügbar angezeigt.
+Passwörter, Hashes, Sitzungstokens und Konfigurationsgeheimnisse werden nicht ausgegeben.
+
+Abbruch oder Fehler bleiben als solche erkennbar; die Zusammenfassung erhält
+den ursprünglichen Exit-Code. Ein fehlgeschlagener optionaler Teststart meldet
+zusätzlich, dass die Basisinstallation bereits abgeschlossen ist. Unvollständige
+Sicherungen sind ausdrücklich markiert. Ein bereits aktueller Git-Stand wird als
+„Keine Aktualisierung nötig“ ausgegeben, nicht als neu ausgeführtes Update.
+
+Dieselben lokalen Konto-/Versionshinweise lassen sich als **root im Container**
+ohne Änderungen an Daten oder Plugins erneut abrufen:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
+```
+
+Erwartet: Version 0.1.8, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
+prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
+Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

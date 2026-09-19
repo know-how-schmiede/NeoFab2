@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Gemeinsame Betriebsfunktionen; nur aus den drei Einstiegsskripten laden.
+# Gemeinsame Betriebsfunktionen; nur aus den vier Einstiegsskripten laden.
 # Variablen werden von den aufrufenden Skripten verwendet.
 # shellcheck disable=SC2034
 set -Eeuo pipefail
@@ -61,4 +61,76 @@ wait_ready() {
   done
   printf 'Startprüfung fehlgeschlagen. Diagnose: journalctl -u %s -n 80 --no-pager\n' "$SERVICE" >&2
   return 1
+}
+
+start_summary() {
+  SUMMARY_ACTION=$1
+  SUMMARY_RESULT='Abgebrochen oder noch nicht abgeschlossen.'
+  SUMMARY_NOTE=''
+  SUMMARY_BACKUP_COMPLETE=0
+  trap 'finish_summary "$?"' EXIT
+}
+
+print_summary() {
+  local status=$1 addresses address host service_state
+  printf '\n============================================================\n'
+  printf ' NEOFAB2 – ZUSAMMENFASSUNG: %s\n' "$SUMMARY_ACTION"
+  printf '============================================================\n'
+  if [[ $status -ne 0 ]]; then
+    printf 'ERGEBNIS: FEHLER / ABBRUCH (Exit-Code %s)\n' "$status"
+  else
+    printf 'ERGEBNIS: %s\n' "$SUMMARY_RESULT"
+  fi
+  [[ -z ${SUMMARY_NOTE:-} ]] || printf 'HINWEIS: %s\n' "$SUMMARY_NOTE"
+  printf '\nInstallation: %s\nDaten:        %s\nKonfiguration: %s\nDienstkonto: %s\n' "$APP_DIR" "$DATA_DIR" "$CONFIG_FILE" "$APP_USER"
+  service_state=$(systemctl is-active "$SERVICE" 2>/dev/null) || service_state=${service_state:-unbekannt}
+  printf 'Service: %s (%s)\n' "$SERVICE" "$service_state"
+  if [[ -z ${PORT:-} && -r $CONFIG_DIR/port ]]; then PORT=$(cat "$CONFIG_DIR/port"); fi
+  if [[ ${PORT:-} =~ ^[1-9][0-9]{3,4}$ ]] && ((PORT >= 1024 && PORT <= 65535)); then
+    printf '\nInterne HTTP-Adressen (Erreichbarkeit von außen nicht geprüft):\n'
+    addresses=$(hostname -I 2>/dev/null) || addresses=''
+    for address in $addresses; do
+      [[ $address =~ ^[0-9a-fA-F:.]+$ ]] || continue
+      host=$address
+      [[ $address != *:* ]] || host="[$address]"
+      printf '  http://%s:%s/login\n' "$host" "$PORT"
+    done
+    [[ -n $addresses ]] || printf '  IP nicht ermittelt: http://<Container-IP>:%s/login\n' "$PORT"
+    printf '  Lokale Bereitschaft: http://127.0.0.1:%s/health/ready\n' "$PORT"
+    printf 'HTTPS-Adresse: ggf. die konfigurierte Reverse-Proxy-Adresse verwenden.\n'
+  else
+    printf '\nZugriffsadresse: Port noch nicht verfügbar.\n'
+  fi
+  printf '\nVersion und Admin-Zugänge (keine Passwörter):\n'
+  if [[ $EUID -eq 0 && -x $APP_DIR/.venv/bin/neofab2 && -f $CONFIG_FILE ]]; then
+    app_cli maintenance-info 2>/dev/null || printf '  Detailinformationen nicht verfügbar; Konfiguration/Installation prüfen.\n'
+  else
+    printf '  Noch nicht verfügbar; Installation oder Zugriffsrechte prüfen.\n'
+  fi
+  if [[ -n ${BACKUP:-} ]]; then
+    if [[ $SUMMARY_BACKUP_COMPLETE == 1 ]]; then
+      printf '\nSicherung erstellt: %s\n' "$BACKUP"
+    else
+      printf '\nSicherungspfad (möglicherweise unvollständig): %s\n' "$BACKUP"
+    fi
+    printf 'Wiederherstellung: %s/doku/operations.md\n' "$APP_DIR"
+  fi
+  printf '\nWICHTIGE BEFEHLE – als root im NeoFab2-Container:\n'
+  printf '  bash %q/script/setupNeoFabService\n' "$APP_DIR"
+  printf '  bash %q/script/upDateNeoFabService\n' "$APP_DIR"
+  printf '  bash %q/script/resetAdminPassword\n' "$APP_DIR"
+  printf '  systemctl status %q --no-pager\n' "$SERVICE"
+  printf '  systemctl restart %q\n' "$SERVICE"
+  printf '  journalctl -u %q -n 80 --no-pager\n' "$SERVICE"
+  printf '  runuser -u %q -- env NEOFAB2_CONFIG=%q %q check\n' "$APP_USER" "$CONFIG_FILE" "$APP_DIR/.venv/bin/neofab2"
+  printf '============================================================\n'
+}
+
+finish_summary() {
+  local status=$1
+  trap - EXIT ERR
+  # Die Diagnose darf weder den Exit-Code ändern noch den Fehler-Handler erneut
+  # auslösen; kein Start/Stop, keine Migration und keine Geheimnisse ausgeben.
+  (set +e; print_summary "$status") || true
+  exit "$status"
 }

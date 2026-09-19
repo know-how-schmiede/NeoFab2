@@ -1,8 +1,8 @@
-# NeoFab2 v0.1.7 – Installation und Entwicklung
+# NeoFab2 v0.1.8 – Installation und Entwicklung
 
-Neu in 0.1.7: [Englisch als Ausgangssprache](Core_Sprachen.md),
-englische CLI und Standard `en` für neue Konten. Vorhandene Kontosprachen
-bleiben erhalten. [Nächste Core-Schritte](Core_Naechste_Schritte.md).
+Neu in 0.1.8: Abschlussübersichten der Betriebsskripte sowie
+[verwaltete Benutzer-Auswahllisten und englische Feldhilfen](Core_Auswahllisten.md).
+Die Listen starten leer; alte Freitexte werden nicht übernommen.
 
 ## Umfang und Prüfstand
 
@@ -39,7 +39,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.7 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.8 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -153,7 +153,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.7`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.8`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:
@@ -321,3 +321,36 @@ Python-3.12-/3.13-Interpreters verwenden. Bei unzugänglichem Tempverzeichnis
 einen neuen Unterpfad unter `.test-artifacts/` mit `pytest --basetemp`
 angeben; Elternverzeichnis vorher anlegen. Pytest leert einen vorhandenen
 `--basetemp` selbständig: niemals einen Pfad mit benötigten Daten wählen.
+
+## Abschlussübersicht der Skripte (0.1.8)
+
+`setupNeoFab`, `setupNeoFabService`, `upDateNeoFabService` und
+`resetAdminPassword` geben beim Beenden einen deutlich eingerahmten Block
+**NEOFAB2 – ZUSAMMENFASSUNG** aus. Er nennt Ergebnis/Exit-Code, Installations-,
+Daten- und Konfigurationspfad, Dienstkonto und Servicezustand, ermittelte IPv4-/
+IPv6-Adressen mit Port, installierte Version, Admin-E-Mails mit Aktivstatus,
+gegebenenfalls den Sicherungspfad und kopierbare Wartungs-/Diagnosebefehle.
+
+Die internen HTTP-Adressen sind keine Zusage externer Erreichbarkeit. Bei
+Secure-Cookies nennt die CLI ausdrücklich die HTTPS-Anforderung; die öffentliche
+HTTPS-Adresse stammt aus der eigenen Reverse-Proxy-Konfiguration. Die Skripte
+richten kein TLS ein. Fehlende IP-/Kontodaten werden als nicht verfügbar angezeigt.
+Passwörter, Hashes, Sitzungstokens und Konfigurationsgeheimnisse werden nicht ausgegeben.
+
+Abbruch oder Fehler bleiben als solche erkennbar; die Zusammenfassung erhält
+den ursprünglichen Exit-Code. Ein fehlgeschlagener optionaler Teststart meldet
+zusätzlich, dass die Basisinstallation bereits abgeschlossen ist. Unvollständige
+Sicherungen sind ausdrücklich markiert. Ein bereits aktueller Git-Stand wird als
+„Keine Aktualisierung nötig“ ausgegeben, nicht als neu ausgeführtes Update.
+
+Dieselben lokalen Konto-/Versionshinweise lassen sich als **root im Container**
+ohne Änderungen an Daten oder Plugins erneut abrufen:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
+```
+
+Erwartet: Version 0.1.8, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
+prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
+Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

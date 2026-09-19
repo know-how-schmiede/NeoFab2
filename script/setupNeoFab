@@ -4,6 +4,7 @@ set -Eeuo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=script/common.sh
 source "$SCRIPT_DIR/common.sh"
+start_summary 'Installation'
 require_root
 trap 'printf "Installation abgebrochen (Zeile %s). Bestehende Dateien bleiben zur Diagnose erhalten.\n" "$LINENO" >&2' ERR
 
@@ -44,6 +45,8 @@ app_cli check
 # Auch CLI-Prozesse nicht aus einem für neofab2 unzugänglichen CWD starten.
 (cd -- "$APP_DIR" && app_cli create-admin)
 printf 'Basisinstallation erfolgreich. Service installieren: bash %s/script/setupNeoFabService\n' "$APP_DIR"
+SUMMARY_RESULT='Basisinstallation erfolgreich; Service separat einrichten.'
+SUMMARY_NOTE='Der optionale Terminal-Test ersetzt keinen dauerhaft eingerichteten Service.'
 # Ab hier betreffen Fehler nur noch den optionalen Test, nicht die Installation.
 trap - ERR
 prompt TEST_RUN 'Temporären HTTP-Teststart im Terminal ausführen? (j/n)' 'n'
@@ -61,6 +64,7 @@ if [[ $TEST_RUN == j ]]; then
       printf 'Optionaler Test mit Strg+C beendet. Die Basisinstallation ist erfolgreich abgeschlossen.\n'
     else
       printf 'Optionaler Teststart fehlgeschlagen (Exit-Code %s). Die Basisinstallation ist erfolgreich abgeschlossen; keine Neuinstallation erforderlich.\n' "$TEST_STATUS" >&2
+      SUMMARY_NOTE='Basisinstallation erfolgreich, aber optionaler Teststart fehlgeschlagen; keine Neuinstallation erforderlich.'
       exit "$TEST_STATUS"
     fi
   fi

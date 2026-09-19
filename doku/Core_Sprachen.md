@@ -1,4 +1,4 @@
-# Sprachwahl – v0.1.7
+# Sprachwahl – Stand v0.1.8
 
 Englisch ist die Ausgangssprache, die Standardsprache für Gäste ohne Auswahl
 und neue Konten sowie der Fallback (S02/U07). Deutsch und Französisch werden
@@ -28,6 +28,12 @@ Technische Werte wie `enable`, `disable`, Rollen-IDs und Sprachcodes bleiben
 unübersetzte Protokollwerte. Eigene Plugin-Kataloge und vollständige französische
 Abdeckung bleiben Teil des weiteren S02-/N01-Ausbaus.
 
+## Ergänzung 0.1.8
+
+Englische Feldhilfen und Benutzer-Auswahllisten sind ergänzt. Die Hilfetexte
+verwenden bereits `_()`; ihre DE-/FR-Übersetzungen folgen später. Individuelle
+Listennamen sind Benutzerdaten. [Details](Core_Auswahllisten.md).
+
 ## Bedienung
 
 Gast: `/login` öffnen, unter **Language** die Sprache wählen und **Apply language**
@@ -40,7 +46,7 @@ abgewiesen; beschädigte gespeicherte Sprachcodes fallen auf Englisch zurück.
 
 ## Update und Prüfung im Container
 
-Voraussetzung: 0.1.7 wurde vom Benutzer manuell committed und auf den verwendeten
+Voraussetzung: 0.1.8 wurde vom Benutzer manuell committed und auf den verwendeten
 Remote-Branch übertragen. Als **root im NeoFab2-Testcontainer**:
 
 ```bash
@@ -49,7 +55,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
 ```
 
-Erwartet: Version `0.1.7` und `Database and schema ready.`. Die explizite Migration
+Erwartet: Version `0.1.8` und `Database and schema ready.`. Die explizite Migration
 `0006_english_default` ändert ausschließlich den Datenbank-Standard für neue
 Kontosprachen auf `en`. Bestehende Kontosprachen, Hashes, Zusatzfelder,
 Einstellungen und E-Mail-Eindeutigkeit bleiben erhalten. SQLite baut dazu die

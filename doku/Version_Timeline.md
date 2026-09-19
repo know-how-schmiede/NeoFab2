@@ -1,5 +1,93 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.8 – 2026-09-19
+
+Bereich: Betriebsskripte, Formularhilfen und verwaltete Benutzer-Auswahllisten
+(X01–X07, U05, S01/S02, S04, S12).
+
+### Änderungen
+
+- Installation, Service-Einrichtung, Update und Notfall-Passwort-Reset geben zum
+  Abschluss einen eingerahmten Zusammenfassungsblock aus: Ergebnis/Exit-Code,
+  IP-Adressen und interner Port, Servicezustand, Pfade, installierte Version,
+  Admin-E-Mails, Sicherungspfad und kopierbare Wartungs-/Diagnosebefehle.
+- Erfolgs-, Abbruch- und Fehlerfälle sowie bereits aktueller Git-Stand werden
+  unterschieden. Der ursprüngliche Exit-Code bleibt erhalten. Ein Fehler des
+  optionalen Installationstests wird nicht als fehlgeschlagene Basisinstallation
+  ausgegeben; unvollständige Sicherungen bleiben ausdrücklich gekennzeichnet.
+- Neuer lesender CLI-Befehl `maintenance-info` liefert Version, HTTP-/HTTPS-Hinweis
+  und Admin-E-Mails ohne Plugin-Start, Passwörter, Hashes oder andere Secrets.
+- Kurze englische Hilfetexte für Login, Sprachwahl, Profil/Passwortwechsel,
+  Benutzerformulare, Systemeinstellungen und die neuen Listenformulare.
+  `aria-describedby` verknüpft die Eingaben mit den Hilfen; `_()` bereitet
+  spätere Übersetzungen vor. Neue DE-/FR-Hilfetexte sind noch nicht enthalten.
+- Position, Studiengang und Kostenstelle sind optionale Auswahlfelder.
+  Administratoren pflegen jede Liste über eine eigene Backend-Seite unter
+  **User management**. Anlegen, Umbenennen und Aktivieren/Deaktivieren sind
+  implementiert; Änderungen werden in der Datenbank gespeichert.
+- Kontospeicherung prüft Auswahlwerte und Rechte innerhalb derselben Transaktion.
+  Unbekannte, listenfremde oder neu zugeordnete inaktive Werte werden abgewiesen.
+  Umbenennen aktualisiert vorhandene Zuordnungen atomar; Deaktivieren erhält sie.
+- Version und deutsche Betriebs-/Bedienungsanleitungen aktualisiert.
+
+### Betrieb und Schema
+
+Die explizite Schema-Revision `0007_user_options` legt die leere Tabelle
+`core_user_options` an. **Auf Benutzerwunsch keine Übernahme alter Freitextwerte**,
+keine Vorbelegung und keine fachliche Datenmigration. Neue Listen im Backend
+selbst pflegen. Die vorhandenen Textspalten der Benutzer werden weiterverwendet
+und gegen die Listen validiert; keine Änderung vorhandener Hashes oder Sitzungen.
+Alte Freitexte erscheinen nicht als Auswahl; beim nächsten Speichern im Formular
+gilt die gewählte Option bzw. der leere Wert. Keine automatische Schemaänderung
+beim App-Start. Update über das reguläre Skript mit Sicherung.
+
+Die Kostenstellenliste ist eine organisatorische Benutzerangabe, keine
+Kostenstellen-/Finanzverwaltung eines Fachplugins. Löschen von Listeneinträgen
+ist nicht enthalten; zum Ausblenden deaktivieren.
+
+Die Zusammenfassung nennt interne HTTP-Adressen, deren externe Erreichbarkeit
+nicht geprüft ist. Bei Secure-Cookies muss weiterhin die selbst konfigurierte
+HTTPS-Adresse verwendet werden; die Skripte richten kein TLS ein. Fehlende
+Zusatzinformationen ändern den Erfolg/Fehler des eigentlichen Skripts nicht.
+Details: `script/README.md`, `doku/SETUP.md`, `doku/Core_Auswahllisten.md`.
+
+### Prüfungen
+
+- 132 Tests unter Windows/Python 3.12 bestanden. Neue Nachweise: getrennte
+  Listenformulare, Persistenz nach Neustart, Rechte/CSRF, Feldgrenzen, Duplikate,
+  HTML-Maskierung, atomare Umbenennung und Fehlerspeicherung, inaktive/fremde
+  Auswahlwerte sowie leere Listen nach Upgrade ohne Freitextübernahme.
+- Feldhilfen an allen sichtbaren Eingabefeldern der betroffenen Formulare per
+  HTML-Prüfung nachgewiesen; Übersetzbarkeit mit synthetischem Katalogeintrag geprüft.
+- Skript-Zusammenfassungen mit simulierten Betriebssystembefehlen einschließlich
+  Fehler/Abbruch, IPv4/IPv6, fehlenden Metadaten, optionalem Teststart und Update-
+  Fehlern geprüft. Lesender CLI-Abruf verändert keine Daten und gibt keine Secrets aus.
+- Bash-Syntax aller fünf Shell-Dateien geprüft; 69 lokale Dokumentationslinks und
+  `git diff --check` ohne Befund. Kein eigener ShellCheck-Lauf für diesen Stand.
+- Wheel und sdist 0.1.8 gebaut; separat installiertes Wheel mit Migration,
+  Listenformularen/-speicherung, Core-/Plugin-Templates, CSS und Logo geprüft.
+- Kein echter Debian-/LXC-/systemd-Lauf und keine interaktive Browserabnahme.
+  Nur synthetische Testdaten; keine vollständige Core-Abnahme, kein Commit/Push.
+
+### Commit für GitHub Desktop
+
+```text
+0.1.8: Skript-Zusammenfassungen, Feldhilfen und Benutzer-Auswahllisten ergänzen
+```
+
+```text
+Abschlussübersichten für Installation, Service, Update und Admin-Passwort-Reset ergänzen.
+Lesende Versions-/Admin-Informationen ohne Secrets über maintenance-info bereitstellen.
+Englische übersetzbare Feldhilfen mit aria-describedby einbinden.
+Positionen, Studiengänge und Kostenstellen über eigene Admin-Formulare pflegen.
+Benutzer-Auswahlwerte transaktional prüfen; Umbenennen und Deaktivieren unterstützen.
+Schema 0007_user_options mit leeren Listen anlegen, ohne alte Freitexte zu übernehmen.
+132 Tests, Bash-Syntax, Dokumentationslinks, Paketbau und installiertes Wheel geprüft.
+Deutsche Anleitungen und Funktionsnachweise aktualisieren; Container-/Browserabnahme offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.7 – 2026-09-18
 
 Bereich: englische Ausgangssprache, Übersetzungsschlüssel und Core-Arbeitsplan

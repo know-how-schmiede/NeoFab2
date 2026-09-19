@@ -1,4 +1,4 @@
-# Systemeinstellungen und Darstellung – v0.1.7
+# Systemeinstellungen und Darstellung – v0.1.8
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -11,7 +11,7 @@ werden in späteren Core-Schritten ergänzt.
 
 ## Update und Migration
 
-Voraussetzung: Änderungen zu 0.1.7 manuell in GitHub Desktop committen und
+Voraussetzung: Änderungen zu 0.1.8 manuell in GitHub Desktop committen und
 auf den verwendeten Remote-Branch übertragen. Danach als **root im Container**:
 
 ```bash
@@ -34,7 +34,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl status neofab2.service --no-pager
 ```
 
-Erwartet: Version 0.1.7, `Database and schema ready.`, aktiver Dienst.
+Erwartet: Version 0.1.8, `Database and schema ready.`, aktiver Dienst.
 Die HTTP-Einstellung `SESSION_COOKIE_SECURE = false` im isolierten Testnetz
 und die Plugin-Aktivierung werden durch diesen Schritt nicht verändert.
 

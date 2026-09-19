@@ -135,6 +135,8 @@ def create_user(app, email, display_name, password, role="user", *, actor_id=Non
                     raise ValueError("An administrator already exists. Use reset-admin-password if you cannot sign in.")
             else:
                 require_actor(connection, actor_id)
+            from .user_options import validate_choices
+            validate_choices(connection, extra)
             result = connection.execute(users.insert().values(email=email, display_name=display_name,
                 password_hash=password_hash, role=role, active=active, created_at=int(time.time()),
                 locale=locale, **extra))
@@ -155,9 +157,11 @@ def edit_user(app, user_id, email, display_name, role, active, *, actor_id, deta
     try:
         with write_transaction(app) as connection:
             require_actor(connection, actor_id)
-            target = get_user(connection, user_id)
+            target = get_admin_user(connection, user_id)
             if not target:
                 raise ValueError("User not found.")
+            from .user_options import validate_choices
+            validate_choices(connection, extra, target)
             if target["active"] and target["role"] == "admin" and (not active or role != "admin"):
                 other = connection.execute(select(users.c.id).where(
                     users.c.role == "admin", users.c.active.is_(True), users.c.id != user_id)).first()

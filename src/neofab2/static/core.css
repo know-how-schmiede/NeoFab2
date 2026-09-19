@@ -38,3 +38,4 @@ th, td { padding: 16px 12px; border-bottom: 1px solid var(--border); overflow-wr
 textarea { resize: vertical; min-height: 130px; }
 .multiline { white-space: pre-wrap; overflow-wrap: anywhere; }
 h1, header span { overflow-wrap: anywhere; }
+.field-help { display: block; color: var(--muted); font-size: .875rem; line-height: 1.5; }

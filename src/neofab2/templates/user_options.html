@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ _(kinds[kind]) }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _(kinds[kind]) }}</h1>
+<p>{{ _('Manage the choices available in user accounts. Renaming updates existing assignments; inactive options remain on existing accounts but cannot be assigned to another account.') }}</p>
+<nav aria-label="{{ _('User field options') }}">
+  {% for key, label in kinds.items() %}<a href="{{ url_for('user_options.manage', kind=key) }}" {% if key == kind %}aria-current="page"{% endif %}>{{ _(label) }}</a>{% endfor %}
+</nav>
+<h2>{{ _('Edit option' if editing else 'Add option') }}</h2>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="name">{{ _('Name') }}</label>
+  <input id="name" name="name" value="{{ entry.name }}" maxlength="{{ limit }}" required aria-describedby="name-help">
+  <small id="name-help" class="field-help">{{ _('Use a clear, unique name for this list. Maximum {limit} characters.', limit=limit) }}</small>
+  <input type="hidden" name="active" value="off">
+  <label class="checkbox"><input id="active" name="active" type="checkbox" value="on" {% if entry.active %}checked{% endif %} aria-describedby="active-help">{{ _('Active') }}</label>
+  <small id="active-help" class="field-help">{{ _('Clear this checkbox to hide the option from new selections without removing existing assignments.') }}</small>
+  <button type="submit">{{ _('Save option') }}</button>
+</form>
+<div class="table-scroll"><table>
+  <caption>{{ _('Saved options') }}</caption>
+  <thead><tr><th scope="col">{{ _('Name') }}</th><th scope="col">{{ _('Status') }}</th><th scope="col">{{ _('Action') }}</th></tr></thead>
+  <tbody>{% for option in entries %}<tr><td>{{ option.name }}</td><td>{{ _('Active' if option.active else 'Inactive') }}</td><td><a href="{{ url_for('user_options.manage', kind=kind, option_id=option.id) }}">{{ _('Edit') }}<span class="sr-only">: {{ option.name }}</span></a></td></tr>{% else %}<tr><td colspan="3">{{ _('No options yet. Add an option above before selecting it in a user account.') }}</td></tr>{% endfor %}</tbody>
+</table></div>
+<p><a href="{{ url_for('accounts.user_list') }}">{{ _('Back to user list') }}</a></p>
+{% endblock %}

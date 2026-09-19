@@ -6,16 +6,20 @@
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label for="site_name">{{ _("Workshop name") }}</label>
-  <input id="site_name" name="site_name" value="{{ values.site_name }}" maxlength="80" required>
+  <input id="site_name" aria-describedby="site_name-help" name="site_name" value="{{ values.site_name }}" maxlength="80" required>
+  <small id="site_name-help" class="field-help">{{ _("Use the public workshop name shown on the home page. Maximum 80 characters.") }}</small>
   <label for="site_tagline">{{ _("Short description") }}</label>
-  <input id="site_tagline" name="site_tagline" value="{{ values.site_tagline }}" maxlength="160" required>
+  <input id="site_tagline" aria-describedby="site_tagline-help" name="site_tagline" value="{{ values.site_tagline }}" maxlength="160" required>
+  <small id="site_tagline-help" class="field-help">{{ _("Write a short public description for the page header. Maximum 160 characters.") }}</small>
   <label for="welcome_text">{{ _("Welcome text") }}</label>
-  <textarea id="welcome_text" name="welcome_text" rows="6" maxlength="2000" required>{{ values.welcome_text }}</textarea>
+  <textarea id="welcome_text" aria-describedby="welcome_text-help" name="welcome_text" rows="6" maxlength="2000" required>{{ values.welcome_text }}</textarea>
+  <small id="welcome_text-help" class="field-help">{{ _("Write a public welcome message. Plain text only, up to 2000 characters.") }}</small>
   <label for="default_theme">{{ _("Default appearance") }}</label>
-  <select id="default_theme" name="default_theme">
+  <select id="default_theme" aria-describedby="default_theme-help" name="default_theme">
     <option value="dark" {% if values.default_theme == 'dark' %}selected{% endif %}>{{ _("Dark") }}</option>
     <option value="light" {% if values.default_theme == 'light' %}selected{% endif %}>{{ _("Light") }}</option>
   </select>
+  <small id="default_theme-help" class="field-help">{{ _("Choose the appearance for guests and accounts using the system default.") }}</small>
   <button type="submit">{{ _("Save settings") }}</button>
 </form>
 {% endblock %}

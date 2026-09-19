@@ -1,4 +1,4 @@
-# Benutzer anlegen und bearbeiten – v0.1.7
+# Benutzer anlegen und bearbeiten – v0.1.8
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -18,10 +18,15 @@ Vorlage; der bisherige Anzeigename bleibt für bestehende Konten erhalten.
 | Anrede | Optionaler Freitext, höchstens 50 Zeichen |
 | Vorname / Nachname | Jeweils optional, höchstens 100 Zeichen |
 | Adresse | Optionaler Freitext, höchstens 500 Zeichen |
-| Position | Optionaler Freitext, höchstens 150 Zeichen |
-| Kostenstelle | Optionale Benutzerangabe, höchstens 100 Zeichen; keine Kostenstellen-Stammdatenverwaltung |
-| Studiengang | Optionaler Freitext, höchstens 150 Zeichen |
+| Position | Optionale Auswahl aus der Liste Positions; Namen höchstens 150 Zeichen |
+| Kostenstelle | Optionale Auswahl aus Cost centers; Namen höchstens 100 Zeichen; reine organisatorische Benutzerangabe, keine Finanzverwaltung |
+| Studiengang | Optionale Auswahl aus Study programs; Namen höchstens 150 Zeichen |
 | Notiz | Optional, höchstens 2000 Zeichen; nur im Admin-Formular verfügbar |
+
+Die Listen werden unter **User management → Positions / Study programs / Cost centers**
+über eigene Formulare gepflegt und starten leer. Es erfolgt keine Übernahme alter
+Freitextwerte. Englische Feldhilfen sind bereits übersetzbar eingebunden.
+[Bedienung, Speicherung und Fehlerhilfe](Core_Auswahllisten.md).
 
 Neue Konten benötigen ein Startpasswort mit 8–128 Zeichen und dessen Wiederholung.
 Beim Bearbeiten sind **Neues Passwort** und Wiederholung optional. Beide leer:

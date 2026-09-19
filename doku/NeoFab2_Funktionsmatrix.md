@@ -187,7 +187,7 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 
 | Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
 |---|---|---|---|---|
-| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.7 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
+| X06 | geprüft | `src/neofab2/version.py`, `pyproject.toml`, `README.md`, `doku/Version_Timeline.md` | Version 0.1.8 in Paket, CLI und Oberfläche; Commit-Texte vorhanden | Kein Commit/Push ausgeführt |
 | X05 | in Arbeit | `doku/SETUP.md`, `doku/operations.md`, `script/README.md` | Links und Übereinstimmung mit Skripten geprüft | Echte Debian-/LXC-Erprobung offen |
 | S01 | in Arbeit | `src/neofab2/core/routes.py`, `core/accounts.py`, `core/plugins.py`, `templates/`, `static/core.css` | Startseite, Login, Profil, Benutzerverwaltung und rechteabhängige Core-/Plugin-Navigation per HTTP-Test geprüft | Infoseite und interaktive visuelle Browserprüfung offen |
 | S12 | in Arbeit | `src/neofab2/version.py`, `templates/base.html`, `templates/plugins.html` | Core-Versionsanzeige, Paketmetadaten und separate Plugin-Versionen geprüft | Weiterer Ausbau der Systeminformationen offen |
@@ -274,6 +274,16 @@ Zulässige Statuswerte: **geplant**, **in Arbeit**, **implementiert**, **geprüf
 | N01, U06, S10, D01–D07, O01, O10 | geplant (Präzisierung) | `doku/Plugin_Umsetzungsplan.md` | Rollenmatrix, API-1-Lücke, gemeinsame STL-Komponente, MVP-Grenzen und Abnahmekriterien dokumentiert | `staff` bleibt gespeicherter Rollenwert; konkrete Kosten-/Status-/Formatregeln offen; Core-Abnahme bleibt Pflicht |
 | N09 | geplant | `doku/Plugin_Umsetzungsplan.md` | PrintFleet als Anschlussausbau mit lesendem Statusrückkanal abgegrenzt | Keine geprüfte API, kein Adapter und keine echte Druckersteuerung implementiert |
 | N02 | geplant (nachrangig) | `doku/NeoFab2_Projektbeschreibung.md`, `doku/Plugin_Umsetzungsplan.md` | Workshops bleiben erhalten; 3D-Druck ersetzt ihre frühere Erstpriorität | Weitere Reihenfolge offen; Laser/Scan nur Modulideen |
+
+### Betriebsskripte, Feldhilfen und Auswahllisten 0.1.8 (19.09.2026)
+
+| Funktions-ID | Status | Zielpfad / Arbeitspaket | Prüfung und Ergebnis | Abweichung / offene Punkte |
+|---|---|---|---|---|
+| X01–X04 | geprüft (Teilumfang) | `script/common.sh`, `setupNeoFab`, `setupNeoFabService`, `upDateNeoFabService`, `resetAdminPassword`, `src/neofab2/cli.py`, `tests/integration/test_script_summaries.py`, `test_update_script.py`, `test_setup_teststart.py` | Zusammenfassungen für Erfolg/Abbruch/Fehler, Exit-Code-Erhalt, optionalen Test, IPv4/IPv6, Sicherungsstatus und lesende Admin-/Versionsinformationen ohne Secrets geprüft | Betriebssystembefehle simuliert; echter Debian-/LXC-/systemd-Lauf bleibt offen |
+| U05, S04 | geprüft (Teilumfang) | `src/neofab2/core/user_options.py`, `core/users.py`, `core/accounts.py`, `templates/user_options.html`, `templates/user_form.html`, `tests/core/test_user_options.py` | Eigene Formulare für drei Listen; Persistenz, Rechte/CSRF, Grenzen, Duplikate, Maskierung, atomare Umbenennung und Auswahlvalidierung geprüft | Keine Freitextübernahme auf Benutzerwunsch; Kostenstellen nur organisatorische Benutzerangaben, keine O13-Finanzfunktion; keine Listen-Löschung |
+| S01, S02, U05, U07 | geprüft (Teilumfang) | `src/neofab2/templates/`, `core/accounts.py`, `static/core.css`, `tests/core/test_user_options.py` | Englische Hilfen an sichtbaren Eingaben, eindeutige IDs und `aria-describedby` sowie spätere Übersetzbarkeit geprüft | DE-/FR-Übersetzungen der neuen Texte und interaktive visuelle Abnahme offen |
+| X07 | geprüft (Teilumfang) | `migrations/versions/0007_user_options.py`, `src/neofab2/database.py`, `tests/core/test_user_options.py` | Explizites Upgrade von 0006, Wiederholung, leere Listen ohne Datenübernahme und Readiness-Prüfung auf neue Tabelle bestanden | Nur Testdaten; kein produktives Schema ausgeführt |
+| X05, X06, S12 | geprüft (Teilumfang) | `doku/Core_Auswahllisten.md`, `doku/Benutzerverwaltung.md`, `doku/SETUP.md`, `script/README.md`, `doku/Version_Timeline.md`, `src/neofab2/version.py`, `tests/wheel_smoke.py` | 132 Tests, Bash-Syntax, 69 Dokumentationslinks, Wheel/sdist und installiertes Wheel geprüft; Version 0.1.8 | Kein Commit/Push; keine vollständige Core-Abnahme |
 
 Alle übrigen IDs bleiben geplant. U02–U04 (Registrierung/E-Mail-Verfahren),
 Benutzerlöschung, weitere Sprachabdeckung und Plugin-Dienste sind offen.

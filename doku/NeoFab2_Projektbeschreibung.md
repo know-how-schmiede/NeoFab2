@@ -117,7 +117,7 @@ Anwendungsstart und Schemaänderungen werden getrennt. Versionierte Migrationen,
 ### Funktionsumfang
 
 - Anmeldung und Abmeldung, sichere Sitzungen und konfigurierbare Inaktivitätsgrenze.
-- Benutzerverwaltung, Profile, Aktivieren/Deaktivieren, kontrollierter Administrator-Erstzugang.
+- Benutzerverwaltung, Profile, Aktivieren/Deaktivieren, kontrollierter Administrator-Erstzugang. Seit 0.1.8 eigene Core-Auswahllisten für Position, Studiengang und organisatorische Kostenstelle; keine Finanz-/Fachplugin-Abhängigkeit. [Bedienung](Core_Auswahllisten.md).
 - Konfigurierbare Registrierung, E-Mail-Aktivierung und Passwort-Reset.
 - Rollen als Bündel von Berechtigungen; Ausgangsrollen Benutzer, Mitarbeiter und Administrator. Bisherige Rollenwerte beim Import explizit zuordnen.
 - Zentrale Rechteprüfung auch auf Serverseite. Plugins deklarieren Rechte wie `workshops.manage_own` und `workshops.manage_all`; Objektbesitz wird zusätzlich geprüft.

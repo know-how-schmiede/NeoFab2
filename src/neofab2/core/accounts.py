@@ -14,11 +14,27 @@ bp = Blueprint("accounts", __name__)
 
 @bp.app_context_processor
 def user_form_fields():
-    return {"detail_fields": DETAIL_FIELDS}
+    return {"detail_fields": DETAIL_FIELDS, "detail_help": {
+        "salutation": "Optional form of address, such as Dr. Maximum 50 characters.",
+        "first_name": "Optional given name. Maximum 100 characters.",
+        "last_name": "Optional family name. Maximum 100 characters.",
+        "address": "Optional contact address. Maximum 500 characters.",
+        "position": "Select the person's organizational position, or leave this field empty.",
+        "study_program": "Select the person's study program, or leave this field empty if not applicable.",
+        "cost_center": "Select the assigned cost center, or leave this field empty if none is assigned.",
+        "note": "Internal note for administrators only. Do not enter passwords or other secrets. Maximum 2000 characters.",
+    }}
 
 
 def submitted_details():
     return {key: request.form[key] for key in DETAIL_FIELDS if key in request.form}
+
+
+def render_user_form(**context):
+    from .user_options import KINDS, list_options
+    with current_app.extensions["neofab2_db"].connect() as connection:
+        choices = list_options(connection)
+    return render_template("user_form.html", choices=choices, choice_kinds=KINDS, **context)
 
 
 def submitted_active(default):
@@ -109,10 +125,10 @@ def user_new():
                         request.form.get("password", ""), request.form.get("role", "user"), actor_id=g.current_user["id"],
                         details=submitted_details(), locale=request.form.get("locale", "en"), active=submitted_active(True))
         except ValueError as error:
-            return render_template("user_form.html", entry=request.form, creating=True, roles=ROLES, error=str(error)), 400
+            return render_user_form(entry=request.form, creating=True, roles=ROLES, error=str(error)), 400
         flash("User created. Provide the initial password personally through a secure channel.")
         return redirect(url_for("accounts.user_list"))
-    return render_template("user_form.html", entry={"role": "user", "locale": "en", "active": True}, creating=True, roles=ROLES)
+    return render_user_form(entry={"role": "user", "locale": "en", "active": True}, creating=True, roles=ROLES)
 
 
 @bp.route("/admin/users/<int:user_id>/edit", methods=["GET", "POST"])
@@ -134,7 +150,7 @@ def user_edit(user_id):
             safe_fields = set(DETAIL_FIELDS) | {"display_name", "email", "role", "locale"}
             submitted = {**entry, **{key: request.form[key] for key in safe_fields if key in request.form},
                          "active": "on" in request.form.getlist("active")}
-            return render_template("user_form.html", entry=submitted, creating=False, roles=ROLES, error=str(error)), 400
+            return render_user_form(entry=submitted, creating=False, roles=ROLES, error=str(error)), 400
         flash("User saved. Changes to credentials, role or account status end existing sessions.")
         return redirect(url_for("accounts.user_list"))
-    return render_template("user_form.html", entry=entry, creating=False, roles=ROLES)
+    return render_user_form(entry=entry, creating=False, roles=ROLES)

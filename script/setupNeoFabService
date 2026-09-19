@@ -3,6 +3,7 @@ set -Eeuo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=script/common.sh
 source "$SCRIPT_DIR/common.sh"
+start_summary 'Service-Einrichtung'
 require_root
 require_install
 read_port
@@ -49,3 +50,4 @@ if ! wait_ready; then
   systemctl stop "$SERVICE"
   die 'Service nach fehlgeschlagenem Start angehalten.'
 fi
+SUMMARY_RESULT='Service gestartet und Bereitschaft lokal geprüft.'

@@ -16,7 +16,7 @@ def test_update_failure_never_reports_success(tmp_path, failure):
     scripts = Path(__file__).resolve().parents[2] / "script"
     shutil.copy(scripts / "upDateNeoFabService", tmp_path)
     # All OS-affecting commands are functions; only mktemp writes under tmp_path.
-    (tmp_path / "common.sh").write_text(r'''
+    (tmp_path / "common.sh").write_text((scripts / "common.sh").read_text(encoding="utf-8") + r'''
 set -Eeuo pipefail
 APP_DIR="$TEST_ROOT/app"
 CONFIG_FILE="$TEST_ROOT/config.toml"
@@ -63,4 +63,7 @@ wait_ready() { [[ $FAIL_STEP != ready ]]; }
         if failure in {"dirty", "fetch"}:
             assert "systemctl stop" not in log
         else:
-            assert log.strip().endswith("systemctl stop neofab2.service")
+            actions = [line for line in log.splitlines() if not line.startswith("systemctl is-active")]
+            assert actions[-1] == "systemctl stop neofab2.service"
+        assert "ERGEBNIS: FEHLER / ABBRUCH" in result.stdout
+    assert "NEOFAB2" in result.stdout and "ZUSAMMENFASSUNG" in result.stdout

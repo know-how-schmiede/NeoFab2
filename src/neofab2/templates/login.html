@@ -5,17 +5,20 @@
 <p>{{ _('Contact the workshop administration for an account.') }}</p>
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="email">{{ _('Email') }}</label><input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
-  <label for="password">{{ _('Password') }}</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+  <label for="email">{{ _('Email') }}</label><input id="email" aria-describedby="email-help" name="email" type="email" autocomplete="username" maxlength="254" required>
+  <small id="email-help" class="field-help">{{ _("Enter the email address used to sign in to this account.") }}</small>
+  <label for="password">{{ _('Password') }}</label><input id="password" aria-describedby="password-help" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+  <small id="password-help" class="field-help">{{ _("Enter your account password. Passwords are case-sensitive.") }}</small>
   <button type="submit">{{ _('Sign in') }}</button>
 </form>
 <p>{{ _('Forgot your password? Please contact the administration.') }}</p>
 <form method="post" action="{{ url_for('language.choose_language') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label for="locale">{{ _('Language') }}</label>
-  <select id="locale" name="locale">
+  <select id="locale" aria-describedby="locale-help" name="locale">
     {% for key, label in languages.items() %}<option value="{{ key }}" {% if locale == key %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}
   </select>
+  <small id="locale-help" class="field-help">{{ _("Choose the language for this sign-in page. Your saved account language applies after sign-in.") }}</small>
   <button type="submit">{{ _('Apply language') }}</button>
 </form>
 {% endblock %}

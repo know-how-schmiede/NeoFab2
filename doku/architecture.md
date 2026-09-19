@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.7
+# Architektur – Stand v0.1.8
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -123,3 +123,13 @@ Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.7.
 - [Debian 13: Python 3.13](https://packages.debian.org/trixie/python3.13)
 - [Flask-WTF: CSRF](https://flask-wtf.readthedocs.io/en/latest/api/)
 - [Werkzeug: Passwort-Hashing](https://werkzeug.palletsprojects.com/en/stable/utils/)
+
+## Benutzer-Auswahllisten 0.1.8
+
+`core/user_options.py` kapselt die drei getrennt gepflegten Listen in
+`core_user_options`. `0007_user_options` legt diese Tabelle leer an; keine
+Übernahme bisheriger Freitexte. Benutzerzuordnungen bleiben in den bestehenden
+Textspalten, werden bei Kontospeicherung aber innerhalb derselben Transaktion
+gegen den Katalog geprüft. Umbenennen aktualisiert die Zuordnungen atomar.
+Die Kostenstellenliste ist Benutzer-Metadatenpflege, keine O13-Finanzfunktion.
+[Details und Grenzen](Core_Auswahllisten.md).

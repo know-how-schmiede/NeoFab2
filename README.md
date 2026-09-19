@@ -2,7 +2,7 @@
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.7 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.8 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche
@@ -10,10 +10,10 @@ Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 Version 0.1.5 ergänzt Plugin-Aktivierung im Backend mit Neustarthinweis und
 ein zweites synthetisches Testplugin zur Prüfung von Abhängigkeiten.
 
-**Neu in 0.1.7:** Englisch als Ausgangssprache, Standard für neue Konten und
-Fallback. Oberfläche einschließlich Administration und Testplugins sowie CLI
-verwenden englische Texte. Deutsch ist eine Übersetzungssprache; vorhandene
-Sprachpräferenzen bleiben erhalten. [Nächste Core-Schritte](doku/Core_Naechste_Schritte.md).
+**Neu in 0.1.8:** Deutliche Abschlussübersichten der Betriebsskripte, englische
+übersetzbare Feldhilfen und eigene Backend-Formulare für Positionen, Studiengänge
+und Kostenstellen als Benutzer-Auswahllisten. Keine Übernahme alter Freitextwerte.
+[Nächste Core-Schritte](doku/Core_Naechste_Schritte.md).
 
 NeoFab2 ist eine modulare Webanwendung für Werkstätten und Makerspaces. Ein schlankes Core-System verwaltet Benutzer, Rechte und Systemfunktionen. Plugins ergänzen Workshops, 3D-Druck, Plotten, Transferdruck, CNC/Fräsen und Beschaffung.
 
@@ -39,3 +39,4 @@ die vollständige LXC-/systemd-Abnahme steht noch aus.
 - [Systemeinstellungen und Darstellung](doku/Core_Einstellungen.md)
 - [Sprachwahl](doku/Core_Sprachen.md)
 - [Benutzerformulare und Zusatzfelder](doku/Benutzerverwaltung.md)
+- [Auswahllisten und Feldhilfen](doku/Core_Auswahllisten.md)

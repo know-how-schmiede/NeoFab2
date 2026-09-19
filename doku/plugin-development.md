@@ -168,4 +168,4 @@ sind noch nicht Teil von API 1. Die vollständige Core-Abnahme steht aus.
 
 Ab 0.1.7 sind Plugin-Namen, Testseiten und CLI-Meldungen im Quelltext englisch.
 Die Oberfläche verwendet englische Übersetzungsschlüssel und Englisch als Fallback.
-Die zentrale Core-Version ist 0.1.7; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
+Die zentrale Core-Version ist 0.1.8; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
