@@ -41,6 +41,7 @@ class Plugin:
     tasks: tuple[tuple[str, Callable], ...] = ()
     permissions: tuple[Permission, ...] = ()
     files: FilePolicy | None = None
+    mail_permission: str | None = None
 
 
 def has_permission(user, permission):

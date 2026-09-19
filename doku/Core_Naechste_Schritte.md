@@ -1,4 +1,4 @@
-# Nächste Schritte für das Core-System – Stand 0.1.11
+# Nächste Schritte für das Core-System – Stand 0.1.12
 
 Stand: 19.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn
@@ -7,13 +7,19 @@ und der [Umsetzungsnachweis](NeoFab2_Funktionsmatrix.md).
 
 Zusätzlich auf Benutzerauftrag in 0.1.11: [CheckDesign 0.1.0](CheckDesign.md)
 als technische Designgalerie für Mitarbeiter/Admins. Die Galerie unterstützt die
-spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 bleibt der nächste
-offene Schritt dieser Liste.
+spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 wurde in 0.1.12
+umgesetzt; Paket 2 ist der nächste offene Schritt dieser Liste.
+
+Planungsnachtrag: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
+beschreibt eigene Plugin-Verzeichnisse, Mindestzugriff, ZIP-Bereitstellung und
+Deinstallation. **Noch nicht implementieren**; Benutzerauftrag ist ausschließlich
+Dokumentation. Die zusätzlichen Pakete
+P1–P5 werden unten nach Abhängigkeiten eingeordnet, ohne Fachplugins freizugeben.
 
 | Reihenfolge | Geplanter Umfang / Funktions-IDs | Erforderlicher Nachweis |
 |---|---|---|
 | 0 – umgesetzt in 0.1.10 | Plugin-Vertrag, Rollen und minimale Datei-Schnittstellen vorziehen (N01, U06, S10) | Mehrere Plugin-Rechte, Besitzerprüfung, Navigation, Aktivierung/Deaktivierung und sichere Upload-/Download-Zugriffe mit Testplugins automatisiert geprüft. `employee` entspricht `staff`. Minimaler Dateidienst: kleine Anhänge in SQLite, Testplugin nur TXT bis 256 KiB; Details und Grenzen: [Dateien und Rechte](Core_Dateien_und_Rechte.md). |
-| 1 | SMTP-Einstellungen, Testversand, persistente Versandaufträge und minimaler Worker/CLI (S05, S06, N05, N01) | Synthetischer SMTP-Ausfall verliert keine Aufträge; Wiederholung, Neustart, Zustellstatus, begrenzte Versuche und deaktivierte Plugin-Aufgaben prüfen. Geheimnisse nicht ausgeben. Keine Zusage exakt einmaliger SMTP-Zustellung. |
+| 1 – umgesetzt in 0.1.12 | SMTP-Einstellungen, Testversand, persistente Versandaufträge und minimaler Worker/CLI (S05, S06, N05, N01) | Synthetische SMTP-Ausfälle, Wiederholung, Neustart, Status, begrenzte Versuche, Geheimnisschutz, parallele Worker und Plugin-Pause automatisiert geprüft. [Betrieb und Grenzen](Core_SMTP_und_Versand.md). Echte SMTP-/Postfach- und LXC-Prüfung bleiben offen; keine Zusage exakt einmaliger SMTP-Zustellung. |
 | 2 | Registrierung, E-Mail-Aktivierung und Self-Service-Passwort-Reset (U02–U04, S06) | Registrierung abschaltbar, Domain-Regeln, abgelaufene/verbrauchte Tokens, Kontostatus und Sitzungswiderruf prüfen. Registrierungsregeln vor Freischaltung festlegen. |
 | 3 | Audit-Logs und Betriebsstatus (S09, S12, N01) | Rechte, sicherheitsrelevante Ereignisse, Aufbewahrung und Fehlerdarstellung prüfen; keine Passwörter, Tokens oder SMTP-Secrets protokollieren. |
 | 4 | Core-Oberfläche und Einstellungen vervollständigen (S01–S04, S08, U06/U07) | Infoseite, sichere Impressums-/Datenschutzinhalte, Zeitzonen einschließlich Sommerzeit, Einstellungsimport/-export und Rollenpflege prüfen. Deutsche/französische Kataloge und Plugin-Übersetzungsschnittstelle ergänzen; Englisch bleibt Ausgangssprache. |
@@ -21,10 +27,25 @@ offene Schritt dieser Liste.
 | 6 | Benutzerimport mit Vorschau und Ergebnisbericht (U09, N04, U06) | Nur synthetische Daten: wiederholbarer Import ohne Duplikate, Rollen-/Statuszuordnung, E-Mail-Kollisionen und Hash-Kompatibilität. Altrollen und gelöschte Konten vor Umsetzung verbindlich behandeln. Keine Übernahme alter Tokens/Sitzungen. |
 | 7 | Isolierte Betriebsprüfung und vollständige Core-Abnahme (X01–X07, alle Core-IDs) | Saubere Debian-/LXC-Installation, systemd, Update vom vorherigen Schema, Worker, Notfall-Reset sowie vollständige Sicherung/Wiederherstellung nachweisen. Browserprüfung in Hell/Dunkel und schmaler Ansicht; direkte HTTP-Rechteprüfungen. Alle zehn Abnahmekriterien einzeln mit Beleg abschließen. |
 
-Paket 0 wurde in 0.1.10 umgesetzt. Als nächstes folgt Paket 1 mit SMTP,
-Testversand, persistenten Versandaufträgen und minimalem Worker/CLI.
-Der Versanddienst bleibt Voraussetzung
-für die offenen Aktivierungs- und Reset-Verfahren. Paket 5 ergänzt die weitergehenden
+### Zusätzlich eingeplante Plugin-Pakete – nur Planung
+
+| Einordnung | Paket / IDs | Umsetzung und erforderlicher Nachweis |
+|---|---|---|
+| Im Rahmen von Paket 5, vor dessen Abschluss | P1 – eigene Plugin-Verzeichnisse (N01, S10, X03/X05) | Code, Templates, Übersetzungen und eigene Ressourcen je Plugin bündeln; gemeinsame Core-Ressourcen weiterverwenden. Drei Testplugins, Paketierung, geschützte PDF-/Bild-/Icon-Zugriffe und unveränderte IDs/URLs prüfen. |
+| Nach P1 und Audit-Grundlage aus Paket 3, im Rahmen von Paket 5 | P2 – Mindestzugriff (U06, S01, S09, N01) | Admin-Auswahl Benutzer/Mitarbeiter/Admin, persistent und pro Anfrage wirksam; Einstiegsrecht von Einzel-/Besitzerrechten trennen. Rollenmatrix, Direktzugriffe, Ressourcen, mehrere Prozesse und sichere Bestandsübernahme prüfen. |
+| Nach P1/P2, zunächst technischer Ausbau mit Testpaketen | P3 – Paket-/Migrationsvertrag (N01, X03/X07) | Manifest, zentrale Installationshistorie, Kompatibilität, Versions-/ID-Konflikte, modularer Migrationsvertrag und Core-Recovery ohne Plugin-Code. Vertrauensmodell und endgültige Pfade festlegen. |
+| Nach P3 und geprüfter Sicherung/Wiederherstellung; optionale Erweiterung nach Basis-Core-Abnahme | P4 – ZIP-Bereitstellung (N01, S09/S10, X03/X07) | Admin-Upload in Staging, codefreie Prüfung, kontrollierter lokaler Installer, gesonderte Aktivierung/Neustart. Archivangriffe, Abbruch, Parallelität, Update/Recovery prüfen. Noch kein Pflichtpunkt der ursprünglichen Core-Abnahme. |
+| Nach P3/P4 und vollständigem Ressourcenvertrag; spätere Erweiterung | P5 – Deinstallation (N01, N06 als Vertrag, X03/X07) | Abhängigkeiten/Jobs/Prozesse prüfen, Paket entfernen, Daten standardmäßig erhalten; Wiederinstallation/Restore nachweisen. Endgültige Datenlöschung separat entscheiden und beauftragen. |
+
+Alle P-Pakete sind **geplant**, nicht begonnen. Details und eindeutige
+Prüfkriterien: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md).
+P3 ist eine technische Voraussetzung für P4/P5, keine automatische Freigabe
+zur Paketinstallation oder Erweiterung der zehn ursprünglichen Abnahmekriterien.
+
+Paket 0 wurde in 0.1.10, Paket 1 in 0.1.12 umgesetzt. Als nächstes folgt
+Paket 2 mit Registrierung, E-Mail-Aktivierung und Self-Service-Passwort-Reset.
+Der vorhandene Versanddienst bildet die technische Grundlage;
+Registrierungs- und Domain-Regeln sind vor Freischaltung festzulegen. Paket 5 ergänzt die weitergehenden
 Dienstverträge; die übrigen Core-Abnahmekriterien werden nicht übersprungen. Es wird dabei kein neues Fachmodul
 eingeführt. Dienste gehören nach `src/neofab2/services/`, Core-Administration
 nach `src/neofab2/core/` und öffentliche Verträge nach `src/neofab2/plugin_api/`.

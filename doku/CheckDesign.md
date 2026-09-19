@@ -1,4 +1,4 @@
-# CheckDesign 0.1.0 – Designprüfung in NeoFab2 0.1.11
+# CheckDesign 0.1.0 – Designprüfung in NeoFab2 0.1.12
 
 CheckDesign ist ein ausdrücklich beauftragtes technisches Core-Testplugin zur
 Sichtprüfung der Oberfläche, kein Fachplugin. Kennung: `checkdesign`, Plugin-API 1,
@@ -7,7 +7,7 @@ Die [Gestaltungsregeln](UI_Gestaltungsregeln.md) bleiben die gemeinsame Grundlag
 
 ## Aktivieren und öffnen
 
-Ausführungsbenutzer: **NeoFab2-Administrator**. Nach Update auf 0.1.11 unter
+Ausführungsbenutzer: **NeoFab2-Administrator**. Nach Update auf mindestens 0.1.11 unter
 **Administration → Plugins** bei **CheckDesign** die Aktivierung vormerken.
 Anschließend alle Anwendungsprozesse kontrolliert neu starten; siehe
 [Plugin-Betrieb](plugin-development.md). Als **root im NeoFab2-Testcontainer**
@@ -18,9 +18,9 @@ systemctl restart neofab2.service
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
 ```
 
-Erwartet: NeoFab2 **0.1.11**, `Database and schema ready.` und CheckDesign in
-der laufenden Plugin-Auswahl aktiv. Es ist keine neue Schema-Revision nötig;
-der Stand bleibt `0008_core_files`.
+Erwartet: NeoFab2 **0.1.12**, `Database and schema ready.` und CheckDesign in
+der laufenden Plugin-Auswahl aktiv. CheckDesign selbst benötigt keine neue
+Schema-Revision; NeoFab2 0.1.12 ergänzt für den Versanddienst `0009_mail_outbox`.
 
 Danach erscheint **CheckDesign** als eigener Hauptmenüpunkt für angemeldete
 **Mitarbeiter (`staff`) und Administratoren (`admin`)**. Die Adresse lautet

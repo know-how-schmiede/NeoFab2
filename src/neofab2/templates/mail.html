@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ _('SMTP & mail queue') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('SMTP & mail queue') }}</h1>
+<a class="button secondary" href="{{ url_for('settings.edit') }}">{{ icon('settings') }} {{ _('System settings') }}</a>
+<p>{{ _('Messages are stored and sent by the worker. Saving settings does not send an email.') }}</p>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="save">
+  <label for="enabled"><input id="enabled" type="checkbox" name="enabled" {% if values.enabled %}checked{% endif %}> {{ _('Enable sending') }}</label>
+  <label for="host">{{ _('SMTP host') }}</label>
+  <input id="host" name="host" value="{{ values.host }}" maxlength="254" aria-describedby="host-help">
+  <small id="host-help" class="field-help">{{ _('Server name without URL or credentials, for example smtp.example.org.') }}</small>
+  <label for="port">Port</label><input id="port" name="port" type="number" min="1" max="65535" value="{{ values.port }}" required>
+  <label for="mode">{{ _('Transport') }}</label>
+  <select id="mode" name="mode" aria-describedby="mode-help">
+    {% for value, label in [('starttls', 'STARTTLS (usually port 587)'), ('ssl', 'TLS (usually port 465)'), ('plain', 'Unencrypted, without authentication')] %}
+    <option value="{{ value }}" {% if values.mode == value %}selected{% endif %}>{{ _(label) }}</option>
+    {% endfor %}
+  </select>
+  <small id="mode-help" class="field-help">{{ _('TLS verifies the server certificate. Unencrypted transport is intended only for a trusted local relay.') }}</small>
+  <label for="sender">{{ _('Sender address') }}</label><input id="sender" name="sender" type="email" value="{{ values.sender }}" maxlength="254">
+  <label for="username">{{ _('SMTP username') }}</label><input id="username" name="username" value="{{ values.username }}" maxlength="254" autocomplete="off" aria-describedby="password-help">
+  <small id="password-help" class="field-help">{{ _('Optional. Store the password as SMTP_PASSWORD in the protected server configuration; then restart the web service and worker. Password configured:') }} {{ _('Yes') if password_present else _('No') }}.</small>
+  <button type="submit">{{ icon('save') }} {{ _('Save SMTP settings') }}</button>
+</form>
+<h2>{{ _('Test email') }}</h2>
+{% if not values.enabled %}<p role="status">{{ _('Sending is paused. Jobs remain stored.') }}</p>{% endif %}
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="test">
+  <input type="hidden" name="request_key" value="{{ request_key }}">
+  <label for="recipient">{{ _('Test recipient') }}</label><input id="recipient" name="recipient" type="email" required maxlength="254" aria-describedby="test-help">
+  <small id="test-help" class="field-help">{{ _('Creates a job with a fixed test message. Start the worker separately.') }}</small>
+  <button type="submit">{{ icon('mail') }} {{ _('Queue test email') }}</button>
+</form>
+<h2>{{ _('Mail queue') }}</h2>
+<p>{{ _('Accepted means the SMTP server has taken over the message; it is not a receipt from the recipient. Times are UTC.') }}</p>
+{% set labels = {'queued': 'Queued', 'sending': 'Sending', 'retry': 'Retry scheduled', 'sent': 'Accepted', 'failed': 'Failed', 'uncertain': 'Uncertain'} %}
+{% set reasons = {'worker_interrupted': 'Worker interrupted', 'delivery_unknown': 'SMTP result unknown', 'credentials_missing': 'Password missing', 'smtp_rejected': 'SMTP server rejected the message', 'connection_failed': 'Connection failed', 'smtp_protocol': 'SMTP protocol error', 'transport_error': 'Transport error', 'attempts_exhausted': 'Attempt limit reached'} %}
+<div class="table-scroll"><table>
+  <thead><tr><th scope="col">{{ _('Module / job') }}</th><th scope="col">{{ _('Recipient') }}</th><th scope="col">Status</th><th scope="col">{{ _('Attempts') }}</th><th scope="col">{{ _('Action') }}</th></tr></thead>
+  <tbody>{% for job in jobs %}<tr>
+    <td>{{ job.module_id }}<br><small>{{ job.id }}</small></td><td>{{ job.recipient }}</td>
+    <td>{{ _(labels[job.status]) }}{% if job.module_id not in active_modules and job.status in ['queued', 'retry'] %} ({{ _('Plugin paused') }}){% endif %}
+      {% if job.error_code %}<br>{{ _(reasons.get(job.error_code, 'Unknown error')) }}{% endif %}
+      {% if job.status in ['queued', 'retry'] %}<br><small>{{ _('Due:') }} {{ job.next_attempt_at|mail_time }}</small>{% endif %}
+      {% if job.sent_at %}<br><small>{{ job.sent_at|mail_time }}</small>{% endif %}</td>
+    <td>{{ job.attempts }} / 5<br><small>{{ _('Total:') }} {{ job.total_attempts }}</small></td>
+    <td>{% if job.status in ['failed', 'uncertain'] %}<form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="retry"><input type="hidden" name="job_id" value="{{ job.id }}">
+      {% if job.status == 'uncertain' %}<label><input type="checkbox" name="acknowledge" required> {{ _('Delivery checked; worker stopped; possible duplicate delivery accepted.') }}</label>{% endif %}
+      <button type="submit" class="secondary">{{ icon('play') }} {{ _('Queue again') }}</button>
+    </form>{% else %}—{% endif %}</td>
+  </tr>{% else %}<tr><td colspan="5">{{ _('No mail jobs yet.') }}</td></tr>{% endfor %}</tbody>
+</table></div>
+<nav aria-label="{{ _('Mail queue pages') }}">
+{% if page > 1 %}<a class="button secondary" href="{{ url_for('mail.overview', page=page-1) }}">{{ icon('mail') }} {{ _('Previous page') }}</a>{% endif %}
+{% if more %}<a class="button secondary" href="{{ url_for('mail.overview', page=page+1) }}">{{ icon('mail') }} {{ _('Next page') }}</a>{% endif %}
+</nav>
+{% endblock %}

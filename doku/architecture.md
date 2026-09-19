@@ -1,4 +1,11 @@
-# Architektur – Stand v0.1.11
+# Architektur – Stand v0.1.12
+
+**Planungsnachtrag ohne Codeänderung:** [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
+beschreibt ein vollständiges Verzeichnis je Plugin mit eigenen Ressourcen,
+einen separaten Installationsstamm, Admin-Mindestlevel und spätere ZIP-/
+Deinstallationsabläufe. Code/Ressourcen bleiben von veränderlichen Laufzeitdaten
+getrennt. Der bestehende Katalog und die zentrale Migrationskette werden erst
+in gesonderten Paketen angepasst; die Planung ist noch nicht implementiert.
 
 Seit 0.1.11 ergänzt das ausdrücklich beauftragte technische Testplugin
 `plugins/checkdesign.py` eine Designgalerie für `staff` und `admin`.
@@ -37,8 +44,8 @@ oder produktive Last. Die endgültige produktive Datenbankentscheidung bleibt of
 | `src/neofab2/templates/`, `static/` | Layout, CSS, Logo |
 | `migrations/` | Zentrale Revisionen; als `neofab2.migrations` im Wheel |
 | `src/neofab2/plugin_api/` | API-1-Vertrag, Katalog und Abhängigkeitsprüfung |
-| `src/neofab2/plugins/` | Zwei synthetische Testplugins, bei neuer Installation deaktiviert |
-| `src/neofab2/services/` | Vorbereiteter Zielbereich |
+| `src/neofab2/plugins/` | Drei technische Testplugins, bei neuer Installation deaktiviert; künftig vollständiger Unterordner je Plugin |
+| `src/neofab2/services/` | Technischer kleiner Dateidienst; weitere Dienste geplant |
 | `tests/` | Core, CLI, Restore, simulierte Update-Steuerung |
 | `script/` | Debian-Installation und Wartung |
 | `.github/workflows/core.yml` | Vorbereitete Linux-CI für Python 3.12/3.13 |
@@ -92,7 +99,8 @@ Anlegen/Bearbeiten/Aktivieren/Deaktivieren, noch kein Löschen. U06 verwendet di
 festen Rollen Benutzer/Mitarbeiter/Administrator sowie explizite Plugin-Zugriffsrechte;
 Importzuordnung und Rollenpflege folgen. U07 umfasst Anzeigename, Passwortwechsel
 und persönliche Darstellung; Sprache folgt. S04 umfasst öffentliche Darstellungseinstellungen,
-noch keinen Import/Export oder SMTP. U02–U04, S02/S03, S05–S11, N04 und N05 bleiben offen.
+noch keinen Import/Export. SMTP und minimale Outbox sind seit 0.1.12 vorhanden;
+U02–U04, weitere Teilumfänge von S02–S11 und N04 bleiben offen.
 N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Backend-Auswahl mit
 Aktivierung beim Neustart, Seiten, Rechte, Navigation und lokale Aufgaben.
 Seit 0.1.10: zusätzliche `Permission`-Deklarationen, Besitzerprüfung und minimale
@@ -119,7 +127,8 @@ werden atomar mit den übrigen Feldern gespeichert und widerrufen bestehende Sit
 
 Priorisierter Plan mit Funktions-IDs und Prüfkriterien: [Nächste Core-Schritte](Core_Naechste_Schritte.md).
 Nach der Planungspräzisierung zunächst Plugin-Rechte und minimale Datei-Verträge
-mit Testplugins vervollständigen; danach Versanddienst und E-Mail-Kontoverfahren.
+mit Testplugins vervollständigen (Paket 0, 0.1.10); der Versanddienst folgt in
+Paket 1 (0.1.12). Als nächstes stehen die E-Mail-Kontoverfahren an.
 Nach vollständiger Core-Abnahme `orders` minimal und `printing3d` als Referenzplugin.
 Gemeinsame Upload-/STL-Viewer-Komponenten bleiben technische Infrastruktur;
 PrintFleet folgt nach dem lokalen MVP. [Verbindliche Abgrenzung](Plugin_Umsetzungsplan.md).
@@ -144,3 +153,16 @@ Textspalten, werden bei Kontospeicherung aber innerhalb derselben Transaktion
 gegen den Katalog geprüft. Umbenennen aktualisiert die Zuordnungen atomar.
 Die Kostenstellenliste ist Benutzer-Metadatenpflege, keine O13-Finanzfunktion.
 [Details und Grenzen](Core_Auswahllisten.md).
+
+## SMTP und Outbox 0.1.12
+
+`core/mail.py` administriert SMTP unter `/admin/settings/mail`; `services/mail.py`
+kapselt Einstellungen, transaktionale Outbox und Transport. `plugin_api/notifications.py`
+stellt den additiven API-1-Vertrag mit explizitem `mail_permission` bereit.
+`0009_mail_outbox` ergänzt die persistente Tabelle. Der einmalige CLI-Befehl
+`mail-worker` reserviert Aufträge atomar, führt SMTP außerhalb der DB-Transaktion
+aus und begrenzt Wiederholungen. Verwaiste Übernahmen und mehrdeutige SMTP-Abbrüche
+werden ungeklärt statt automatisch erneut versendet. Secrets bleiben in TOML;
+Plugin-Deaktivierung pausiert neue Übernahmen. Kein Scheduler, keine Anhänge,
+keine Kontoverfahren und keine automatische Löschung in diesem Paket.
+[Betrieb, Zustände, Schnittstelle und Grenzen](Core_SMTP_und_Versand.md).

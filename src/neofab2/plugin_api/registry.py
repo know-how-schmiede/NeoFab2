@@ -35,6 +35,8 @@ class Registry:
                     raise ValueError(f"Invalid plugin permission contract: {key}")
                 names.add(permission.name)
             policy = plugin.files
+            if plugin.mail_permission is not None and plugin.mail_permission not in {p.name for p in plugin.permissions}:
+                raise ValueError(f"Invalid plugin mail permission: {key}")
             if policy is not None and (
                     not {policy.upload, policy.read_own, policy.read_all} <= names
                     or len({policy.upload, policy.read_own, policy.read_all}) != 3

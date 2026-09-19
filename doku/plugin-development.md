@@ -1,7 +1,14 @@
-# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.11
+# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.12
 
 Dieses Arbeitspaket setzt N01 sowie Teile von S01, S12 und U06 um. Es enthält
 drei technische Testplugins, keine produktiven Fachplugins.
+
+**Geplanter Ausbau, noch nicht verfügbar:** [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
+legt eigene Verzeichnisse samt Ressourcen, Mindestzugriff per Admin-Auswahl,
+kontrollierten ZIP-Import und Deinstallation mit Datenerhalt fest. Die folgenden
+Abschnitte beschreiben weiterhin den implementierten API-1-Stand: feste Rollen,
+mitgelieferter Katalog, kein ZIP-Installer. Die neuen Schritte stehen im
+[Core-Arbeitsplan](Core_Naechste_Schritte.md).
 
 ## Zielbild für die nächsten Plugin-Schritte
 
@@ -178,7 +185,15 @@ Die vollständige Core-Abnahme steht aus.
 
 Ab 0.1.7 sind Plugin-Namen, Testseiten und CLI-Meldungen im Quelltext englisch.
 Die Oberfläche verwendet englische Übersetzungsschlüssel und Englisch als Fallback.
-Die zentrale Core-Version ist 0.1.11; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
+Die zentrale Core-Version ist 0.1.12; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
+
+Seit 0.1.12 ergänzt `mail_permission` den Vertrag optional. Es muss auf ein
+explizites zusätzliches Plugin-Recht verweisen. `plugin_api/notifications.py`
+stellt `enqueue_email()` für authentifizierte Requests bereit: frischer
+Kontostand, Einstieg und Versandrecht, dauerhafte Idempotenz sowie optional
+gemeinsame Transaktion mit dem Aufrufer. Deaktivierte Plugin-Aufträge bleiben
+gespeichert, werden aber nicht übernommen. Kein direkter SMTP-Aufruf aus Plugins.
+[Vertragsbeispiel, Worker, Zustände und Grenzen](Core_SMTP_und_Versand.md).
 
 Für Plugin-Oberflächen gelten die [UI-Gestaltungsregeln](UI_Gestaltungsregeln.md).
 Alle Buttons enthalten sichtbaren übersetzbaren Text und ein passendes Icon aus

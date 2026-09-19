@@ -1,4 +1,4 @@
-# Gestaltung von Buttons und Oberflächen – v0.1.11
+# Gestaltung von Buttons und Oberflächen – v0.1.12
 
 Diese Regeln gelten für Core und Plugin-Oberflächen. Gemeinsame Umsetzung:
 `src/neofab2/static/core.css`, Icons: `src/neofab2/templates/ui_icons.html`.
@@ -15,6 +15,8 @@ liest den gemeinsamen Iconbestand aus `ui_icons.html` und zeigt alle Farbvariabl
 | Zweck | Element und Gestaltung | Icon |
 |---|---|---|
 | Speichern | `<button type="submit">`, gefüllte Akzentfarbe | `save` |
+| SMTP öffnen / Testnachricht einplanen | Navigation / Submit-Button mit sichtbarem Aktionstext | `mail` |
+| Fehlgeschlagenen Versand erneut einplanen | Sekundärer Submit-Button; bei ungeklärtem Versand mit Bestätigungs-Checkbox | `play` |
 | Benutzer anlegen | Button oder Navigation mit `class="button"` | `user-plus` |
 | Stammdaten öffnen | `<a class="button secondary" href="…">` | `database` |
 | Anmelden / Abmelden | POST-Button, Abmelden mit `class="secondary"` | `login` / `logout` |

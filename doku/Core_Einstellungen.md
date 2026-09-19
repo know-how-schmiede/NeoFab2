@@ -1,4 +1,4 @@
-# Systemeinstellungen und Darstellung – v0.1.11
+# Systemeinstellungen und Darstellung – v0.1.12
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -6,20 +6,25 @@ in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
 
 Umfang: S04/S01 und der Darstellungsteil von U07. Seit 0.1.6 gibt es eine
 [Sprachwahl für Navigation, Login und Profil](Core_Sprachen.md). Weitere
-Übersetzungen, Import/Export von Einstellungen, SMTP sowie Impressum/Datenschutz
+Übersetzungen, Import/Export von Einstellungen sowie Impressum/Datenschutz
 werden in späteren Core-Schritten ergänzt.
+
+Seit 0.1.12 führt ein eigener Button zur [SMTP-Konfiguration und Versandwarteschlange](Core_SMTP_und_Versand.md).
+Diese Werte sind getrennt vom öffentlichen Darstellungsformular; SMTP-Secrets
+werden weiterhin ausschließlich in der geschützten TOML-Datei verwaltet.
 
 ## Update und Migration
 
-Voraussetzung: Änderungen zu 0.1.11 manuell in GitHub Desktop committen und
+Voraussetzung: Änderungen zu 0.1.12 manuell in GitHub Desktop committen und
 auf den verwendeten Remote-Branch übertragen. Danach als **root im Container**:
 
 ```bash
 bash /opt/neofab2/script/upDateNeoFabService
 ```
 
-Das Skript sichert den bisherigen Stand und führt die explizite Migration
-`0003_user_theme` aus. Sie ergänzt `core_users.theme`; vorhandene Konten
+Das Skript sichert den bisherigen Stand und führt fehlende Migrationen bis
+`0009_mail_outbox` aus. Die Darstellungsmigration `0003_user_theme`
+ergänzt `core_users.theme`; vorhandene Konten
 erhalten `system` (Systemvorgabe). Konten, Passwort-Hashes, Sitzungen und
 vorhandene Einstellungen bleiben erhalten. Die vorhandene Tabelle
 `core_settings` nimmt die öffentlichen Darstellungswerte auf; kein Umbau nötig.
@@ -34,7 +39,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl status neofab2.service --no-pager
 ```
 
-Erwartet: Version 0.1.11, `Database and schema ready.`, aktiver Dienst.
+Erwartet: Version 0.1.12, `Database and schema ready.`, aktiver Dienst.
 Die HTTP-Einstellung `SESSION_COOKIE_SECURE = false` im isolierten Testnetz
 und die Plugin-Aktivierung werden durch diesen Schritt nicht verändert.
 

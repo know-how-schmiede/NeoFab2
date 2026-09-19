@@ -1,10 +1,10 @@
-# Core-Zugang – aktueller Arbeitsstand v0.1.11
+# Core-Zugang – aktueller Arbeitsstand v0.1.12
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
 [Sprachwahl und Migration 0006](Core_Sprachen.md).
 
-Die zentrale Version dieses Arbeitspakets ist `0.1.11`.
+Die zentrale Version dieses Arbeitspakets ist `0.1.12`.
 Dieses Arbeitspaket erweitert U01, U05–U08 und X04. Es ist keine vollständige
 Core-Abnahme; insbesondere E-Mail-Verfahren und weitere technische Dienste fehlen noch.
 API 1 ist unter [Plugin-Vertrag](plugin-development.md) dokumentiert.

@@ -11,6 +11,12 @@ Komponenten und PrintFleet erst nach dem MVP. Sie ersetzt die frühere Prioritä
 
 ## 1. Ziel und verbindliche Rahmenbedingungen
 
+Umsetzungsstand 19.09.2026 / 0.1.12: Paket 1 mit SMTP-Administration,
+Testauftrag und persistenter Versandwarteschlange samt einmaligem CLI-Worker
+ist implementiert. [Umfang, Betrieb und Prüfgrenzen](Core_SMTP_und_Versand.md).
+S05/N05 sowie technische Teilumfänge von S06/N01 sind damit umgesetzt;
+Kontoverfahren folgen in Paket 2. Core-Abnahme und produktive Fachplugins bleiben offen.
+
 NeoFab2 wird als neue modulare Webanwendung in einem eigenen Repository aufgebaut. Zuerst entsteht ein unabhängig lauffähiges Core-System. Fachfunktionen werden anschließend einzeln als Plugins ergänzt.
 
 Aus NeoFab werden ausschließlich Benutzer übernommen. Alte Aufträge einschließlich Nachrichten, Terminen, Anhängen und Fertigungsdaten müssen nicht migriert werden. Der bevorstehende Semesterwechsel ist der gewünschte Umstellungsanlass, aber noch kein festgelegtes Lieferdatum. NeoFab bleibt bis zur Umstellung unverändert nutzbar.
@@ -149,6 +155,15 @@ Keine produktiven Workshops, Aufträge, Fertigungsfunktionen, Beschaffung, Termi
 10. Basisinstallation, Service-Einrichtung, Update und Notfall-Passwort-Reset sind über die vertrauten Skripte gemäß Abschnitt 11 bedienbar und in einer isolierten Testinstallation geprüft.
 
 ## 6. Minimaler Plugin-Vertrag
+
+Planungsnachtrag vom 19.09.2026: Auf Benutzerwunsch werden eigene vollständige
+Plugin-Verzeichnisse, ein administratives Mindestzugriffslevel, kontrollierte
+ZIP-Bereitstellung und spätere Deinstallation eingeplant. Verbindliche Abgrenzung
+zwischen aktuellem Stand und Ziel: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md).
+Dies ist **kein Umsetzungsauftrag**. Der oben genannte Ausschluss von Web-Code-
+Uploads beschreibt weiterhin die vorhandene Basis; ein geprüfter Paketimport
+wird als spätere Erweiterung vorgesehen. Kein beliebiges Nachladen im laufenden
+Prozess und keine Fachplugin-Freigabe vor Core-Abnahme.
 
 Jedes Plugin deklariert Kennung, Anzeigename, Version, unterstützte Plugin-API-Version und Abhängigkeiten. Es kapselt seine Routen/Blueprints, Fachmodelle, Templates, Übersetzungen, Einstellungen und Berechtigungen.
 

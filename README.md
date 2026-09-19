@@ -1,8 +1,11 @@
 # NeoFab2
 
+Geplanter Ausbau (noch nicht umgesetzt): [Plugin-Pakete, eigene Ressourcenverzeichnisse,
+Mindestzugriff und Deinstallation](doku/Plugin_Pakete_und_Lifecycle.md).
+
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.11 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.12 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche
@@ -10,7 +13,12 @@ Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 Version 0.1.5 ergänzt Plugin-Aktivierung im Backend mit Neustarthinweis und
 ein zweites synthetisches Testplugin zur Prüfung von Abhängigkeiten.
 
-**Neu in 0.1.11:** [CheckDesign 0.1.0](doku/CheckDesign.md), ein technisches
+**Neu in 0.1.12:** [SMTP und Versandaufträge](doku/Core_SMTP_und_Versand.md).
+Admin-Einstellungen mit Testauftrag, persistente Warteschlange, begrenzte
+Wiederholungen und CLI-Worker. Neue Migration `0009_mail_outbox`; Versand startet
+deaktiviert und benötigt einen ausdrücklichen Worker-Aufruf.
+
+**Seit 0.1.11:** [CheckDesign 0.1.0](doku/CheckDesign.md), ein technisches
 Core-Testplugin für Mitarbeiter und Administratoren. Galerie der gemeinsamen
 Designelemente mit eigener Hell-/Dunkel-Vorschau ohne Änderung von Einstellungen.
 

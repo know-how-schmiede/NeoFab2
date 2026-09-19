@@ -1,4 +1,4 @@
-# Benutzer anlegen und bearbeiten – v0.1.11
+# Benutzer anlegen und bearbeiten – v0.1.12
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.

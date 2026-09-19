@@ -1,5 +1,92 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.12 – 2026-09-19
+
+Bereich: Core-Paket 1, SMTP und persistente Versandaufträge (S05, N05,
+technische Teilumfänge S06/N01, S12, X05–X07). Zentrale Version **0.1.12**;
+alle drei technischen Testplugins einschließlich CheckDesign bleiben **0.1.0**.
+
+### Änderungen
+
+- Administration → Systemeinstellungen → SMTP & Versandaufträge: validierte
+  Einstellungen, Testauftrag, Statusliste mit Seitenwechsel und manuelle Wiederholung.
+  Gemeinsame Button-Icons, englische Ausgangstexte und deutsche Übersetzungen.
+- SMTP mit STARTTLS, direktem TLS oder lokalem Relay ohne Anmeldung. Zertifikats-
+  und Hostnamenprüfung aktiv; Passwort ausschließlich in geschützter TOML-Datei.
+  Keine Ausgabe von Nachrichtentexten, Passwörtern oder rohen SMTP-Fehlerantworten.
+- Persistente Outbox mit Idempotenzschlüssel, atomarer Reservierung, Status und
+  begrenzten Wiederholungen. Verwaiste bzw. mehrdeutige Übertragungen werden
+  ungeklärt; erneuter Versand nur nach ausdrücklicher Bestätigung.
+- Einmaliger CLI-Worker `mail-worker --limit 20`. SMTP-/Plugin-Deaktivierung
+  pausiert neue Übernahmen; kein automatischer Scheduler installiert.
+- Additiver Plugin-API-1-Vertrag `mail_permission` und `enqueue_email()` mit
+  frischer Rechteprüfung und optional gemeinsamer Transaktion.
+- [Betriebs- und Vertragsdokumentation](Core_SMTP_und_Versand.md), Funktionsmatrix,
+  Setup/Schnellstart und Arbeitsplan aktualisiert. Nächster Punkt: Paket 2 mit
+  Registrierung, Aktivierung und Self-Service-Passwort-Reset.
+- Der vorher beauftragte Dokumentationsnachtrag zu Plugin-Verzeichnissen,
+  Mindestlevel, ZIP-Bereitstellung und Deinstallation bleibt reine Planung
+  ([P1–P5](Plugin_Pakete_und_Lifecycle.md)); keine Umsetzung dieser Pakete.
+
+### Betrieb und Migration
+
+Explizite Revision **`0009_mail_outbox`** nach `0008_core_files`, neue Tabelle
+`core_mail_outbox`. Kein Schemaeingriff beim Start. Vor Update/Restore selbst
+gestartete Worker bzw. Aufrufpläne stoppen; das vorhandene Update-Skript kennt
+nur den Webdienst. Passende Datenbank-, Konfigurations- und Codesicherung erhalten.
+Nach Restore SMTP vor dem nächsten Worker pausieren und mögliche bereits erfolgte
+Zustellungen abgleichen. SMTP startet standardmäßig deaktiviert.
+
+Unter `/etc/neofab2/config.toml` bei Bedarf `SMTP_PASSWORD` hinterlegen,
+Webdienst und Worker neu starten. Als root, ausgeführt durch den Dienstbenutzer:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 mail-worker --limit 20
+```
+
+„Angenommen“ bestätigt die SMTP-Übernahme, nicht den Postfacheingang.
+Keine Zusage exakt einmaliger Zustellung; keine automatische Outbox-Löschung.
+Keine produktiven Daten, keine Nachrichten an reale Empfänger und kein altes
+NeoFab verändert. Kontoverfahren aus S06/U02–U04 bleiben Paket 2.
+
+### Prüfungen
+
+- 28 Versandtests bestanden: Einstellungen/Rechte/CSRF, Geheimnisschutz,
+  Header-/Größenvalidierung, Idempotenz/Rollback, Neustart, begrenzte Wiederholung,
+  Plugin-Pause, parallele Reservierung, abgelaufene Übernahme, verspätetes Ergebnis,
+  SMTP-Modi samt Hostnamenübergabe, Migration 0008 → 0009, Sicherung und CLI.
+- Finale Gesamtsuite: **194 Tests bestanden** unter Windows/Python 3.12.
+  Wheel und sdist 0.1.12 gebaut; separat installiertes Wheel einschließlich
+  Migration, SMTP-Seite, pausiertem Worker und bisherigen Core-/Plugin-Seiten geprüft.
+  120 relative Dokumentationslinks und `git diff --check` bestanden.
+- Kein echter SMTP-Anbieter oder realer Postfacheingang geprüft. Visuelle
+  Browserabnahme und Debian/LXC/systemd-Workerprüfung bleiben offen.
+  Die vollständige Core-Abnahme ist nicht abgeschlossen.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: release NeoFab2 0.1.12 with SMTP settings and persistent mail queue
+```
+
+Commit-Beschreibung:
+
+```text
+Implement Core package 1: admin SMTP settings, queued test emails and mail status.
+Add explicit migration 0009_mail_outbox, idempotent jobs, bounded retries,
+exclusive worker claims and explicit handling of uncertain SMTP delivery.
+Add the one-shot mail-worker CLI and permission-scoped plugin notification API.
+Keep SMTP credentials in protected configuration; add shared icons and DE texts.
+Document operation, migration, restore risks and remaining acceptance checks.
+Preserve the planning-only plugin lifecycle packages P1-P5; make package 2 next.
+Validate 194 tests, installed wheel, sdist and 120 relative documentation links.
+Keep all testplugin versions at 0.1.0; no production migration or automatic commit.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt; kein Commit oder Push durch Codex.
+
 ## Version 0.1.11 – 2026-09-19
 
 Bereich: ausdrücklich beauftragtes technisches Core-Testplugin CheckDesign

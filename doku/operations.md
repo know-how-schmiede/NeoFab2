@@ -1,4 +1,4 @@
-# Betrieb und Wiederherstellung – v0.1.11
+# Betrieb und Wiederherstellung – v0.1.12
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -11,9 +11,18 @@ Proxmox-Admin manuell aus. Die Datenbanksicherung enthält auch den Zielzustand.
 
 Als **root im NeoFab2-Container** ausführen. Diese Fassung speichert nur die
 SQLite-Core-Datenbank. Mit späteren Dateidiensten muss der Sicherungsumfang
-erweitert werden; es gibt noch keine Uploads. Die Datenbank enthält jetzt
-Benutzer, Passwort-Hashes und Sitzungen. Sicherungen entsprechend geschützt
+erweitert werden. Die kleinen Testdateien seit 0.1.10 liegen als BLOB ebenfalls
+in SQLite. Die Datenbank enthält Benutzer, Passwort-Hashes, Sitzungen und
+seit 0.1.12 Versandaufträge samt Empfängern und Nachrichtentexten. Sicherungen entsprechend geschützt
 aufbewahren. Lokaler Admin-Reset: [Core-Zugang](Core_Zugang.md).
+
+**Versandworker seit 0.1.12:** `mail-worker --limit 20` ist ein einmaliger
+CLI-Aufruf, kein automatisch installierter Dienst. Vor Update oder Restore
+zusätzliche Worker und eigene Aufrufpläne stoppen; `neofab2.service` steuert
+nur den Webprozess. Nach Restore zuerst SMTP in der Webverwaltung pausieren
+und wartende/ungeklärte Jobs mit bereits erfolgten Zustellungen abgleichen,
+bevor ein Worker startet. Ältere Sicherungen können bereits zugestellte Jobs
+wieder als wartend enthalten. [Befehle, Fehlerhilfe und Grenzen](Core_SMTP_und_Versand.md).
 
 ## Dienststeuerung
 

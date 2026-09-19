@@ -32,6 +32,9 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
+        assert client.get("/admin/settings/mail").status_code == 200
+        from neofab2.services.mail import run_worker
+        assert sum(run_worker(app).values()) == 0
         assert "Synthetic admin note" in client.get("/admin/users/1/edit").text
         assert 'name="study_program"' in client.get("/admin/users/new").text
         for kind in ["position", "study_program", "cost_center"]:

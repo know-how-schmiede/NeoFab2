@@ -10,6 +10,7 @@ def load_config(overrides=None):
         "DATA_DIR": str(Path.cwd() / "instance"),
         "SECRET_KEY": None,
         "TESTING": False,
+        "SMTP_PASSWORD": "",
         "ENABLED_PLUGINS": [],
         "SESSION_COOKIE_HTTPONLY": True,
         "SESSION_COOKIE_SAMESITE": "Lax",
@@ -40,4 +41,6 @@ def load_config(overrides=None):
             raise ValueError(f"{key} must be a positive integer.")
     if type(config["SESSION_COOKIE_SECURE"]) is not bool:
         raise ValueError("SESSION_COOKIE_SECURE must be true or false.")
+    if not isinstance(config["SMTP_PASSWORD"], str):
+        raise ValueError("SMTP_PASSWORD must be text.")
     return config

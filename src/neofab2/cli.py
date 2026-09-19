@@ -200,5 +200,22 @@ def maintenance_info():
         click.echo(f"Administrator email: {safe_email} ({'active' if active else 'disabled'})")
 
 
+@main.command("mail-worker")
+@click.option("--limit", type=click.IntRange(1, 100), default=20, show_default=True)
+def mail_worker(limit):
+    """Process due mail jobs once; disabled SMTP/plugins remain queued."""
+    from .services.mail import run_worker
+
+    app = ready_app()
+    try:
+        with app.app_context():
+            counts = run_worker(app, limit)
+        click.echo(" ".join(f"{state}={count}" for state, count in counts.items()))
+    except ValueError as error:
+        raise click.ClickException(str(error)) from None
+    finally:
+        app.extensions["neofab2_db"].dispose()
+
+
 if __name__ == "__main__":
     main()

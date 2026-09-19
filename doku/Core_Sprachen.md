@@ -1,4 +1,4 @@
-# Sprachwahl – Stand v0.1.11
+# Sprachwahl – Stand v0.1.12
 
 Englisch ist die Ausgangssprache, die Standardsprache für Gäste ohne Auswahl
 und neue Konten sowie der Fallback (S02/U07). Deutsch und Französisch werden
@@ -46,7 +46,7 @@ abgewiesen; beschädigte gespeicherte Sprachcodes fallen auf Englisch zurück.
 
 ## Update und Prüfung im Container
 
-Voraussetzung: 0.1.11 wurde vom Benutzer manuell committed und auf den verwendeten
+Voraussetzung: 0.1.12 wurde vom Benutzer manuell committed und auf den verwendeten
 Remote-Branch übertragen. Als **root im NeoFab2-Testcontainer**:
 
 ```bash
@@ -55,7 +55,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
 ```
 
-Erwartet: Version `0.1.11` und `Database and schema ready.`. Die explizite Migration
+Erwartet: Version `0.1.12` und `Database and schema ready.`. Die explizite Migration
 `0006_english_default` ändert ausschließlich den Datenbank-Standard für neue
 Kontosprachen auf `en`. Bestehende Kontosprachen, Hashes, Zusatzfelder,
 Einstellungen und E-Mail-Eindeutigkeit bleiben erhalten. SQLite baut dazu die
