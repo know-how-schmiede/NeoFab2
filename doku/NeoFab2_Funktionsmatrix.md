@@ -290,3 +290,10 @@ Benutzerlöschung, weitere Sprachabdeckung und Plugin-Dienste sind offen.
 Keine vollständige Core-Abnahme.
 
 Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsänderungen zusätzlich gemäß Projektbeschreibung in `doku/Version_Timeline.md` dokumentieren, einschließlich Commit-Titel und Commit-Beschreibung für den manuellen Commit. Diese Matrix allein ersetzt weder Tests noch die Versionshistorie.
+### Nachbesserung 0.1.8 – Stammdaten-Einstieg und Konsolenausgaben (19.09.2026)
+
+| IDs | Status | Umsetzungsnachweis | Prüfungen | Abweichungen/offen |
+|---|---|---|---|---|
+| U05, S04, S01/S02 | geprüft (Teilumfang) | `src/neofab2/core/user_options.py`, `templates/master_data.html`, `templates/settings.html`, `templates/user_options.html`, `core/i18n.py`, `tests/core/test_user_options.py` | Einstellungen → Stammdaten → drei getrennte Listen/Formulare; Rücklinks, Persistenz/Umbenennung und Zugriffsschutz geprüft | Keine neue Schemaänderung, keine Freitextmigration; visuelle Browserprüfung nicht durchgeführt |
+| X01–X04 | geprüft (Teilumfang) | `script/common.sh`, `script/setupNeoFab`, `script/upDateNeoFabService`, `tests/integration/test_script_summaries.py` | Trennlinien, erkannte IPv4-/IPv6-URLs, fehlende IP ohne Platzhalter, ursprüngliche Exit-Codes; alle fünf Shell-Dateien mit `bash -n` geprüft | OS-Aufrufe simuliert; Nutzer bestätigt vorheriges Update auf 0.1.8, neue Nachbesserung noch nicht auf Debian/LXC geprüft |
+| X05, X07 | dokumentiert | `script/README.md`, `doku/SETUP.md`, `doku/Core_Auswahllisten.md`, `doku/Version_Timeline.md` | Gesamtsuite: 133 bestanden; nach ergänzter Rechteprüfung Benutzerlisten-Suite erneut: 8 bestanden; `git diff --check` bestanden | Weiterhin Version 0.1.8, kein Commit/Push; keine vollständige Core-Abnahme |

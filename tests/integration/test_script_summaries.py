@@ -38,6 +38,28 @@ exit "$TEST_EXIT"
     assert "resetAdminPassword" in result.stdout and "journalctl" in result.stdout
     assert "keine Passwörter" in result.stdout
     assert ("FEHLER / ABBRUCH" in result.stdout) == (exit_code != 0)
+    assert "<Container-IP>" not in result.stdout
+
+
+@pytest.mark.skipif(not BASH or not Path(BASH).is_file(), reason="Bash unavailable")
+def test_ready_output_has_separators_and_detected_addresses(tmp_path):
+    script = tmp_path / "ready.sh"
+    script.write_text((SCRIPTS / "common.sh").read_text(encoding="utf-8") + r'''
+PORT=8080
+hostname() { printf '192.0.2.10 2001:db8::10\n'; }
+systemctl() { :; }
+curl() { :; }
+wait_ready
+hostname() { return 1; }
+print_access_urls
+''', encoding="utf-8", newline="\n")
+    result = subprocess.run([BASH, script.as_posix()], capture_output=True, text=True, encoding="utf-8")
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.count("------------------------------------------------------------") == 2
+    assert "http://192.0.2.10:8080/login" in result.stdout
+    assert "http://[2001:db8::10]:8080/login" in result.stdout
+    assert "IP nicht ermittelt" in result.stdout
+    assert "<Container-IP>" not in result.stdout
 
 
 @pytest.mark.skipif(not BASH or not Path(BASH).is_file(), reason="Bash unavailable")

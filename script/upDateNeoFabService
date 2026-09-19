@@ -53,6 +53,7 @@ tar -C "$APP_DIR" -czf "$BACKUP/venv.tar.gz" .venv
 SUMMARY_BACKUP_COMPLETE=1
 as_app git -C "$APP_DIR" merge --ff-only "$TARGET"
 as_app "$APP_DIR/.venv/bin/python" -m pip install --upgrade "${APP_DIR}[server]"
+console_section 'NEOFAB2 – ABSCHLUSSPRUEFUNG'
 app_cli migrate
 app_cli check
 systemctl start "$SERVICE"

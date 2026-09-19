@@ -40,6 +40,7 @@ chown root:"$APP_USER" "$CONFIG_FILE"
 chmod 0640 "$CONFIG_FILE"
 printf '%s\n' "$PORT" > "$CONFIG_DIR/port"
 chmod 0644 "$CONFIG_DIR/port"
+console_section 'NEOFAB2 – DATENBANK EINRICHTEN UND PRUEFEN'
 app_cli migrate
 app_cli check
 # Auch CLI-Prozesse nicht aus einem für neofab2 unzugänglichen CWD starten.
@@ -51,7 +52,8 @@ SUMMARY_NOTE='Der optionale Terminal-Test ersetzt keinen dauerhaft eingerichtete
 trap - ERR
 prompt TEST_RUN 'Temporären HTTP-Teststart im Terminal ausführen? (j/n)' 'n'
 if [[ $TEST_RUN == j ]]; then
-  printf 'Starte optionalen Test unter http://<Container-IP>:%s – Beenden mit Strg+C.\n' "$PORT"
+  console_section 'OPTIONALER TESTSTART – Beenden mit Strg+C'
+  print_access_urls
   trap ':' INT
   if (
     cd -- "$APP_DIR" &&

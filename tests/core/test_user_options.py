@@ -37,8 +37,14 @@ def login(client, email="admin@example.org"):
 def test_separate_forms_persist_and_rename_assignments(app, kind):
     client = app.test_client()
     login(client)
+    assert 'href="/admin/master-data"' in client.get("/admin/settings").text
+    overview = client.get("/admin/master-data")
+    assert overview.status_code == 200
+    for list_kind in KINDS:
+        assert f'href="/admin/user-options/{list_kind}"' in overview.text
     path = f"/admin/user-options/{kind}"
     assert "No options yet" in client.get(path).text
+    assert 'href="/admin/master-data"' in client.get(path).text
     assert post(client, path, {"name": "Example", "active": "on"}).status_code == 302
     target = create_user(app, "person@example.org", "Person", "Test123!", actor_id=1, details={kind: "Example"})
     with app.extensions["neofab2_db"].connect() as connection:
@@ -98,6 +104,7 @@ def test_catalog_validation_rights_csrf_and_escaping(app):
         person = app.test_client()
         login(person, f"{role}@example.org")
         assert person.get(path).status_code == 403
+        assert person.get("/admin/master-data").status_code == 403
         assert post(person, path, {"name": "Forbidden"}, form="/profile").status_code == 403
         with pytest.raises(PermissionError):
             save_option(app, uid, "position", "Forbidden", True)

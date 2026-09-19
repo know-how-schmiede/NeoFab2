@@ -50,11 +50,31 @@ verify_service() {
   grep -Fxq "WorkingDirectory=$APP_DIR" "$UNIT" || die 'Service-Pfad passt nicht zur Installation.'
   grep -Fxq "User=$APP_USER" "$UNIT" || die 'Service-Benutzer passt nicht zur Installation.'
 }
+console_section() {
+  printf '\n------------------------------------------------------------\n'
+  printf '%s\n' "$1"
+  printf '%s\n' '------------------------------------------------------------'
+}
+
+print_access_urls() {
+  local addresses address host found=0
+  addresses=$(hostname -I 2>/dev/null) || addresses=''
+  for address in $addresses; do
+    [[ $address =~ ^[0-9a-fA-F:.]+$ ]] || continue
+    host=$address
+    [[ $address != *:* ]] || host="[$address]"
+    printf '  http://%s:%s/login\n' "$host" "$PORT"
+    found=1
+  done
+  [[ $found == 1 ]] || printf '  IP nicht ermittelt. Adressen im Container mit "ip -brief address" pruefen.\n'
+}
+
 wait_ready() {
   local attempt
   for attempt in {1..30}; do
     if systemctl is-active --quiet "$SERVICE" && curl --fail --silent --max-time 2 "http://127.0.0.1:$PORT/health/ready" >/dev/null; then
-      printf 'NeoFab2 bereit: http://<Container-IP>:%s\n' "$PORT"
+      console_section 'NEOFAB2 BEREIT – interne Zugriffsadressen'
+      print_access_urls
       return 0
     fi
     sleep 1
@@ -72,7 +92,7 @@ start_summary() {
 }
 
 print_summary() {
-  local status=$1 addresses address host service_state
+  local status=$1 service_state
   printf '\n============================================================\n'
   printf ' NEOFAB2 – ZUSAMMENFASSUNG: %s\n' "$SUMMARY_ACTION"
   printf '============================================================\n'
@@ -88,14 +108,7 @@ print_summary() {
   if [[ -z ${PORT:-} && -r $CONFIG_DIR/port ]]; then PORT=$(cat "$CONFIG_DIR/port"); fi
   if [[ ${PORT:-} =~ ^[1-9][0-9]{3,4}$ ]] && ((PORT >= 1024 && PORT <= 65535)); then
     printf '\nInterne HTTP-Adressen (Erreichbarkeit von außen nicht geprüft):\n'
-    addresses=$(hostname -I 2>/dev/null) || addresses=''
-    for address in $addresses; do
-      [[ $address =~ ^[0-9a-fA-F:.]+$ ]] || continue
-      host=$address
-      [[ $address != *:* ]] || host="[$address]"
-      printf '  http://%s:%s/login\n' "$host" "$PORT"
-    done
-    [[ -n $addresses ]] || printf '  IP nicht ermittelt: http://<Container-IP>:%s/login\n' "$PORT"
+    print_access_urls
     printf '  Lokale Bereitschaft: http://127.0.0.1:%s/health/ready\n' "$PORT"
     printf 'HTTPS-Adresse: ggf. die konfigurierte Reverse-Proxy-Adresse verwenden.\n'
   else

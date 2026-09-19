@@ -121,3 +121,22 @@ Erwartet: Version 0.1.8, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.
+# Nachbesserung der Abschlussausgaben in 0.1.8
+
+Die Datenbankprüfung und Bereitschaftsmeldung werden mit Trennlinien abgesetzt;
+der abschließende Zusammenfassungsblock ist eingerahmt. Die Adressen stammen
+aus `hostname -I` im Container, IPv6-Adressen werden in URL-Klammern ausgegeben.
+Ist keine Adresse ermittelbar, erscheint ein Diagnosehinweis statt eines Platzhalters.
+
+Beim ersten Update von 0.1.7 läuft noch das zuvor geladene Skript; dessen Ausgabe
+enthält die neue Zusammenfassung daher noch nicht. Zur Prüfung nach dem Update
+als **root im NeoFab2-Container** erneut ausführen:
+
+```bash
+bash /opt/neofab2/script/upDateNeoFabService
+```
+
+Bei unverändertem Repository-Stand wird kein weiteres Update ausgeführt; die
+Zusammenfassung erscheint trotzdem. Standardport: `8080`, maßgeblich ist der
+konfigurierte Port. Bei fehlender IP `ip -brief address` ausführen; externe
+Erreichbarkeit und Reverse-Proxy-Adresse werden nicht automatisch geprüft.

@@ -5,6 +5,10 @@ from flask import Blueprint, abort, g, has_request_context, redirect, request, s
 LANGUAGES = {"en": "English", "de": "Deutsch", "fr": "Français"}
 # English messages are stable lookup keys and the fallback. No HTML.
 MESSAGES = {
+    "Master data": {"de": "Stammdaten", "fr": "Données de référence"},
+    "Positions": {"de": "Positionen", "fr": "Postes"},
+    "Study programs": {"de": "Studiengänge", "fr": "Programmes d’études"},
+    "Cost centers": {"de": "Kostenstellen", "fr": "Centres de coûts"},
     "{label} must contain at most {limit} characters.": {
         "de": "{label} darf höchstens {limit} Zeichen enthalten."
     },

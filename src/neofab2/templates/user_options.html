@@ -2,6 +2,7 @@
 {% block title %}{{ _(kinds[kind]) }} · NeoFab2{% endblock %}
 {% block content %}
 <h1>{{ _(kinds[kind]) }}</h1>
+<p><a href="{{ url_for('settings.edit') }}">{{ _('System settings') }}</a> / <a href="{{ url_for('user_options.overview') }}">{{ _('Master data') }}</a></p>
 <p>{{ _('Manage the choices available in user accounts. Renaming updates existing assignments; inactive options remain on existing accounts but cannot be assigned to another account.') }}</p>
 <nav aria-label="{{ _('User field options') }}">
   {% for key, label in kinds.items() %}<a href="{{ url_for('user_options.manage', kind=key) }}" {% if key == kind %}aria-current="page"{% endif %}>{{ _(label) }}</a>{% endfor %}

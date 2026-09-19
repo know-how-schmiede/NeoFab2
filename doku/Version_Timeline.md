@@ -7,6 +7,24 @@ Bereich: Betriebsskripte, Formularhilfen und verwaltete Benutzer-Auswahllisten
 
 ### Änderungen
 
+- Nachbesserung vom 2026-09-19, weiterhin 0.1.8: Einstieg **System settings →
+  Master data** mit separaten Zielseiten für Positionen, Studiengänge und
+  Kostenstellen. Bereits vorhandene Anlage-/Änderungsformulare bleiben erhalten.
+  Zusätzliche Trennlinien bei Abschlussprüfung/Bereitschaft; tatsächliche
+  IP-Adressen auch beim Teststart, Diagnosehinweis statt IP-Platzhalter.
+  Keine zusätzliche Schemaänderung. Beim Update aus 0.1.7 war noch der alte
+  Skriptcode geladen; neue Ausgabe ab erneutem Aufruf der aktualisierten Skripte.
+
+  Kopierbarer Commit-Titel: `fix: clarify maintenance output and expose master data settings`
+
+  Beschreibung: `Add a master data overview under system settings, link separate
+  option forms, separate maintenance checks visually and display detected IP URLs.`
+
+  Prüfung der Nachbesserung: 133 Tests bestanden; ergänzte Zugriffsschutzprüfung
+  anschließend mit 8 Benutzerlisten-Tests erneut bestanden. Alle fünf Shell-Dateien
+  bestehen `bash -n`, `git diff --check` ohne Befund. OS-Kommandos simuliert;
+  neue Darstellung noch nicht selbst im Browser oder Debian-LXC geprüft.
+
 - Installation, Service-Einrichtung, Update und Notfall-Passwort-Reset geben zum
   Abschluss einen eingerahmten Zusammenfassungsblock aus: Ergebnis/Exit-Code,
   IP-Adressen und interner Port, Servicezustand, Pfade, installierte Version,

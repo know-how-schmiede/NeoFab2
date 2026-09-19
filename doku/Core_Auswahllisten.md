@@ -7,6 +7,12 @@ Benutzerangaben, keine Finanz-/Auftragsverwaltung und keine Fachplugin-Abhängig
 
 ## Listen pflegen
 
+Zentraler Einstieg: **System settings → Master data** (Deutsch:
+**Systemeinstellungen → Stammdaten**), Adresse `/admin/master-data`.
+Die Übersicht verlinkt Positionen, Studiengänge und Kostenstellen jeweils auf
+ihre eigene Liste mit Anlage- und Bearbeitungsformular. Weitere Serien können
+später eigene Zielseiten erhalten. Die bisherigen Direktlinks bleiben erhalten.
+
 Ausführungsbenutzer: **angemeldeter NeoFab2-Administrator**. Unter **User management**
 die gewünschte Liste öffnen; alternativ im Benutzerformular **Manage options**:
 

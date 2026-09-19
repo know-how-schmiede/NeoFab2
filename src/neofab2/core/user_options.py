@@ -59,6 +59,14 @@ def save_option(app, actor_id, kind, name, active, option_id=None):
         raise ValueError("An option with this name already exists in this list.") from error
 
 
+@bp.get("/admin/master-data")
+@permission_required("core.users.manage")
+def overview():
+    if not database_ready(current_app):
+        abort(503)
+    return render_template("master_data.html", kinds=KINDS)
+
+
 @bp.route("/admin/user-options/<kind>", methods=["GET", "POST"])
 @bp.route("/admin/user-options/<kind>/<int:option_id>/edit", methods=["GET", "POST"])
 @permission_required("core.users.manage")

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Master data') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('Master data') }}</h1>
+<p><a href="{{ url_for('settings.edit') }}">{{ _('System settings') }}</a></p>
+<p>{{ _('Choose a list to add, edit or deactivate the options available in user accounts.') }}</p>
+<ul>
+  {% for kind, label in kinds.items() %}
+  <li><a href="{{ url_for('user_options.manage', kind=kind) }}">{{ _(label) }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -354,3 +354,16 @@ Erwartet: Version 0.1.8, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.
+## Abschlussausgaben und Stammdaten: Nachbesserung 0.1.8
+
+Die Betriebsskripte zeigen ermittelte Container-Adressen statt IP-Platzhaltern.
+Trennlinien setzen Datenbankprüfung und Bereitschaftsmeldung ab; die abschließende
+Zusammenfassung enthält Ergebnis, Zugänge und Wartungsbefehle. Ausführung und
+Fehlerhilfe: [Schnellstart](../script/README.md#nachbesserung-der-abschlussausgaben-in-018).
+Ein bereits laufendes Update aus 0.1.7 verwendet noch den zuvor geladenen Skriptcode.
+
+Als angemeldeter Administrator **System settings → Master data** öffnen
+(Deutsch: **Systemeinstellungen → Stammdaten**). Dort wird für jede Serie auf
+eine getrennte Liste mit eigenen Eingabe-/Änderungsformularen verlinkt.
+Bedienung und Ergebnisprüfung: [Auswahllisten](Core_Auswahllisten.md).
+Keine zusätzliche Schemaänderung oder Freitextmigration für diese Nachbesserung.
