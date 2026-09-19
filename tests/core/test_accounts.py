@@ -59,7 +59,8 @@ def test_login_logout_and_cookie_replay(app, admin):
     page = client.get("/profile")
     assert page.status_code == 200
     assert page.headers["Cache-Control"] == "no-store"
-    assert "User management" in page.text
+    assert "Administration" in page.text
+    assert "User management" in client.get("/admin").text
     assert PASSWORD not in page.text
     cookie = client.get_cookie("neofab2_session").value
     assert client.get("/logout").status_code == 405

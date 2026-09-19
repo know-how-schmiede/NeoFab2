@@ -151,7 +151,7 @@ Maßgeblich ist der [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md): `printing
 als erstes Fach-/Referenzplugin nach vollständiger Core-Abnahme, davor minimale
 `orders`-Basis und gemeinsame Datei-/Viewer-Komponenten. Workshops folgen später.
 `employee` entspricht dem bestehenden `staff`; API-1-Ausbau mit mehreren Rechten
-und Besitzerprüfung ist geplant. Kein React-Wechsel, keine automatische
+und Besitzerprüfung wurde mit Paket 0 in 0.1.10 umgesetzt. Kein React-Wechsel, keine automatische
 Freigabe von Laser-/Scan-Plugins. G-Code-Analyse und lokale Kosten/Status gehören
 zum MVP, PrintFleet erst zum Anschlussausbau.
 
@@ -305,3 +305,13 @@ Bei jeder abgeschlossenen Umsetzung diesen Nachweis aktualisieren. Versionsände
 | U05, S01, S04 | geprüft (Teilumfang) | `src/neofab2/templates/users.html`, `user_form.html`, `settings.html` | HTML-Prüfung: Stammdaten-Links aus Liste und beiden Benutzerformularen entfernt; Einstellungen mit Stammdaten-Button; bestehende Rechte-/CSRF-Tests bestanden | Keine Schemaänderung; Funktionsrestumfang unverändert |
 | S01 | geprüft (HTML/CSS-Teilumfang) | `src/neofab2/templates/ui_icons.html`, `base.html`, weitere Button-Templates, `src/neofab2/plugins/templates/management_test/index.html`, `src/neofab2/static/core.css` | 14 Seiten mit 28 beschrifteten Buttons und dekorativen SVG-Icons geprüft; 133 Gesamttests bestanden | Interaktive visuelle Abnahme offen, kein Browser verbunden; keine vollständige Core-Abnahme |
 | S12, X05, X06 | dokumentiert / geprüft (Teilumfang) | `src/neofab2/version.py`, `doku/UI_Gestaltungsregeln.md`, `doku/Version_Timeline.md`, Bedienungs-/Betriebsanleitungen, `README.md` | Version 0.1.9, deutsche Gestaltungsregeln und kopierbarer Commit-Text; temporäre Testdaten ausschließlich im Projekt | Kein Commit/Push, keine Produktivdaten geändert |
+
+### Paket 0 und Administration 0.1.10 (19.09.2026)
+
+| IDs | Status | Umsetzungsnachweis | Prüfungen | Abweichungen/offen |
+|---|---|---|---|---|
+| N01, U06 | geprüft (Paket 0) | `src/neofab2/plugin_api/__init__.py`, `registry.py`, `src/neofab2/plugins/management_test.py`, `tests/plugin_contract/test_files.py` | Mehrere Rechte, Namespace-/Rollenvalidierung, Besitzer + Eigenrecht, kein Admin-Wildcard, Aktionsrechte, Navigation und bestehende Aktivierungs-/Aufgabensperren; API-1-Altverträge funktionieren | Rollenpflege und weitere Dienstverträge folgen; `staff` unverändert |
+| S10, N01 | geprüft (Minimalvertrag) | `src/neofab2/services/files.py`, `plugin_api/files.py`, `plugins/templates/management_test/index.html`, `tests/plugin_contract/test_files.py` | Eigene/fremde Downloads, Mitarbeiter/Admin, Modulfilter, CSRF, frischer Kontostatus, leere/falsche/zu große Dateien, Pfad-/Namensprüfung, Anhang-Header, Neustart und Datenerhalt bei Deaktivierung | Kleine SQLite-BLOBs statt großer Dateisystemablage; TXT-Testplugin bis 256 KiB; keine Inhaltsprüfung, Viewer, Löschung oder fachliche Objektbindung |
+| S01, U06 | geprüft (Teilumfang) | `src/neofab2/core/routes.py`, `core/i18n.py`, `templates/base.html`, `administration.html`, `ui_icons.html`, `tests/plugin_contract/test_files.py` | Administrationseinstieg, drei Buttons mit Icons, ausgeblendete direkte Hauptmenülinks, direkter Zugriff für Gäste/Benutzer/Mitarbeiter/Admin geprüft | Interaktive visuelle Browser-Abnahme offen |
+| X07 | geprüft (Teilumfang) | `migrations/versions/0008_core_files.py`, `src/neofab2/database.py`, `tests/plugin_contract/test_files.py`, `tests/core/test_foundation.py` | Explizites Upgrade von 0007, Wiederholung, Kontenerhalt, leere Dateitabelle, fehlende Migration nicht bereit; SQLite-Sicherung mit Dateiinhalt geprüft | Nur synthetische Daten; kein Produktivupdate oder echter LXC-Lauf |
+| S12, X05, X06 | geprüft (Teilumfang) | `src/neofab2/version.py`, `pyproject.toml`, `doku/Core_Dateien_und_Rechte.md`, `Core_Naechste_Schritte.md`, `Version_Timeline.md`, `script/README.md`, `doku/SETUP.md` | Version 0.1.10; 160 Tests bestanden, Wheel/sdist gebaut, installiertes Wheel einschließlich Administration/Icons/Upload/Download geprüft; `git diff --check` bestanden; Paket 1 als nächster Schritt dokumentiert | Kein Commit/Push; vollständige Core-Abnahme bleibt offen |

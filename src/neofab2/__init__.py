@@ -59,6 +59,10 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     def unavailable(_error):
         return render_template("error.html", message="The system is not ready yet. Please contact the administration."), 503
 
+    @app.errorhandler(413)
+    def file_too_large(_error):
+        return render_template("error.html", message="The upload exceeds the allowed size. Choose a smaller file."), 413
+
     @app.after_request
     def security_headers(response):
         response.headers["X-Content-Type-Options"] = "nosniff"

@@ -5,6 +5,12 @@ from flask import Blueprint, abort, g, has_request_context, redirect, request, s
 LANGUAGES = {"en": "English", "de": "Deutsch", "fr": "Français"}
 # English messages are stable lookup keys and the fallback. No HTML.
 MESSAGES = {
+    "Administration": {"de": "Administration", "fr": "Administration"},
+    "Test files": {"de": "Testdateien", "fr": "Fichiers de test"},
+    "Test file": {"de": "Testdatei", "fr": "Fichier de test"},
+    "Upload test file": {"de": "Testdatei hochladen", "fr": "Téléverser un fichier de test"},
+    "Test file saved.": {"de": "Testdatei gespeichert.", "fr": "Fichier de test enregistré."},
+    "No test files available.": {"de": "Keine Testdateien vorhanden.", "fr": "Aucun fichier de test disponible."},
     "Master data": {"de": "Stammdaten", "fr": "Données de référence"},
     "Positions": {"de": "Positionen", "fr": "Postes"},
     "Study programs": {"de": "Studiengänge", "fr": "Programmes d’études"},

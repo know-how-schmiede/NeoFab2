@@ -52,6 +52,7 @@ def database_ready(app):
             connection.execute(text("SELECT token_hash, user_id, created_at, last_seen FROM core_sessions LIMIT 0"))
             connection.execute(text("SELECT key, count, window_start FROM core_login_attempts LIMIT 0"))
             connection.execute(text("SELECT id, kind, name, active FROM core_user_options LIMIT 0"))
+            connection.execute(text("SELECT id, plugin_id, owner_id, filename, size, created_at, content FROM core_files LIMIT 0"))
             return actual == expected
     except SQLAlchemyError:
         return False

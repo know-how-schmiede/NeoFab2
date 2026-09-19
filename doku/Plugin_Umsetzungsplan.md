@@ -68,9 +68,10 @@ benötigt einen eigenen Auftrag, explizite Migration und Kompatibilitätsprüfun
 
 Geplante Rechte beispielsweise `printing3d.create`, `printing3d.view_own`,
 `printing3d.manage`, `printing3d.approve`, `printing3d.configure` sind **noch kein
-implementierter API-Vertrag**. Die aktuelle API 1 kennt nur `<kennung>.access`.
-Vor dem Fachplugin den Vertrag für mehrere Rechte und Besitzerprüfung erweitern
-und mit Testplugins nachweisen. Die Rechte werden ausdrücklich zugeordnet;
+implementierter Fachplugin-Vertrag**. Seit 0.1.10 unterstützt API 1 neben
+`<kennung>.access` mehrere Rechte und Besitzerprüfung, nachgewiesen mit
+Testplugins ([Dateien und Rechte](Core_Dateien_und_Rechte.md)). Die konkreten
+3D-Druck-Rechte bleiben geplant. Die Rechte werden ausdrücklich zugeordnet;
 ein Admin erhält keinen pauschalen Zugriff auf beliebige fremde Plugins.
 Navigation, Routen, Formularaktionen, Datei-Downloads und Vorschauen müssen
 dieselbe serverseitige Prüfung verwenden. Die genaue Änderbarkeit eigener

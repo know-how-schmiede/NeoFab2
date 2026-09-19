@@ -17,6 +17,7 @@
     {% if (plugin.plugin_id in selected) != (plugin.plugin_id in registry.enabled) %} · {{ _("Restart pending") }}{% endif %}</p>
   <p>Version {{ plugin.version }} · API {{ plugin.api_version }}</p>
   <p>{{ _("ID:") }} {{ plugin.plugin_id }} · {{ _("Permission:") }} {{ plugin.permission }}</p>
+  {% if plugin.permissions %}<ul>{% for permission in plugin.permissions %}<li>{{ permission.name }}: {{ permission.roles|join(', ') }}</li>{% endfor %}</ul>{% endif %}
   <p>{{ _("Dependencies:") }} {% for dependency in plugin.dependencies %}{{ dependency.plugin_id }} {{ _("from") }} {{ dependency.minimum_version }}{% if not loop.last %}, {% endif %}{% else %}{{ _("none") }}{% endfor %}</p>
   {% if has_permission(current_user, 'core.plugins.manage') %}
   <form method="post" action="{{ url_for('plugins.change', plugin_id=plugin.plugin_id) }}">

@@ -7,6 +7,21 @@ API_VERSION = 1
 
 
 @dataclass(frozen=True)
+class Permission:
+    name: str
+    roles: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class FilePolicy:
+    upload: str
+    read_own: str
+    read_all: str
+    max_bytes: int = 262144
+    extensions: tuple[str, ...] = (".txt",)
+
+
+@dataclass(frozen=True)
 class Dependency:
     plugin_id: str
     minimum_version: str
@@ -24,6 +39,25 @@ class Plugin:
     dependencies: tuple[Dependency, ...] = ()
     # Aufgaben laufen ausdrücklich per Betriebs-CLI, noch kein Scheduler.
     tasks: tuple[tuple[str, Callable], ...] = ()
+    permissions: tuple[Permission, ...] = ()
+    files: FilePolicy | None = None
+
+
+def has_permission(user, permission):
+    from neofab2.core.users import has_permission as check
+    return check(user, permission)
+
+
+def owns_or_allowed(user, owner_id, own_permission, all_permission):
+    """An explicit broad permission or ownership AND an explicit own permission."""
+    return bool(user and user["active"] and (
+        has_permission(user, all_permission) or
+        (user["id"] == owner_id and has_permission(user, own_permission))))
+
+
+def permission_required(permission):
+    from neofab2.core.auth import permission_required as guard
+    return guard(permission)
 
 
 def builtin_plugins():

@@ -3,9 +3,21 @@
 {% block content %}
 <h1>{{ _("Management test plugin") }}</h1>
 <p>{{ _("This additional test plugin requires the core test plugin. It checks activation, dependencies and protected forms.") }}</p>
+{% if has_permission(current_user, 'management_test.check') %}
 <form method="post" action="{{ url_for('plugin_management_test.check') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <button type="submit">{{ icon("shield") }} {{ _("Test form access") }}</button>
 </form>
+{% endif %}
 <p>{{ _("The test only displays a confirmation; no business data is created.") }}</p>
+<h2>{{ _('Test files') }}</h2>
+<p>{{ _('Use synthetic TXT files only (maximum 256 KiB). Users see their own files; staff and administrators see all files in this test plugin.') }}</p>
+<form method="post" enctype="multipart/form-data" action="{{ url_for('plugin_management_test.upload') }}" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="file">{{ _('Test file') }}</label>
+  <input type="file" id="file" name="file" accept=".txt" required aria-describedby="file-help">
+  <small id="file-help" class="field-help">{{ _('Choose a nonempty TXT file with a simple filename. No personal or production data.') }}</small>
+  <button type="submit">{{ icon('upload') }} {{ _('Upload test file') }}</button>
+</form>
+<ul>{% for entry in entries %}<li><a href="{{ url_for('plugin_management_test.download', file_id=entry.id) }}">{{ entry.filename }}</a> ({{ entry.size }} B)</li>{% else %}<li>{{ _('No test files available.') }}</li>{% endfor %}</ul>
 {% endblock %}

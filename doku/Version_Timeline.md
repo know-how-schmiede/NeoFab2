@@ -1,5 +1,82 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.10 – 2026-09-19
+
+Bereich: Paket 0 des Core-Arbeitsplans und Administration (N01, U06, S10,
+S01/S12, X05–X07).
+
+### Änderungen
+
+- Neuer Menüpunkt **Administration** mit berechtigungsabhängigen Buttons für
+  Benutzerverwaltung, Plugins und Systemeinstellungen; die drei Einzelverweise
+  entfallen in der Hauptnavigation. Zieladressen und Schutz bleiben erhalten.
+- API 1 abwärtskompatibel um mehrere explizite Plugin-Rechte, einzelne
+  Aktionsprüfungen und Besitzerprüfung erweitert. Kein Admin-Wildcard, `employee`
+  bleibt `staff`. Ungültige/fremde/duplizierte Rechte werden zurückgewiesen.
+- Öffentliche minimale Dateischnittstelle und getrennter technischer Dienst:
+  modul- und besitzergebundene Uploads, Metadatenlisten und geschützte Downloads.
+  Kontostatus wird erneut geprüft; CSRF, Dateinamen-/Typ-/Größenlimits und
+  ausschließliche Anhang-Auslieferung mit `nosniff`/`no-store` bleiben verbindlich.
+- Bestehendes Verwaltungs-Testplugin nutzt TXT-Dateien bis 256 KiB: Benutzer
+  lesen eigene, Mitarbeiter/Administratoren alle Dateien dieses Testplugins.
+  Nur Mitarbeiter/Administratoren dürfen die separate Formularprüfung ausführen.
+  Core-Plugin-Verwaltung bleibt ausschließlich administrativ.
+- Dateien und Metadaten werden für diesen Minimalumfang atomar als SQLite-BLOB
+  gespeichert. Keine benutzergesteuerten Ablagepfade; bestehende Datenbanksicherung
+  umfasst Testdateien. Keine automatische Löschung bei Deaktivierung.
+- Deutsche [Bedienungs-/Vertragsanleitung](Core_Dateien_und_Rechte.md),
+  Gestaltungsregeln, Versionsangaben und Core-Arbeitsplan aktualisiert.
+  Paket 1 (SMTP/Versandaufträge/Worker) ist als nächster Schritt eingeplant.
+
+### Betrieb und Migration
+
+Explizite Revision **`0008_core_files`**, Vorgänger `0007_user_options`.
+Leere Tabelle mit Modul, Besitzer-Fremdschlüssel, Dateiname, Größe, Zeit und Inhalt;
+keine Bestandsdatenübernahme. Normales Update nach manuellem Commit/Push über
+`script/upDateNeoFabService`, einschließlich Sicherung und expliziter Migration.
+Erwartet: Version 0.1.10 und `Database and schema ready.`. Keine Migration beim
+App-Start. Default weiterhin keine aktiven Plugins; gespeicherte Aktivierungen
+bleiben bestehen. Ist das Verwaltungs-Testplugin bereits aktiv, erhalten Benutzer
+und Mitarbeiter nach Update Zugriff auf dessen synthetische Testdateiseite.
+
+Die SQLite-Ablage ist bewusst auf kleine Anhänge begrenzt (Vertrag maximal 1 MiB,
+Testplugin 256 KiB, HTTP-Limit 1 MiB inklusive Multipart-Overhead). Große Dateien,
+fachliche Objektbindung, Inhaltsprüfung, Viewer, Löschung/Kontingente, Versand
+und Rollenpflege sind nicht Bestandteil dieses Pakets. Keine Fachplugins,
+Produktivmigration oder vollständige Core-Abnahme.
+
+### Prüfungen
+
+- **160 Tests bestanden** unter Windows/Python 3.12 (112,87 s), davon 27 neue
+  Fälle zu Plugin-Rechten, Besitzerprüfung, Upload-/Download-Schutz, Dateirichtlinien,
+  Grenzen, Rechtewiderruf, Administration und Migration von 0.1.9.
+- Neustart-Persistenz, gesperrte Routen/Aufgaben nach Deaktivierung, erhaltene
+  Dateien, SQLite-Sicherung mit Inhalt sowie wiederholbares Upgrade mit
+  unveränderten Konten geprüft. Ausschließlich synthetische Daten.
+- Wheel und sdist 0.1.10 gebaut; separat installiertes Wheel mit Migration,
+  Templates, CSS und Logo geprüft. Zusätzliche Paketprüfung von Administration,
+  Icons und Upload/Download bestanden. Temporäres Windows-Verzeichnis beim
+  Zusatzlauf blockiert; Wiederholung mit explizitem Projektpfad erfolgreich.
+- `git diff --check` ohne Befund.
+- Bestehende Tests auf den neuen Administrationseinstieg und `core_files`
+  angepasst; lange parametrisierte Testnamen für Windows verkürzt.
+- Interaktive Browser- und echter Debian-/LXC-Lauf nicht durchgeführt.
+  Kein Commit oder Push ausgeführt.
+
+### Kopierbarer Commit-Text
+
+```text
+feat: release 0.1.10 with administration and plugin permission/file contracts
+
+Group user, plugin and system management under Administration.
+Extend API 1 with explicit permissions, ownership checks and small-file services.
+Exercise protected uploads/downloads through the synthetic management test plugin.
+Add explicit migration 0008_core_files; preserve existing accounts and data.
+Document package 0 completion, operating limits and SMTP as the next core step.
+Validation: 160 tests passed; wheel/sdist built and installed wheel checked.
+Interactive browser and Debian/LXC acceptance remain open.
+```
+
 ## Version 0.1.9 – 2026-09-19
 
 Bereich: Benutzerverwaltung, Navigation und gemeinsame Gestaltung

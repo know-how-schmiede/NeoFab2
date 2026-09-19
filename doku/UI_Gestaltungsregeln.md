@@ -1,4 +1,4 @@
-# Gestaltung von Buttons und Oberflächen – v0.1.9
+# Gestaltung von Buttons und Oberflächen – v0.1.10
 
 Diese Regeln gelten für Core und Plugin-Oberflächen. Gemeinsame Umsetzung:
 `src/neofab2/static/core.css`, Icons: `src/neofab2/templates/ui_icons.html`.
@@ -17,6 +17,8 @@ Keine externen Icon-Schriften, CDNs oder JavaScript-Abhängigkeiten erforderlich
 | Sprache anwenden | Submit-Button | `language` |
 | Plugin-Aktivierung / Deaktivierung vormerken | Submit-Button mit passendem Aktionstext | `play` / `pause` |
 | Berechtigungsprüfung im Testplugin | Submit-Button | `shield` |
+| Datei hochladen | Submit-Button | `upload` |
+| Verwaltungsbereiche öffnen | Sekundäre Link-Buttons unter Administration | `users` / `plugin` / `settings` |
 
 Jeder Button enthält links ein kleines passendes Icon **und sichtbaren Text**.
 Beschriftungen benennen die Aktion, beispielsweise „Profil speichern“.
@@ -29,6 +31,11 @@ auf Navigationslinks. Normale Menü-, Tabellen-, Rück- und Textlinks bleiben Li
 ohne Button-Gestaltung; sie benötigen kein zusätzliches Icon.
 Die Stammdatenpflege wird aus den Systemeinstellungen geöffnet. Benutzerliste
 und Benutzerformulare enthalten keine Stammdaten-Verwaltungslinks.
+Seit 0.1.10 enthält die Hauptnavigation nur den Einstieg „Administration“ für
+Benutzerverwaltung, Plugin-Verwaltung und Systemeinstellungen. Die Übersichtsseite
+zeigt die berechtigten Ziele als Buttons mit Icons; Unterseiten markieren den
+Administrationsbereich in der Hauptnavigation. Normale Konten erhalten keinen
+sichtbaren oder direkten Zugang zur Core-Administration.
 
 ## Maße, Farben und Zustände
 

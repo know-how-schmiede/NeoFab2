@@ -25,7 +25,7 @@ dev = ["pytest>=8,<10", "build>=1.2,<2"]
 neofab2 = "neofab2.cli:main"
 
 [tool.setuptools]
-packages = ["neofab2", "neofab2.core", "neofab2.plugin_api", "neofab2.plugins", "neofab2.migrations", "neofab2.migrations.versions"]
+packages = ["neofab2", "neofab2.core", "neofab2.services", "neofab2.plugin_api", "neofab2.plugins", "neofab2.migrations", "neofab2.migrations.versions"]
 include-package-data = false
 
 [tool.setuptools.package-dir]

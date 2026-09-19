@@ -13,9 +13,7 @@
     <a href="{{ url_for('core.index') }}">{{ _('Home') }}</a>
     {% if current_user %}
       <a href="{{ url_for('accounts.profile') }}">{{ _('My profile') }}</a>
-      {% if has_permission(current_user, 'core.users.manage') %}<a href="{{ url_for('accounts.user_list') }}">{{ _('User management') }}</a>{% endif %}
-      {% if has_permission(current_user, 'core.plugins.view') %}<a href="{{ url_for('plugins.overview') }}">{{ _('Plugins') }}</a>{% endif %}
-      {% if has_permission(current_user, 'core.settings.manage') %}<a href="{{ url_for('settings.edit') }}">{{ _('System settings') }}</a>{% endif %}
+      {% if has_permission(current_user, 'core.users.manage') or has_permission(current_user, 'core.plugins.view') or has_permission(current_user, 'core.settings.manage') %}<a href="{{ url_for('core.administration') }}" {% if request.path == '/admin' or request.path.startswith('/admin/') %}aria-current="{{ 'page' if request.path == '/admin' else 'location' }}"{% endif %}>{{ _('Administration') }}</a>{% endif %}
       {% for plugin in plugin_navigation %}<a href="{{ url_for('plugin_' ~ plugin.plugin_id ~ '.index') }}">{{ _(plugin.name) }}</a>{% endfor %}
       <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">{{ icon("logout") }} {{ _('Sign out') }}</button></form>
     {% else %}<a href="{{ url_for('accounts.login') }}">{{ _('Sign in') }}</a>{% endif %}

@@ -1,10 +1,10 @@
-# Benutzer anlegen und bearbeiten – v0.1.9
+# Benutzer anlegen und bearbeiten – v0.1.10
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
 [Sprachwahl und Migration 0006](Core_Sprachen.md).
 
-Als **NeoFab2-Administrator** unter **Benutzerverwaltung** ein Konto anlegen
+Als **NeoFab2-Administrator** unter **Administration → Benutzerverwaltung** ein Konto anlegen
 oder **Bearbeiten** öffnen. Beide Formulare enthalten die Felder der bereitgestellten
 Vorlage; der bisherige Anzeigename bleibt für bestehende Konten erhalten.
 
@@ -23,7 +23,7 @@ Vorlage; der bisherige Anzeigename bleibt für bestehende Konten erhalten.
 | Studiengang | Optionale Auswahl aus Study programs; Namen höchstens 150 Zeichen |
 | Notiz | Optional, höchstens 2000 Zeichen; nur im Admin-Formular verfügbar |
 
-Die Listen werden unter **System settings → Master data → Positions / Study programs / Cost centers**
+Die Listen werden unter **Administration → System settings → Master data → Positions / Study programs / Cost centers**
 über eigene Formulare gepflegt und starten leer. Es erfolgt keine Übernahme alter
 Freitextwerte. Englische Feldhilfen sind bereits übersetzbar eingebunden.
 [Bedienung, Speicherung und Fehlerhilfe](Core_Auswahllisten.md).

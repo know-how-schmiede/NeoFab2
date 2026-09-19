@@ -26,6 +26,23 @@ class Registry:
                     or not plugin.roles or not set(plugin.roles) <= {"user", "staff", "admin"}
                     or not callable(plugin.blueprint_factory)):
                 raise ValueError(f"Invalid plugin contract: {key}")
+            names = {plugin.permission}
+            for permission in plugin.permissions:
+                if (not isinstance(permission.name, str)
+                        or not re.fullmatch(re.escape(key) + r"\.[a-z][a-z0-9_]*", permission.name)
+                        or permission.name in names or not permission.roles
+                        or not set(permission.roles) <= {"user", "staff", "admin"}):
+                    raise ValueError(f"Invalid plugin permission contract: {key}")
+                names.add(permission.name)
+            policy = plugin.files
+            if policy is not None and (
+                    not {policy.upload, policy.read_own, policy.read_all} <= names
+                    or len({policy.upload, policy.read_own, policy.read_all}) != 3
+                    or type(policy.max_bytes) is not int or not 1 <= policy.max_bytes <= 1048576
+                    or not policy.extensions or any(
+                        not isinstance(ext, str) or not re.fullmatch(r"\.[a-z0-9]+", ext)
+                        for ext in policy.extensions)):
+                raise ValueError(f"Invalid plugin file contract: {key}")
             task_names = set()
             for name, handler in plugin.tasks:
                 if not re.fullmatch(r"[a-z][a-z0-9_]*", name) or name in task_names or not callable(handler):
@@ -77,7 +94,9 @@ class Registry:
 
     def allows(self, user, permission):
         return bool(user and user["active"] and any(
-            plugin.permission == permission and user["role"] in plugin.roles
+            ((plugin.permission == permission and user["role"] in plugin.roles)
+             or any(item.name == permission and user["role"] in item.roles
+                    for item in plugin.permissions))
             for plugin in self.ordered))
 
     def run_task(self, plugin_id, task_name):

@@ -1,4 +1,4 @@
-# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.5
+# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.10
 
 Dieses Arbeitspaket setzt N01 sowie Teile von S01, S12 und U06 um. Es enthält
 zwei synthetische Testplugins, keine produktiven Fachplugins.
@@ -7,9 +7,9 @@ zwei synthetische Testplugins, keine produktiven Fachplugins.
 
 Vor Fachplugin-Arbeiten den [Plugin-Umsetzungsplan](Plugin_Umsetzungsplan.md) lesen.
 Erstes Referenzplugin wird `printing3d` nach vollständiger Core-Abnahme und
-minimaler `orders`-Basis. Zunächst den Vertrag für mehrere Rechte und
-Besitzerprüfung mit Testplugins ausbauen. `employee` aus der Planung entspricht
-dem vorhandenen `staff`; API 1 implementiert diese feineren Rechte noch nicht.
+minimaler `orders`-Basis. Mehrere Rechte und Besitzerprüfung sind seit 0.1.10
+mit Testplugins umgesetzt. `employee` aus der Planung entspricht
+dem vorhandenen `staff`. [Dateivertrag und Rechte](Core_Dateien_und_Rechte.md).
 Datei-Upload und STL-/3D-Viewer sind interne gemeinsame Komponenten. Der MVP
 bleibt ohne PrintFleet; Slicing erfolgt extern. PrintFleet-Anschluss und
 weitere Viewer-/Dateiformate sind separat zu spezifizieren.
@@ -19,10 +19,10 @@ weitere Viewer-/Dateiformate sind separat zu spezifizieren.
 `neofab2.plugin_api.Plugin` beschreibt Kennung, Anzeigename, eigene Version
 im Format MAJOR.MINOR.PATCH, API-Version, Zugriffsrecht, erlaubte Core-Rollen,
 Blueprint-Factory, Abhängigkeiten und optionale lokale Aufgaben.
-API 1 unterstützt genau ein Zugriffsrecht je Plugin: `<kennung>.access`.
+API 1 unterstützt das Einstiegsrecht `<kennung>.access` und seit 0.1.10
+optionale zusätzliche `Permission`-Deklarationen sowie `FilePolicy`.
 Die Rollen werden ausdrücklich angegeben; Administratoren erhalten keine
-pauschalen Rechte für fremde Plugins. Weitere Einzelrechte und eigene Rollenpflege
-bleiben einem späteren Vertragsausbau vorbehalten.
+pauschalen Rechte für fremde Plugins. Eigene Rollenpflege bleibt offen.
 
 Die Factory erzeugt bei jedem App-Start einen neuen Flask-Blueprint namens
 `plugin_<kennung>` mit einem GET-Endpunkt `index`. Der Core registriert ihn
@@ -46,8 +46,8 @@ und Core-Routen importieren keine Plugin-Implementierungen.
 
 ## Backend-Verwaltung und manueller Neustart
 
-Nach dem regulären Update auf 0.1.5 als **NeoFab2-Administrator** anmelden und
-**Plugins** (`/admin/plugins`) öffnen. Das zusätzliche Recht `core.plugins.manage`
+Nach dem regulären Update als **NeoFab2-Administrator** anmelden und
+**Administration → Plugins** (`/admin/plugins`) öffnen. Das zusätzliche Recht `core.plugins.manage`
 erlaubt ausschließlich Administratoren Änderungen; POST-Formulare sind CSRF-geschützt.
 
 Die Übersicht unterscheidet **Im laufenden Webprozess** und **Gespeicherte Auswahl**.
@@ -74,7 +74,7 @@ Der vollständige manuelle Container-Neustart bleibt der einfache Betriebsweg.
 | Plugin | Version / API | Abhängigkeit | Zweck |
 |---|---|---|---|
 | Core-Testplugin (`core_test`) | 0.1.0 / 1 | keine | einfache Seite und lokale Testaufgabe |
-| Verwaltungs-Testplugin (`management_test`) | 0.1.0 / 1 | `core_test` ab 0.1.0 | Abhängigkeitsprüfung, zweite Seite und geschützter Formularaufruf |
+| Verwaltungs-Testplugin (`management_test`) | 0.1.0 / 1 | `core_test` ab 0.1.0 | Abhängigkeiten, mehrere Rechte, Besitzerprüfung, geschütztes Formular und Testdateien |
 
 1. Zunächst beim Core-Testplugin **Aktivierung vormerken** wählen, sofern es noch
    nicht ausgewählt ist. Danach das Verwaltungs-Testplugin vormerken. Es reicht,
@@ -92,8 +92,11 @@ Der vollständige manuelle Container-Neustart bleibt der einfache Betriebsweg.
    Nach dem nächsten manuellen Neustart fehlen ihre Menüpunkte und direkte
    Seitenaufrufe liefern 404. Lokale Aufgaben werden mit Exit-Code 1 abgewiesen.
 
-Benutzer und Mitarbeiter dürfen weder die Plugin-Verwaltung noch aktivierte
-Testseiten nutzen (403); ohne Anmeldung folgt die Weiterleitung zum Login.
+Benutzer und Mitarbeiter dürfen die Plugin-Verwaltung und die `core_test`-Seite
+nicht nutzen (403). Seit 0.1.10 ist `management_test` für alle drei Rollen
+zugänglich: Benutzer sehen eigene Dateien; Mitarbeiter und Administratoren alle
+Dateien dieses Testplugins. Die Formularprüfung erfordert Mitarbeiter-/Adminrecht.
+Ohne Anmeldung folgt die Weiterleitung zum Login.
 Eine noch ausstehende Änderung kann durch Vormerken des bisherigen Zustands
 wieder aufgehoben werden. Stimmen beide Zustände überein, ist dafür kein Neustart nötig.
 
@@ -162,13 +165,15 @@ Das Plugin-Grundsystem in 0.1.3 benötigte keine neue Datenbankrevision.
 Core 0.1.4 ergänzt `0003_user_theme`; 0.1.5 ergänzt keine neue Revision.
 Beide Testplugins haben weiterhin keine Tabellen.
 Künftige Plugin-Schemata benötigen explizite versionierte Migrationen in der
-zentralen Migrationenkette. Plugin-Einstellungen, Benachrichtigungs-/Dateidienste,
-persistente Aufgaben und feinere Rechte
-sind noch nicht Teil von API 1. Die vollständige Core-Abnahme steht aus.
+zentralen Migrationenkette. Seit 0.1.10 hält `core_files` über Revision
+`0008_core_files` Testdateien im technischen Core-Dienst. Mehrere Rechte und der
+minimale Dateivertrag sind Teil von API 1; Plugin-Einstellungen,
+Benachrichtigungen und persistente Aufgaben bleiben offen.
+Die vollständige Core-Abnahme steht aus.
 
 Ab 0.1.7 sind Plugin-Namen, Testseiten und CLI-Meldungen im Quelltext englisch.
 Die Oberfläche verwendet englische Übersetzungsschlüssel und Englisch als Fallback.
-Die zentrale Core-Version ist 0.1.9; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
+Die zentrale Core-Version ist 0.1.10; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
 
 Für Plugin-Oberflächen gelten die [UI-Gestaltungsregeln](UI_Gestaltungsregeln.md).
 Alle Buttons enthalten sichtbaren übersetzbaren Text und ein passendes Icon aus

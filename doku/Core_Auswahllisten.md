@@ -1,4 +1,4 @@
-# Benutzer-Auswahllisten und Feldhilfen – v0.1.9
+# Benutzer-Auswahllisten und Feldhilfen – v0.1.10
 
 Umfang: U05, S01/S02, S04 und X07. Position, Studiengang und Kostenstelle sind
 optionale Auswahlfelder in den Formularen zum Anlegen und Bearbeiten von Konten.
@@ -7,14 +7,14 @@ Benutzerangaben, keine Finanz-/Auftragsverwaltung und keine Fachplugin-Abhängig
 
 ## Listen pflegen
 
-Zentraler Einstieg: **System settings → Master data** (Deutsch:
-**Systemeinstellungen → Stammdaten**), Adresse `/admin/master-data`.
+Zentraler Einstieg: **Administration → System settings → Master data** (Deutsch:
+**Administration → Systemeinstellungen → Stammdaten**), Adresse `/admin/master-data`.
 Die Übersicht verlinkt Positionen, Studiengänge und Kostenstellen jeweils auf
 ihre eigene Liste mit Anlage- und Bearbeitungsformular. Weitere Serien können
 später eigene Zielseiten erhalten. Seit 0.1.9 ist der Einstieg ein Button mit
 Datenbank-Icon; die Direktlinks in Benutzerliste und Benutzerformularen entfallen.
 
-Ausführungsbenutzer: **angemeldeter NeoFab2-Administrator**. Unter **System settings**
+Ausführungsbenutzer: **angemeldeter NeoFab2-Administrator**. Unter **Administration → System settings**
 den Button **Master data** und anschließend die gewünschte Liste öffnen:
 
 | Liste | Backend-Adresse | Namensgrenze |
@@ -57,19 +57,19 @@ nicht als Auswahl angeboten. Beim nächsten Speichern über das Benutzerformular
 wird die ausgewählte Option bzw. der leere Wert gespeichert. Die Schemaänderung
 erfolgt ausschließlich über den normalen expliziten Migrationsschritt.
 
-Nach manuellem Commit/Push des Stands 0.1.9 als **root im NeoFab2-Testcontainer**:
+Nach manuellem Commit/Push des Stands 0.1.10 als **root im NeoFab2-Testcontainer**:
 
 ```bash
 bash /opt/neofab2/script/upDateNeoFabService
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
 ```
 
-Erwartet: Version 0.1.9 in der Abschlussübersicht und `Database and schema ready.`.
+Erwartet: Version 0.1.10 in der Abschlussübersicht und `Database and schema ready.`.
 Anschließend je einen synthetischen Eintrag in allen drei Listen anlegen,
 einem Testkonto zuweisen, erneut öffnen und die Auswahl kontrollieren.
 Umbenennen und Deaktivieren ebenfalls nur mit synthetischen Daten prüfen.
 
-Fehlerhilfe: Bei leerer Auswahl zuerst unter **System settings → Master data** einen aktiven
+Fehlerhilfe: Bei leerer Auswahl zuerst unter **Administration → System settings → Master data** einen aktiven
 Eintrag anlegen. Bei doppeltem Namen vorhandenen Eintrag bearbeiten. Wird ein
 zwischenzeitlich deaktivierter oder umbenannter Wert beim Speichern abgewiesen,
 Formular neu laden und Auswahl prüfen. Bei HTTP 503 zuerst die Update-Ausgabe

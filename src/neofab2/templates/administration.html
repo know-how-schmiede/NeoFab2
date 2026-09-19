@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Administration') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('Administration') }}</h1>
+<nav aria-label="{{ _('Administration') }}">
+  {% if has_permission(current_user, 'core.users.manage') %}<a class="button secondary" href="{{ url_for('accounts.user_list') }}">{{ icon('users') }} {{ _('User management') }}</a>{% endif %}
+  {% if has_permission(current_user, 'core.plugins.view') %}<a class="button secondary" href="{{ url_for('plugins.overview') }}">{{ icon('plugin') }} {{ _('Plugins') }}</a>{% endif %}
+  {% if has_permission(current_user, 'core.settings.manage') %}<a class="button secondary" href="{{ url_for('settings.edit') }}">{{ icon('settings') }} {{ _('System settings') }}</a>{% endif %}
+</nav>
+{% endblock %}

@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.9
+# Architektur – Stand v0.1.10
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -88,7 +88,11 @@ und persönliche Darstellung; Sprache folgt. S04 umfasst öffentliche Darstellun
 noch keinen Import/Export oder SMTP. U02–U04, S02/S03, S05–S11, N04 und N05 bleiben offen.
 N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Backend-Auswahl mit
 Aktivierung beim Neustart, Seiten, Rechte, Navigation und lokale Aufgaben.
-Weitere Dienstverträge fehlen.
+Seit 0.1.10: zusätzliche `Permission`-Deklarationen, Besitzerprüfung und minimale
+Dateischnittstelle über `plugin_api/files.py`. `services/files.py` speichert kleine
+Anhänge samt Metadaten atomar in `core_files` (explizite Revision `0008_core_files`).
+Core-Verwaltungsziele liegen unter dem neuen Einstieg `/admin`. Weitere
+Dienstverträge fehlen; [Umfang und Grenzen](Core_Dateien_und_Rechte.md).
 [Plugin-Vertrag und Betriebsprüfung](plugin-development.md).
 
 Die drei vertrauten Betriebsskriptnamen und interaktive Bedienung bleiben.
