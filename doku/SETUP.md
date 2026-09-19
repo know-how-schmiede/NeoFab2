@@ -1,6 +1,15 @@
-# NeoFab2 v0.1.12 – Installation und Entwicklung
+# NeoFab2 v0.1.13 – Installation und Entwicklung
 
-Neu in 0.1.12: [SMTP-Einstellungen und persistente Versandaufträge](Core_SMTP_und_Versand.md),
+Neu in 0.1.13: [Registrierung, Aktivierung und Passwort-Reset](Core_Registrierung_und_Reset.md),
+explizite Migration `0010_account_flows`. Beide öffentlichen Verfahren starten
+ausgeschaltet. Vor Freischaltung als Administrator SMTP testen, `PUBLIC_BASE_URL`
+in der geschützten TOML-Datei festlegen und die erlaubten Registrierungsdomains
+unter Administration → Systemeinstellungen → Registrierung und Kontowiederherstellung
+auswählen. Der vorhandene Versandworker bleibt erforderlich. Bestandskonten werden
+nicht automatisch aktiviert. Standardwerte, Ergebnisprüfung und Fehlerhilfe
+stehen in der verlinkten Anleitung.
+
+Seit 0.1.12: [SMTP-Einstellungen und persistente Versandaufträge](Core_SMTP_und_Versand.md),
 explizite Migration `0009_mail_outbox` nach `0008_core_files`. Versand ist
 standardmäßig deaktiviert. Unter Administration → Systemeinstellungen → SMTP
 konfigurieren und Testauftrag erzeugen. Als **root**, ausgeführt durch **neofab2**:
@@ -35,8 +44,9 @@ Die Listen starten leer; alte Freitexte werden nicht übernommen.
 
 Startfähiger Core mit Startseite, Version, SQLite-Basis und expliziter
 Alembic-Migration. Der aktuelle Arbeitsstand ergänzt Anmeldung, Administratoren,
-Benutzerverwaltung, Profil und lokalen Passwort-Reset. Selbstregistrierung,
-E-Mail-Kontoverfahren, weitere Plugin-Dienste und Benutzerübernahme folgen. SQLite dient der ersten isolierten
+Benutzerverwaltung, Profil, lokalen Passwort-Reset sowie abschaltbare
+Selbstregistrierung, E-Mail-Aktivierung und Passwort-Rücksetzung. Audit,
+weitere Plugin-Dienste und Benutzerübernahme folgen. SQLite dient der ersten isolierten
 Testinstallation; die endgültige produktive Datenbankentscheidung bleibt offen.
 
 Lokal geprüft unter Windows/Python 3.12: Core, Migration, Sicherung und
@@ -66,7 +76,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.12 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.13 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -180,7 +190,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.12`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.13`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:
@@ -377,7 +387,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.12, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.13, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

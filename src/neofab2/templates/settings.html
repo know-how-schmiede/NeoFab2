@@ -2,6 +2,7 @@
 {% block title %}{{ _("System settings") }} · NeoFab2{% endblock %}
 {% block content %}
 <h1>{{ _("System settings") }}</h1>
+<nav aria-label="{{ _('Account registration and recovery') }}"><a class="button secondary" href="{{ url_for('account_flows.settings_page') }}">{{ icon('users') }} {{ _('Account registration and recovery') }}</a></nav>
 <nav aria-label="SMTP"><a class="button secondary" href="{{ url_for('mail.overview') }}">{{ icon("mail") }} {{ _('SMTP & mail queue') }}</a></nav>
 {% if has_permission(current_user, 'core.users.manage') %}
 <nav aria-label="{{ _('System settings') }}"><a class="button secondary" href="{{ url_for('user_options.overview') }}">{{ icon("database") }} {{ _('Master data') }}</a></nav>

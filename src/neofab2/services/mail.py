@@ -27,7 +27,8 @@ outbox = Table("core_mail_outbox", MetaData(),
     Column("attempts", Integer), Column("total_attempts", Integer),
     Column("created_at", BigInteger), Column("next_attempt_at", BigInteger),
     Column("sent_at", BigInteger), Column("lease_until", BigInteger),
-    Column("lease_token", String(32)), Column("error_code", String(40)))
+    Column("lease_token", String(32)), Column("error_code", String(40)),
+    Column("account_user_id", Integer), Column("account_token_id", String(32)))
 
 
 def mailbox(value):
@@ -199,7 +200,14 @@ def run_worker(app, limit=20):
         if claimed is None:
             break
         job, config = claimed
-        state, reason = deliver(config, app.config["SMTP_PASSWORD"], job)
+        prepared = job
+        if job["account_user_id"] is not None or job["account_token_id"] is not None:
+            prepare = app.extensions.get("neofab2_account_mail")
+            prepared = prepare(app, job) if prepare is not None else None
+        if prepared is None:
+            state, reason = "failed", "account_request_invalid"
+        else:
+            state, reason = deliver(config, app.config["SMTP_PASSWORD"], prepared)
         if state == "retry" and job["attempts"] >= MAX_ATTEMPTS:
             state, reason = "failed", "attempts_exhausted"
         now = int(time.time())

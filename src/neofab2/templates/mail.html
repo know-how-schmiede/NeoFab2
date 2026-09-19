@@ -36,7 +36,7 @@
 <h2>{{ _('Mail queue') }}</h2>
 <p>{{ _('Accepted means the SMTP server has taken over the message; it is not a receipt from the recipient. Times are UTC.') }}</p>
 {% set labels = {'queued': 'Queued', 'sending': 'Sending', 'retry': 'Retry scheduled', 'sent': 'Accepted', 'failed': 'Failed', 'uncertain': 'Uncertain'} %}
-{% set reasons = {'worker_interrupted': 'Worker interrupted', 'delivery_unknown': 'SMTP result unknown', 'credentials_missing': 'Password missing', 'smtp_rejected': 'SMTP server rejected the message', 'connection_failed': 'Connection failed', 'smtp_protocol': 'SMTP protocol error', 'transport_error': 'Transport error', 'attempts_exhausted': 'Attempt limit reached'} %}
+{% set reasons = {'worker_interrupted': 'Worker interrupted', 'delivery_unknown': 'SMTP result unknown', 'credentials_missing': 'Password missing', 'smtp_rejected': 'SMTP server rejected the message', 'connection_failed': 'Connection failed', 'smtp_protocol': 'SMTP protocol error', 'transport_error': 'Transport error', 'attempts_exhausted': 'Attempt limit reached', 'account_request_invalid': 'Account request expired or no longer valid'} %}
 <div class="table-scroll"><table>
   <thead><tr><th scope="col">{{ _('Module / job') }}</th><th scope="col">{{ _('Recipient') }}</th><th scope="col">Status</th><th scope="col">{{ _('Attempts') }}</th><th scope="col">{{ _('Action') }}</th></tr></thead>
   <tbody>{% for job in jobs %}<tr>

@@ -2,7 +2,9 @@
 {% block title %}{{ _('Sign in') }} · NeoFab2{% endblock %}
 {% block content %}
 <h1>{{ _('Sign in') }}</h1>
-<p>{{ _('Contact the workshop administration for an account.') }}</p>
+{% if account_policy.registration_enabled %}
+<p><a class="button secondary" href="{{ url_for('account_flows.request_page', purpose='register') }}">{{ icon('user-plus') }} {{ _('Register') }}</a></p>
+{% else %}<p>{{ _('Contact the workshop administration for an account.') }}</p>{% endif %}
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label for="email">{{ _('Email') }}</label><input id="email" aria-describedby="email-help" name="email" type="email" autocomplete="username" maxlength="254" required>
@@ -11,7 +13,9 @@
   <small id="password-help" class="field-help">{{ _("Enter your account password. Passwords are case-sensitive.") }}</small>
   <button type="submit">{{ icon("login") }} {{ _('Sign in') }}</button>
 </form>
-<p>{{ _('Forgot your password? Please contact the administration.') }}</p>
+{% if account_policy.reset_enabled %}
+<p><a class="button secondary" href="{{ url_for('account_flows.request_page', purpose='reset') }}">{{ icon('key') }} {{ _('Forgot password') }}</a></p>
+{% else %}<p>{{ _('Forgot your password? Please contact the administration.') }}</p>{% endif %}
 <form method="post" action="{{ url_for('language.choose_language') }}" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label for="locale">{{ _('Language') }}</label>

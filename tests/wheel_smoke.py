@@ -33,6 +33,10 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
         assert client.get("/admin/settings/mail").status_code == 200
+        assert client.get("/admin/settings/accounts").status_code == 200
+        assert client.get("/activate").status_code == 200
+        assert client.get("/reset-password").status_code == 200
+        assert client.get("/register").status_code == 403
         from neofab2.services.mail import run_worker
         assert sum(run_worker(app).values()) == 0
         assert "Synthetic admin note" in client.get("/admin/users/1/edit").text

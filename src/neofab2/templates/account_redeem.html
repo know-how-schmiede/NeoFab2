@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% set title = 'Activate account' if purpose == 'activate' else 'Reset password' %}
+{% block title %}{{ _(title) }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _(title) }}</h1>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="code">{{ _('Code from the email') }}</label><input id="code" name="code" type="text" autocomplete="one-time-code" maxlength="100" spellcheck="false" autocapitalize="none" aria-describedby="code-help" required>
+  <small id="code-help" class="field-help">{{ _('Copy the complete code from the email. Activation codes expire after 24 hours; reset codes after 30 minutes. Each code can be used only once.') }}</small>
+  <label for="new_password">{{ _('New password') }}</label><input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="password-help" required>
+  <small id="password-help" class="field-help">{{ _('Use 8 to 128 characters. Your password is never sent by email.') }}</small>
+  <label for="confirm_password">{{ _('Repeat new password') }}</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="confirm-help" required>
+  <small id="confirm-help" class="field-help">{{ _('Enter the same new password again to avoid typing mistakes.') }}</small>
+  <button type="submit">{{ icon('key') }} {{ _(title) }}</button>
+</form>
+<nav aria-label="{{ _('Account access') }}">
+  <a class="button secondary" href="{{ url_for('account_flows.request_page', purpose=purpose) }}">{{ icon('mail') }} {{ _('Request a new code') }}</a>
+  <a class="button secondary" href="{{ url_for('accounts.login') }}">{{ icon('login') }} {{ _('Sign in') }}</a>
+</nav>
+{% endblock %}

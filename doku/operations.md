@@ -1,4 +1,12 @@
-# Betrieb und Wiederherstellung – v0.1.12
+# Betrieb und Wiederherstellung – v0.1.13
+
+Seit 0.1.13 gehören die Kontoverfahren und ihre Tokenmetadaten zur Sicherung.
+Nach Restore öffentliche Registrierung und Passwort-Rücksetzung zunächst
+deaktivieren: ein altes Backup kann zuvor verbrauchte Codes oder Sitzungen
+wiederherstellen. Vor erneuter Freigabe offene Codes widerrufen, bei
+sicherheitsbedingter Wiederherstellung gegebenenfalls `SECRET_KEY` wechseln.
+Dieser Wechsel macht bestehende Sitzungen und Kontocodes unbrauchbar.
+[Verfahren und Betriebsgrenzen](Core_Registrierung_und_Reset.md).
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -37,6 +45,51 @@ journalctl -u neofab2.service -n 80 --no-pager
 `ExecStartPre` prüft das Schema, führt aber keine Migration aus.
 
 ## Zusätzliche manuelle Datenbanksicherung
+
+### Sensible Dateien im Git-Arbeitsverzeichnis
+
+Prüfung am 19.09.2026, unverändert Version 0.1.12 (X05/X07, Geheimnisschutz S05):
+In den versionierten Dateien wurden keine echten Betriebszugangsdaten oder
+Datenbank-Dumps gefunden. Die lokale Git-Historie umfasst 17 Commits;
+433 Dateiinhalte aus allen lokal erreichbaren Referenzen wurden auf typische
+Token-, private Schlüssel-, Passwort-Hash- und Zugangsdaten-URL-Muster geprüft,
+ohne Treffer. Historische Dateinamen enthielten keine Datenbank-/Dumpdateien
+oder echte `config.toml`-/`.env`-Dateien. Das ist eine gezielte Prüfung, kein
+Beweis, dass beliebige Geheimnisformate ausgeschlossen sind, und keine Prüfung
+entfernter, lokal nicht vorhandener Git-Referenzen.
+
+Lokal vorhanden waren 2066 Datenbank-/Dumpdateien und 91 Konfigurationsdateien,
+sämtlich bereits von Git ignoriert; insbesondere synthetische Testartefakte
+unter `.test-artifacts/`. Tests enthalten bewusst synthetische Passwörter und
+Testschlüssel. Diese Testquellen bleiben versioniert, erzeugte Daten nicht.
+
+`.gitignore` schützt zusätzlich lokale TOML-Konfigurationen, `.env.*`,
+Datenbankkopien samt Begleitdateien, SQL-/Dump-Backups, private Schlüssel sowie
+die lokalen Verzeichnisse `data/`, `uploads/`, `logs/`, `dumps/`, `private/`
+und `secrets/`. `instance/`, `.test-artifacts/` und `backups/` waren bereits
+ausgeschlossen. Konfigurationsvorlagen `.env.example`, `.env.sample` und
+`.env.template` sind erlaubt, dürfen aber ausschließlich Platzhalter enthalten.
+Sensible Dateien mit beliebigen anderen Namen in ein ausgeschlossenes
+Verzeichnis oder außerhalb des Repositorys legen. Reguläre Plugin-Ressourcen
+und Python-Migrationen bleiben versionierbar.
+
+Als **Entwicklungsbenutzer im Repository** vor einem manuellen Commit prüfen:
+
+```bash
+git status --short
+git ls-files -ci --exclude-standard
+git check-ignore -v --no-index config.toml .env.production backup.sql
+```
+
+Erwartet: Der zweite Befehl zeigt keine bereits versionierten ignorierten Dateien;
+der dritte zeigt die passenden Ignore-Regeln auch für noch nicht angelegte Pfade.
+27 sensible Beispielpfade und neun erlaubte Quell-/Vorlagenpfade wurden geprüft.
+Keine bestehenden versionierten Dateien mussten aus dem Git-Index entfernt werden.
+Ignore-Regeln entfernen keine bereits eingecheckten Dateien oder alten Commits.
+Sollten später echte Zugangsdaten in Git entdeckt werden, reicht `.gitignore`
+allein nicht: Zugangsdaten ersetzen und den betroffenen Git-Stand gesondert bereinigen.
+
+### Sicherung außerhalb des Repositorys erstellen
 
 ```bash
 install -d -m 0700 /var/backups/neofab2

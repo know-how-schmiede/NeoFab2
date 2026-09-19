@@ -1,4 +1,4 @@
-# Architektur – Stand v0.1.12
+# Architektur – Stand v0.1.13
 
 **Planungsnachtrag ohne Codeänderung:** [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
 beschreibt ein vollständiges Verzeichnis je Plugin mit eigenen Ressourcen,
@@ -100,7 +100,8 @@ festen Rollen Benutzer/Mitarbeiter/Administrator sowie explizite Plugin-Zugriffs
 Importzuordnung und Rollenpflege folgen. U07 umfasst Anzeigename, Passwortwechsel
 und persönliche Darstellung; Sprache folgt. S04 umfasst öffentliche Darstellungseinstellungen,
 noch keinen Import/Export. SMTP und minimale Outbox sind seit 0.1.12 vorhanden;
-U02–U04, weitere Teilumfänge von S02–S11 und N04 bleiben offen.
+U02–U04/S06 sind seit 0.1.13 mit abschaltbaren Kontoverfahren umgesetzt;
+weitere Teilumfänge von S02–S11 und N04 bleiben offen.
 N01 ist mit API 1 teilweise umgesetzt: Abhängigkeiten, Backend-Auswahl mit
 Aktivierung beim Neustart, Seiten, Rechte, Navigation und lokale Aufgaben.
 Seit 0.1.10: zusätzliche `Permission`-Deklarationen, Besitzerprüfung und minimale
@@ -128,12 +129,13 @@ werden atomar mit den übrigen Feldern gespeichert und widerrufen bestehende Sit
 Priorisierter Plan mit Funktions-IDs und Prüfkriterien: [Nächste Core-Schritte](Core_Naechste_Schritte.md).
 Nach der Planungspräzisierung zunächst Plugin-Rechte und minimale Datei-Verträge
 mit Testplugins vervollständigen (Paket 0, 0.1.10); der Versanddienst folgt in
-Paket 1 (0.1.12). Als nächstes stehen die E-Mail-Kontoverfahren an.
+Paket 1 (0.1.12), die Kontoverfahren in Paket 2 (0.1.13). Als nächstes folgen
+Audit-Logs und Betriebsstatus in Paket 3.
 Nach vollständiger Core-Abnahme `orders` minimal und `printing3d` als Referenzplugin.
 Gemeinsame Upload-/STL-Viewer-Komponenten bleiben technische Infrastruktur;
 PrintFleet folgt nach dem lokalen MVP. [Verbindliche Abgrenzung](Plugin_Umsetzungsplan.md).
 
-Offen: Registrierungsregeln, Rollen-/Konfliktzuordnung beim Import, produktive
+Offen: betriebliche Freigabe der Registrierungsdomains, Rollen-/Konfliktzuordnung beim Import, produktive
 Datenbank und Umstellungstermin. Keine Datenübernahme in v0.1.7.
 
 ## Referenzen
@@ -164,5 +166,23 @@ stellt den additiven API-1-Vertrag mit explizitem `mail_permission` bereit.
 aus und begrenzt Wiederholungen. Verwaiste Übernahmen und mehrdeutige SMTP-Abbrüche
 werden ungeklärt statt automatisch erneut versendet. Secrets bleiben in TOML;
 Plugin-Deaktivierung pausiert neue Übernahmen. Kein Scheduler, keine Anhänge,
-keine Kontoverfahren und keine automatische Löschung in diesem Paket.
+keine Kontoverfahren in Paket 1 und keine automatische Löschung.
 [Betrieb, Zustände, Schnittstelle und Grenzen](Core_SMTP_und_Versand.md).
+
+## Kontoverfahren 0.1.13
+
+`core/account_flows.py` kapselt Registrierung, Aktivierung, Passwort-Reset,
+Freigaberegeln, Codegültigkeit und Kontonachrichten. `0010_account_flows`
+ergänzt `activation_pending`, Token- und Begrenzungstabellen sowie optionale
+Zuordnungsfelder der Outbox. Kontoänderung und Versandauftrag werden atomar
+gespeichert. `core/users.py` widerruft bei sicherheitsrelevanten Änderungen
+offene Codes; Authentifizierung und Sitzungen sperren wartende Konten.
+
+Der Core registriert bei der Application Factory einen Mail-Vorbereitungshook.
+Der generische Worker ruft ihn ausschließlich für zugeordnete Kontonachrichten
+auf; der Hook prüft Ablauf, aktuelle Freigaben und Kontostatus. Vollständige
+Codes werden erst im Arbeitsspeicher des Workers erzeugt, nicht in der Outbox
+gespeichert. Einlösung ausschließlich per CSRF-geschütztem POST, keine Tokens
+in vorgesehenen URLs. Domains mit internationalisierten Namen werden für SMTP
+in die ASCII-Darstellung normalisiert; SMTPUTF8-Lokalteile bleiben ausgeschlossen.
+[Bedienung, Schutzmaßnahmen und offene Prüfungen](Core_Registrierung_und_Reset.md).

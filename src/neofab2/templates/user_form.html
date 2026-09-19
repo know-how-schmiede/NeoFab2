@@ -2,6 +2,9 @@
 {% block title %}{{ _('Create user' if creating else 'Edit user') }} · NeoFab2{% endblock %}
 {% block content %}
 <h1>{{ _('Create user' if creating else 'Edit user') }}</h1>
+{% if entry.activation_pending|default(false) %}
+<p class="notice">{{ _('This account is awaiting email activation. Saving this form ends that procedure and applies the administrator-selected active or disabled status. Set an initial password if activating it here.') }}</p>
+{% endif %}
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label for="display_name">{{ _("Display name") }}</label><input id="display_name" aria-describedby="display_name-help" name="display_name" value="{{ entry.display_name|default('') }}" maxlength="100" required>

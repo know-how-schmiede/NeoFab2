@@ -1,4 +1,11 @@
-# Benutzer anlegen und bearbeiten – v0.1.12
+# Benutzer anlegen und bearbeiten – v0.1.13
+
+Seit 0.1.13 unterscheidet die Liste **Wartet auf E-Mail-Aktivierung** von
+gesperrten Konten. Beim administrativen Speichern eines wartenden Kontos endet
+dessen E-Mail-Aktivierungsverfahren; der gewählte Aktivstatus gilt unmittelbar.
+Zum Aktivieren ist dabei ein Anfangspasswort erforderlich. Passwort-, E-Mail-,
+Rollen- und Statusänderungen widerrufen offene Aktivierungs-/Resetcodes.
+[Selbstregistrierung und Wiederherstellung](Core_Registrierung_und_Reset.md).
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% set title = {'register': 'Register', 'activate': 'Request a new activation code', 'reset': 'Forgot password'}[purpose] %}
+{% block title %}{{ _(title) }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _(title) }}</h1>
+{% if purpose == 'register' %}<p>{{ _('You will receive an activation code by email. Set your password when activating your account.') }}</p>{% endif %}
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% if purpose == 'register' %}
+  <label for="display_name">{{ _('Display name') }}</label><input id="display_name" name="display_name" maxlength="100" autocomplete="name" aria-describedby="name-help" required>
+  <small id="name-help" class="field-help">{{ _('Enter the name other people should see. Use 1 to 100 characters.') }}</small>
+  {% endif %}
+  <label for="email">{{ _('Email') }}</label><input id="email" name="email" type="email" maxlength="254" autocomplete="email" aria-describedby="email-help" required>
+  <small id="email-help" class="field-help">{{ _('Use an address you can access. Delivery may take a few minutes. Check your spam folder.') }}</small>
+  <button type="submit">{{ icon('mail') }} {{ _('Request email') }}</button>
+</form>
+<nav aria-label="{{ _('Account access') }}">
+  <a class="button secondary" href="{{ url_for('accounts.login') }}">{{ icon('login') }} {{ _('Sign in') }}</a>
+  <a class="button secondary" href="{{ url_for('account_flows.redeem_page', purpose='reset' if purpose == 'reset' else 'activate') }}">{{ icon('key') }} {{ _('I already have a code') }}</a>
+  {% if purpose == 'register' %}<a class="button secondary" href="{{ url_for('account_flows.request_page', purpose='activate') }}">{{ icon('mail') }} {{ _('Request a new activation code') }}</a>{% endif %}
+</nav>
+{% endblock %}

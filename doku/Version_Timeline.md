@@ -1,5 +1,117 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.13 – 2026-09-19
+
+Bereich: Core-Paket 2, Registrierung, E-Mail-Aktivierung und Passwort-Reset
+(U02–U04, S06, ergänzend U01/U05/U06/U08, S12 und X05–X07).
+Version **0.1.13** wurde ausdrücklich beauftragt und folgt auf den vorliegenden
+Stand 0.1.12. Alle drei technischen Testplugins bleiben bei **0.1.0**, API 1.
+
+Die Versionsnummer wurde nach Benutzerkorrektur berichtigt. Funktionsumfang
+und Schema-Revision bleiben unverändert; Version, Dokumentation und Commit-Text
+sind auf 0.1.13 abgestimmt. Die Pakete wurden mit dieser Nummer erneut gebaut.
+
+### Änderungen
+
+- Neue Admin-Seite **Registrierung und Kontowiederherstellung** mit getrennten
+  Freigaben für Registrierung und E-Mail-Reset. Beide starten ausgeschaltet.
+  Registrierung mit bis zu 100 genauen Domains oder ausdrücklicher Freigabe aller Domains.
+- Neue Registrierungskonten sind inaktiv, warten auf E-Mail-Aktivierung und
+  erhalten ausschließlich die Benutzerrolle. Passwortwahl erst beim Einlösen
+  des Aktivierungscodes durch den Postfachinhaber; keine Überschreibung bestehender Konten.
+- Aktivierungscodes gelten 24 Stunden, Rücksetzcodes 30 Minuten ab Anforderung.
+  Einmalige Verwendung, Widerruf nach Sicherheits-/Freigabeänderungen und
+  serialisierte Einlösung. Passwort-Reset beendet alle bestehenden Sitzungen.
+- Neuer Aktivierungscode anforderbar; gemeinsame Anfragebegrenzung je Adresse/IP
+  und 60-Sekunden-Abstand. Generische Antworten verraten keinen Kontostatus.
+- Aktivierungs-, Reset-, Willkommens- und Änderungsnachrichten in EN/DE/FR über
+  die bestehende Outbox. Kontoänderung und Auftrag werden atomar gespeichert.
+  Worker prüft aktuelle Gültigkeit; vollständige Codes stehen nicht in der
+  persistenten Outbox und werden erst für die SMTP-Übertragung erzeugt.
+- Codes werden in ein POST-Formular eingefügt, nicht in URLs transportiert oder
+  durch GET verbraucht. Konfigurierte `PUBLIC_BASE_URL` schützt E-Mail-Links vor
+  Host-Header-Manipulation. Alle neuen Buttons verwenden gemeinsame Icons.
+- Benutzerliste zeigt ausstehende Aktivierung. Administratives Speichern eines
+  solchen Kontos beendet das Verfahren; zum Aktivieren ist ein Anfangspasswort nötig.
+- [Deutsche Betriebsanleitung](Core_Registrierung_und_Reset.md), Setup/Schnellstart,
+  Funktionsmatrix und Arbeitsplan aktualisiert. Paket 3 mit Audit/Betriebsstatus
+  ist der nächste offene Schritt. Plugin-Pakete P1–P5 bleiben reine Planung.
+- Vorherige Repository-Prüfung und erweiterte Ignore-Regeln für Konfigurationen,
+  Datenbankkopien und Schlüssel bleiben erhalten; keine sensiblen Dateien gelöscht.
+
+### Betrieb und Migration
+
+Explizite Revision **`0010_account_flows`** nach `0009_mail_outbox`:
+`core_users.activation_pending`, `core_account_tokens`, `core_account_limits`
+und zwei optionale Kontozuordnungen in der Outbox. Bestandskonten behalten
+ihren Aktivstatus; das neue Merkmal ist für sie false. Keine Migration beim Start.
+
+Vor Update alle zusätzlich gestarteten Worker/Aufrufpläne stoppen und eine
+passende Datenbank-/Konfigurations-/Codesicherung erhalten. Das vorhandene
+Update-Skript installiert und migriert den manuell bereitgestellten Stand.
+Danach als **root**, ausgeführt durch **neofab2**, prüfen:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: Version 0.1.13 und Schema bereit. Vor bewusster Freischaltung die
+tatsächliche HTTPS-Origin als `PUBLIC_BASE_URL` konfigurieren, SMTP testen,
+Prozesse neu starten und Registrierungsdomains administrativ festlegen.
+Der bisherige einmalige `mail-worker --limit 20` bleibt für die Zustellung nötig.
+Kein automatischer Scheduler und kein automatisch versandtes produktives Mailing.
+
+Nach Restore Kontoverfahren und Versand zuerst sperren: ältere Sicherungen
+können bereits verbrauchte Codes/Sitzungen wiederherstellen. Vor Wiederfreigabe
+offene Codes widerrufen und gegebenenfalls den Anwendungsschlüssel wechseln.
+Anleitung enthält Standardwerte, Befehle, Ergebnisprüfung und Fehlerhilfe.
+Altes NeoFab und produktive Daten wurden nicht verändert.
+
+### Prüfungen
+
+- Gesamtsuite: **235 Tests bestanden**. Danach ergänzte Normalisierung
+  internationalisierter Domains: **42 gezielte Kontoverfahren-Tests bestanden**,
+  einschließlich dieser zusätzlichen Regression.
+- Geprüft: Rechte/CSRF, Domain-Grenzen, Rollenmanipulation, Kontostatus,
+  Codeablauf/Einmaligkeit/Zweckbindung, Passwort- und Sitzungswiderruf,
+  Anfragelimits, Parallelität, Rollback, SMTP-Pause, erneute Anforderung,
+  Host-Header-Unabhängigkeit und fehlende Klartextcodes in der Datenbank.
+- Upgrade vom vorherigen Schema, wiederholte Migration, Bestandswerterhalt,
+  Neustart sowie SQLite-Sicherung/Wiederherstellung mit wartendem Code bestanden.
+- Wheel und sdist 0.1.13 gebaut; separat installiertes Wheel mit neuen Admin-/
+  Aktivierungs-/Reset-Templates, standardmäßig gesperrter Registrierung und
+  bestehendem Core-/Plugin-Umfang erfolgreich geprüft.
+- Relative Dokumentationslinks und `git diff --check` geprüft.
+- Kein echter SMTP-/Postfach-Test, keine visuelle Browserabnahme und kein eigener
+  Debian/LXC/systemd-Lauf. Weitere Sprachabdeckung, Audit, Aufbewahrung/Löschung
+  und weitergehender Bot-Schutz bleiben offen. Keine vollständige Core-Abnahme.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: release NeoFab2 0.1.13 with registration and email account recovery
+```
+
+Commit-Beschreibung:
+
+```text
+Implement Core package 2: configurable registration, email activation and password reset.
+Keep public account flows disabled by default; require SMTP, canonical origin and domain policy.
+Add migration 0010_account_flows, pending status, single-use expiring codes and request limits.
+Queue localized account emails atomically and prepare codes only in the mail worker.
+Revoke codes and sessions on security changes; preserve local administrator recovery.
+Add protected admin forms, shared button icons and account status guidance.
+Validate 235 full-suite tests, then 42 focused account-flow tests including IDNA handling.
+Build wheel/sdist and verify the installed wheel, migrations and documentation.
+Preserve credential-ignore hardening; make audit and operational status package 3 next.
+Keep testplugins at 0.1.0; no production migration, automatic commit or push.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.12 – 2026-09-19
 
 Bereich: Core-Paket 1, SMTP und persistente Versandaufträge (S05, N05,

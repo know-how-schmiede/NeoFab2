@@ -1,6 +1,15 @@
-# NeoFab2 – Installation und Wartung (v0.1.12)
+# NeoFab2 – Installation und Wartung (v0.1.13)
 
-Neu in 0.1.12: [SMTP-Einstellungen und persistente Versandaufträge](../doku/Core_SMTP_und_Versand.md),
+Neu in 0.1.13: [Registrierung, Aktivierung und Passwort-Reset](../doku/Core_Registrierung_und_Reset.md),
+explizite Migration `0010_account_flows`. Beide öffentlichen Verfahren starten
+ausgeschaltet. Vor Freischaltung als Administrator SMTP testen, `PUBLIC_BASE_URL`
+in der geschützten TOML-Datei festlegen und die erlaubten Registrierungsdomains
+unter Administration → Systemeinstellungen → Registrierung und Kontowiederherstellung
+auswählen. Der vorhandene Versandworker bleibt erforderlich. Bestandskonten werden
+nicht automatisch aktiviert. Standardwerte, Ergebnisprüfung und Fehlerhilfe
+stehen in der verlinkten Anleitung.
+
+Seit 0.1.12: [SMTP-Einstellungen und persistente Versandaufträge](../doku/Core_SMTP_und_Versand.md),
 explizite Migration `0009_mail_outbox` nach `0008_core_files`. Versand ist
 standardmäßig deaktiviert. Unter Administration → Systemeinstellungen → SMTP
 konfigurieren und Testauftrag erzeugen. Als **root**, ausgeführt durch **neofab2**:
@@ -41,7 +50,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.12 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.13 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
@@ -144,7 +153,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.12, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.13, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

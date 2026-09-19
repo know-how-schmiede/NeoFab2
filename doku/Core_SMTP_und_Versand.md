@@ -1,9 +1,10 @@
-# SMTP und persistente Versandaufträge – 0.1.12
+# SMTP und persistente Versandaufträge – Stand 0.1.13, eingeführt in 0.1.12
 
 Paket 1 des [Core-Arbeitsplans](Core_Naechste_Schritte.md): S05, N05 und
 Teilumfänge von S06/N01; Migration X07, Betriebsanleitung X05. Keine Fachplugins.
-Registrierung, Aktivierung, Willkommens- und Passwort-Reset-E-Mails folgen in
-Paket 2. Dieser Stand implementiert den technischen Versand und einen Testauftrag.
+Seit 0.1.13 ergänzt Paket 2 [Registrierung, Aktivierung, Willkommens- und
+Passwort-Reset-E-Mails](Core_Registrierung_und_Reset.md). Der technische
+Versand und der Testauftrag aus Paket 1 bleiben unverändert bedienbar.
 
 ## Administration und Standardwerte
 
@@ -162,7 +163,7 @@ ein synthetischer Vertragsfixture prüft diese Schnittstelle.
 
 ## Migration, Sicherung und Betriebsgrenzen
 
-Neue explizite Revision `0009_mail_outbox`, Vorgänger `0008_core_files`.
+Die Outbox wurde mit Revision `0009_mail_outbox`, Vorgänger `0008_core_files`, eingeführt.
 Sie ergänzt ausschließlich `core_mail_outbox` samt Index und Eindeutigkeitsregel;
 keine automatische Migration beim App-Start, keine Änderung alter NeoFab-Daten.
 
@@ -177,7 +178,9 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl start neofab2.service
 ```
 
-Ergebnis: Readiness erfolgreich, Anwendungsversion 0.1.12, SMTP-Seite erreichbar.
+Aktueller Schemastand: `0010_account_flows` ergänzt die Kontoverfahren und
+zwei optionale Zuordnungsfelder der Outbox. Ergebnis: Readiness erfolgreich,
+Anwendungsversion 0.1.13, SMTP-Seite erreichbar.
 Erst anschließend Worker wieder ausführen. Plugin-Versionen bleiben 0.1.0.
 
 Die SQLite-Sicherung umfasst die Outbox samt Empfängern und Nachrichtentexten.

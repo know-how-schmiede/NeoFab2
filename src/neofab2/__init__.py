@@ -14,6 +14,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     from .core.user_options import bp as user_options_bp
     from .core.mail import bp as mail_bp
     from .core.auth import register_auth
+    from .core.account_flows import register_account_flows
     from .core.plugins import register_plugins
     from .core.settings import register_presentation
     from .core.i18n import register_i18n
@@ -36,6 +37,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     app.register_blueprint(accounts_bp)
     app.register_blueprint(user_options_bp)
     app.register_blueprint(mail_bp)
+    register_account_flows(app)
     register_plugins(app, registry)
     register_presentation(app)
     register_i18n(app)

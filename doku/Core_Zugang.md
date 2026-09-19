@@ -1,12 +1,14 @@
-# Core-Zugang – aktueller Arbeitsstand v0.1.12
+# Core-Zugang – aktueller Arbeitsstand v0.1.13
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
 [Sprachwahl und Migration 0006](Core_Sprachen.md).
 
-Die zentrale Version dieses Arbeitspakets ist `0.1.12`.
+Die zentrale Version dieses Arbeitspakets ist `0.1.13`.
 Dieses Arbeitspaket erweitert U01, U05–U08 und X04. Es ist keine vollständige
-Core-Abnahme; insbesondere E-Mail-Verfahren und weitere technische Dienste fehlen noch.
+Core-Abnahme. Seit 0.1.13 ergänzen [Registrierung, E-Mail-Aktivierung und
+Passwort-Reset](Core_Registrierung_und_Reset.md) die Zugangsfunktionen;
+Audit und weitere technische Dienste fehlen noch.
 API 1 ist unter [Plugin-Vertrag](plugin-development.md) dokumentiert.
 Anmeldung und Passwortwechsel wurden vom Nutzer im HTTP-Container bestätigt;
 die Ursache des vorherigen Sitzungsfehlers war `SESSION_COOKIE_SECURE = true`
@@ -23,9 +25,10 @@ beim HTTP-Aufruf. Nach Umstellung auf `false` funktioniert der Zugang.
 - Schutz des letzten aktiven Administrators, auch bei parallelen Änderungen.
 
 E-Mail-Adressen werden validiert, normalisiert und vollständig ohne Beachtung
-der Groß-/Kleinschreibung verglichen. Es findet keine Zustellprüfung oder
-E-Mail-Verifikation statt. Registrierung, E-Mail-Aktivierung und Self-Service-Reset
-werden erst mit dem Versanddienst umgesetzt. Es gibt keine versteckten
+der Groß-/Kleinschreibung verglichen. Administrativ angelegte Konten werden
+nicht automatisch per E-Mail verifiziert. Selbstregistrierte Konten benötigen
+seit 0.1.13 dagegen einen gültigen Aktivierungscode; die Verfahren bleiben bis
+zur ausdrücklichen Freigabe abgeschaltet. Es gibt keine versteckten
 Standardkonten, Startpasswörter oder automatisch übernommenen Benutzer.
 
 ## Rollen und Rechte
@@ -177,5 +180,6 @@ Die Benutzerverwaltung ergänzt die bereits vom Nutzer als laufend gemeldete
 Grundinstallation. Nutzer bestätigt Anmeldung, Passwortwechsel und den Schritt
 0.1.3. Ein eigener LXC-Echttest der neuen Einstellungen und die visuelle
 Browserprüfung stehen noch aus. Benutzerlöschung, eigene Rollenverwaltung,
-Sprachen, SMTP, Registrierung, E-Mail-Aktivierung, Self-Service-Reset,
-weitere Plugin-Dienste und Benutzerimport bleiben ausdrücklich offen.
+weitere Sprachabdeckung, Audit, weitere Plugin-Dienste und Benutzerimport bleiben
+offen. SMTP und Kontoverfahren sind inzwischen implementiert; ihre echte
+Postfach-/Betriebsprüfung steht weiterhin aus.

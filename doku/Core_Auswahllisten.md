@@ -1,4 +1,4 @@
-# Benutzer-Auswahllisten und Feldhilfen – v0.1.12
+# Benutzer-Auswahllisten und Feldhilfen – v0.1.13
 
 Umfang: U05, S01/S02, S04 und X07. Position, Studiengang und Kostenstelle sind
 optionale Auswahlfelder in den Formularen zum Anlegen und Bearbeiten von Konten.
@@ -57,14 +57,14 @@ nicht als Auswahl angeboten. Beim nächsten Speichern über das Benutzerformular
 wird die ausgewählte Option bzw. der leere Wert gespeichert. Die Schemaänderung
 erfolgt ausschließlich über den normalen expliziten Migrationsschritt.
 
-Nach manuellem Commit/Push des Stands 0.1.12 als **root im NeoFab2-Testcontainer**:
+Nach manuellem Commit/Push des Stands 0.1.13 als **root im NeoFab2-Testcontainer**:
 
 ```bash
 bash /opt/neofab2/script/upDateNeoFabService
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
 ```
 
-Erwartet: Version 0.1.12 in der Abschlussübersicht und `Database and schema ready.`.
+Erwartet: Version 0.1.13 in der Abschlussübersicht und `Database and schema ready.`.
 Anschließend je einen synthetischen Eintrag in allen drei Listen anlegen,
 einem Testkonto zuweisen, erneut öffnen und die Auswahl kontrollieren.
 Umbenennen und Deaktivieren ebenfalls nur mit synthetischen Daten prüfen.

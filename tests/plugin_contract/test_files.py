@@ -204,14 +204,17 @@ def test_explicit_upgrade_from_019_preserves_accounts(tmp_path, monkeypatch):
             config.attributes["connection"] = connection
             command.upgrade(config, "0007_user_options")
         create_user(app, "admin@example.org", "Existing", "Test123!", "admin", bootstrap=True)
+        # Compare the columns that existed in 0007; later revisions add metadata.
+        original_columns = [column for column in users.c if column.name != "activation_pending"]
         with app.extensions["neofab2_db"].connect() as connection:
-            before = connection.execute(select(users)).all()
+            before = connection.execute(select(*original_columns)).all()
         assert not database_ready(app)
         upgrade_database(app)
         upgrade_database(app)
         assert database_ready(app)
         with app.extensions["neofab2_db"].connect() as connection:
-            assert connection.execute(select(users)).all() == before
+            assert connection.execute(select(*original_columns)).all() == before
+            assert connection.execute(select(users.c.activation_pending)).scalar_one() is False
             assert connection.execute(select(files)).first() is None
     finally:
         app.extensions["neofab2_db"].dispose()

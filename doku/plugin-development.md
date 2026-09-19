@@ -1,4 +1,4 @@
-# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.12
+# Plugin-Vertrag und Backend-Verwaltung – API 1, Core 0.1.13
 
 Dieses Arbeitspaket setzt N01 sowie Teile von S01, S12 und U06 um. Es enthält
 drei technische Testplugins, keine produktiven Fachplugins.
@@ -185,7 +185,7 @@ Die vollständige Core-Abnahme steht aus.
 
 Ab 0.1.7 sind Plugin-Namen, Testseiten und CLI-Meldungen im Quelltext englisch.
 Die Oberfläche verwendet englische Übersetzungsschlüssel und Englisch als Fallback.
-Die zentrale Core-Version ist 0.1.12; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
+Die zentrale Core-Version ist 0.1.13; Testplugin-Versionen bleiben 0.1.0, API bleibt 1.
 
 Seit 0.1.12 ergänzt `mail_permission` den Vertrag optional. Es muss auf ein
 explizites zusätzliches Plugin-Recht verweisen. `plugin_api/notifications.py`

@@ -43,7 +43,7 @@ def authenticate(app, email, password, ip):
             return None
         user = connection.execute(select(users).where(users.c.email == email)).mappings().first()
         valid = check_password_hash(user["password_hash"] if user else DUMMY_HASH, password)
-        if not valid or not user or not user["active"]:
+        if not valid or not user or not user["active"] or user["activation_pending"]:
             for key in (account_key, ip_key):
                 if key in buckets:
                     connection.execute(update(attempts).where(attempts.c.key == key).values(count=attempts.c.count + 1))
@@ -85,7 +85,7 @@ def register_auth(app):
                 sessions.c.created_at.label("session_created")).select_from(
                     sessions.join(users, sessions.c.user_id == users.c.id)).where(
                         sessions.c.token_hash == token_hash(token))).mappings().first()
-            if (not row or not row["active"] or now - row["last_seen"] >= app.config["SESSION_IDLE_SECONDS"]
+            if (not row or not row["active"] or row["activation_pending"] or now - row["last_seen"] >= app.config["SESSION_IDLE_SECONDS"]
                     or now - row["session_created"] >= app.config["SESSION_MAX_SECONDS"]):
                 connection.execute(delete(sessions).where(sessions.c.token_hash == token_hash(token)))
                 session.clear()

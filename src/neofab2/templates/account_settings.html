@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Account registration and recovery') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('Account registration and recovery') }}</h1>
+<a class="button secondary" href="{{ url_for('settings.edit') }}">{{ icon('settings') }} {{ _('System settings') }}</a>
+<p>{{ _('New accounts always require email activation and receive the User role. The password is set during activation.') }}</p>
+<p>{{ _('Public site URL:') }} {{ public_url or _('Not configured') }}</p>
+<p>{{ _('Configure PUBLIC_BASE_URL in the protected server configuration and enable SMTP before enabling these services. Email is sent by the separate mail worker.') }}</p>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label class="checkbox"><input type="checkbox" name="registration_enabled" {% if values.registration_enabled %}checked{% endif %}> {{ _('Allow self-registration') }}</label>
+  <label class="checkbox"><input type="checkbox" name="reset_enabled" {% if values.reset_enabled %}checked{% endif %}> {{ _('Allow email password reset') }}</label>
+  <label class="checkbox"><input type="checkbox" name="allow_all_domains" aria-describedby="domains-help" {% if values.allow_all_domains %}checked{% endif %}> {{ _('Explicitly allow all email domains') }}</label>
+  <label for="allowed_domains">{{ _('Allowed email domains') }}</label>
+  <textarea id="allowed_domains" name="allowed_domains" rows="5" maxlength="25400" aria-describedby="domains-help">{{ values.allowed_domains|join('\n') }}</textarea>
+  <small id="domains-help" class="field-help">{{ _('Enter at most 100 exact domains, one per line, for example example.org. Subdomains need their own entry. This restriction applies to registration, not to existing accounts requesting a reset.') }}</small>
+  <p>{{ _('Changing registration rules invalidates pending activation codes. Disabling password reset invalidates pending reset codes. Accounts remain stored.') }}</p>
+  <button type="submit">{{ icon('save') }} {{ _('Save account settings') }}</button>
+</form>
+{% endblock %}

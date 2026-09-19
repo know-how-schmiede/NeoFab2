@@ -345,6 +345,20 @@ bisher bewusst geschlossenen Lieferkatalogs, kein bereits verfügbares Merkmal.
 
 ### Paket 1: SMTP und Versandaufträge 0.1.12 (19.09.2026)
 
+Nachprüfung Repository-Geheimnisse am 19.09.2026, ohne Versionsanhebung:
+**X05/X07 und S05 (Geheimnisschutz), geprüft im beschriebenen Umfang.**
+Nachweis: `.gitignore`, `doku/operations.md`. 433 historische Dateiinhalte aus
+17 lokalen Commits auf typische Geheimnismuster und sensible Dateinamen geprüft;
+keine entsprechenden Treffer. Keine echten Zugangsdaten oder Datenbank-Dumps
+im versionierten Stand gefunden. 2066 lokale Datenbank-/Dumpdateien und
+91 Konfigurationen bereits ignoriert. Ergänzte Regeln für Konfigurationen,
+weitere Dump-/Datenbankformate und private Schlüssel: 27 Ausschlussfälle und
+neun erlaubte Quell-/Vorlagenpfade bestanden; keine bereits getrackten Dateien
+von Ignore-Regeln betroffen. Keine Dateien gelöscht, kein Commit/Push.
+Grenze: gezielte Musterprüfung, keine vollständige Geheimniserkennung oder
+Prüfung nicht lokal vorhandener Remote-Historie. Keine Anwendungstests für
+die reine Ignore-/Dokumentationsänderung erforderlich.
+
 | IDs | Status | Umsetzungsnachweis | Prüfungen | Abweichungen/offen |
 |---|---|---|---|---|
 | S05 | geprüft (technischer Umfang) | `src/neofab2/core/mail.py`, `services/mail.py`, `templates/mail.html`, `core/i18n.py`, `tests/core/test_mail.py` | Admin-/CSRF-Schutz, validierte persistente SMTP-Einstellungen, Passwort nur TOML, Testauftrag, Status/Paginierung, DE-Texte und feste Fehlerkategorien; simulierte TLS-/Relay-Transporte einschließlich Hostnamenübergabe | Kein echter SMTP-Anbieter oder Postfacheingang geprüft; keine visuelle Browserabnahme |
@@ -352,3 +366,19 @@ bisher bewusst geschlossenen Lieferkatalogs, kein bereits verfügbares Merkmal.
 | N01, U06 | geprüft (additiver API-1-Teilumfang) | `src/neofab2/plugin_api/__init__.py`, `registry.py`, `notifications.py`, `tests/core/test_mail.py` | Deklariertes Versandrecht plus Einstieg, kein Admin-Wildcard, frischer Kontostatus, gemeinsame Transaktion, gespeicherte Plugin-Pause verhindert neue Übernahmen ohne Versuchsverbrauch | Nur synthetischer Vertragsfixture, keine produktiven Fachplugins; fachliche Empfänger-/Objektberechtigungen bleiben Plugin-Aufgabe |
 | X07 | geprüft (Teilumfang) | `migrations/versions/0009_mail_outbox.py`, `src/neofab2/database.py`, `tests/core/test_mail.py`, `tests/core/test_foundation.py` | Upgrade 0008 → 0009, wiederholte Migration, Bestandswerterhalt, Readiness, SQLite-Sicherung mit wartendem Auftrag und unveränderter Start ohne Schemaanlage | Nur synthetische Daten; kein Produktivupdate oder echter Debian/LXC-Lauf |
 | S01, S12, X05, X06 | geprüft / dokumentiert (Teilumfang) | `src/neofab2/version.py`, `templates/settings.html`, `ui_icons.html`, `tests/wheel_smoke.py`, `doku/Core_SMTP_und_Versand.md`, `SETUP.md`, `script/README.md`, `Version_Timeline.md` | Core 0.1.12, Testplugins 0.1.0; 194 Tests einschließlich 28 Versandtests bestanden; Wheel/sdist gebaut, installiertes Wheel geprüft; 120 Dokumentationslinks und Diff geprüft; Paket 2 ist nächster Schritt | P1–P5 bleiben Planung; kein Commit/Push und keine vollständige Core-Abnahme |
+
+### Paket 2: Registrierung und Kontoverfahren 0.1.13 (19.09.2026)
+
+Versionskorrektur auf Benutzerwunsch (S12, X05/X06): zentrale Version,
+aktuelle Dokumentation und Timeline samt Commit-Text auf 0.1.13 berichtigt.
+CLI-Versionsausgabe sowie neu gebautes Wheel/sdist und installiertes Wheel
+geprüft. Keine Funktions- oder Schemaänderung durch diese Korrektur.
+
+| IDs | Status | Umsetzungsnachweis | Prüfungen | Abweichungen/offen |
+|---|---|---|---|---|
+| U02, U03 | geprüft (implementierter Core-Umfang) | `src/neofab2/core/account_flows.py`, `templates/account_settings.html`, `account_request.html`, `account_redeem.html`, `tests/core/test_account_flows.py` | Abschaltbare Registrierung, genaue Domain-Freigaben/allgemeine Freigabe, keine Rolleninjektion, inaktive wartende Konten, Passwortwahl bei Aktivierung, einmalige befristete Codes, Resend, Grenzen/Parallelität und generische Antworten | Standard aus; konkrete Produktionsdomains nicht vorgegeben, keine automatische Kontolöschung, kein CAPTCHA |
+| U04, U01/U08 | geprüft (implementierter Core-Umfang) | `core/account_flows.py`, `core/users.py`, `core/auth.py`, `tests/core/test_account_flows.py`, bestehende Account-/CLI-Tests | Reset nur aktiver Konten, Einmaligkeit/Ablauf/Zweckbindung, neue Passwortbestätigung, alle Sitzungen widerrufen, offene Codes nach Passwort-/E-Mail-/Rollen-/Statusänderungen unbrauchbar, lokaler Notfallzugang erhalten | Keine Reaktivierung gesperrter Bestandskonten, keine automatische Anmeldung; öffentliches Resetverfahren standardmäßig aus |
+| S06, N05 | geprüft (synthetischer Versand) | `core/account_flows.py`, `services/mail.py`, `core/i18n.py`, `tests/core/test_account_flows.py` | EN/DE/FR-Kontonachrichten, atomare Kontovorgänge/Outbox, keine Klartextcodes in gespeicherter Outbox, Worker-Gültigkeitsprüfung, SMTP-Pause, Host-Header-Unabhängigkeit, internationalisierte Domains und Geheimnisschutz | Echter SMTP-Anbieter/Postfacheingang ungeprüft; weiterhin einmaliger CLI-Worker; SMTPUTF8-Lokalteile nicht unterstützt |
+| U05/U06, S01 | geprüft (HTTP/HTML) | `templates/login.html`, `settings.html`, `users.html`, `user_form.html`, neue Account-Templates, `core/account_flows.py`, `core/users.py` | Admin-/CSRF-Schutz, wartender Status, administratives Beenden des Aktivierungsverfahrens nur mit expliziter Passwortwahl bei Aktivierung, öffentliche Formulare ohne Passwort-/Codereflexion, Buttons mit gemeinsamen Icons | Visuelle Browserabnahme offen; weitere Sprachabdeckung folgt |
+| X07 | geprüft (Teilumfang) | `migrations/versions/0010_account_flows.py`, `database.py`, `tests/core/test_account_flows.py`, `test_foundation.py`, `tests/plugin_contract/test_files.py` | Migration 0009 → 0010, Wiederholung, Bestandsstatus bleibt unverändert, Readiness, Start ohne Schemaeingriff, Neustart und SQLite-Sicherung/Restore einschließlich wartendem Code | Nur synthetische Daten; Restore kann alten Gültigkeitsstand wiederherstellen, Betriebsmaßnahmen dokumentiert |
+| S12, X05/X06 | geprüft / dokumentiert | `version.py`, `tests/wheel_smoke.py`, `doku/Core_Registrierung_und_Reset.md`, `SETUP.md`, `script/README.md`, `Core_Naechste_Schritte.md`, `Version_Timeline.md` | Version 0.1.13, Testplugins 0.1.0; 235 Gesamttests bestanden, danach 42 gezielte Tests inklusive ergänzter Domain-Regression; Wheel/sdist gebaut und installiertes Wheel geprüft; Dokumentationslinks/Diff geprüft; Paket 3 ist nächster Schritt | Kein Commit/Push, kein Produktivupdate, keine vollständige Core-Abnahme; P1–P5 bleiben geplant |

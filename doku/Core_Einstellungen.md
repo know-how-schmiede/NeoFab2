@@ -1,4 +1,10 @@
-# Systemeinstellungen und Darstellung – v0.1.12
+# Systemeinstellungen und Darstellung – v0.1.13
+
+Seit 0.1.13 führt ein weiterer Button zu [Registrierung und
+Kontowiederherstellung](Core_Registrierung_und_Reset.md). Beide Verfahren sind
+zunächst abgeschaltet; Freigabe und Domain-Regeln werden dort getrennt von den
+öffentlichen Darstellungswerten verwaltet. Aktuelle Schema-Revision:
+`0010_account_flows`.
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
@@ -15,7 +21,7 @@ werden weiterhin ausschließlich in der geschützten TOML-Datei verwaltet.
 
 ## Update und Migration
 
-Voraussetzung: Änderungen zu 0.1.12 manuell in GitHub Desktop committen und
+Voraussetzung: Änderungen zu 0.1.13 manuell in GitHub Desktop committen und
 auf den verwendeten Remote-Branch übertragen. Danach als **root im Container**:
 
 ```bash
@@ -23,7 +29,7 @@ bash /opt/neofab2/script/upDateNeoFabService
 ```
 
 Das Skript sichert den bisherigen Stand und führt fehlende Migrationen bis
-`0009_mail_outbox` aus. Die Darstellungsmigration `0003_user_theme`
+`0010_account_flows` aus. Die Darstellungsmigration `0003_user_theme`
 ergänzt `core_users.theme`; vorhandene Konten
 erhalten `system` (Systemvorgabe). Konten, Passwort-Hashes, Sitzungen und
 vorhandene Einstellungen bleiben erhalten. Die vorhandene Tabelle
@@ -39,7 +45,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl status neofab2.service --no-pager
 ```
 
-Erwartet: Version 0.1.12, `Database and schema ready.`, aktiver Dienst.
+Erwartet: Version 0.1.13, `Database and schema ready.`, aktiver Dienst.
 Die HTTP-Einstellung `SESSION_COOKIE_SECURE = false` im isolierten Testnetz
 und die Plugin-Aktivierung werden durch diesen Schritt nicht verändert.
 

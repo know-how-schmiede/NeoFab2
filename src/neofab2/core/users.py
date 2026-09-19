@@ -20,6 +20,7 @@ users = Table("core_users", metadata,
     Column("id", Integer, primary_key=True), Column("email", String(254)),
     Column("display_name", String(100)), Column("password_hash", Text),
     Column("role", String(20)), Column("active", Boolean), Column("created_at", BigInteger),
+    Column("activation_pending", Boolean, server_default="0"),
     Column("theme", String(10), server_default="system"),
     Column("locale", String(2), server_default="en"),
     *(Column(key, String(limit), server_default="") for key, (_label, limit) in DETAIL_FIELDS.items()))
@@ -35,13 +36,13 @@ ROLE_PERMISSIONS = {
     "staff": frozenset({"core.profile"}),
     "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.plugins.manage", "core.settings.manage"}),
 }
-PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme, users.c.locale]
+PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme, users.c.locale, users.c.activation_pending]
 
 
 def has_permission(user, permission):
     from flask import current_app, has_app_context
 
-    if not user or not user["active"]:
+    if not user or not user["active"] or user.get("activation_pending", False):
         return False
     if permission in ROLE_PERMISSIONS.get(user["role"], ()):
         return True
@@ -160,6 +161,8 @@ def edit_user(app, user_id, email, display_name, role, active, *, actor_id, deta
             target = get_admin_user(connection, user_id)
             if not target:
                 raise ValueError("User not found.")
+            if target["activation_pending"] and active and not new_password:
+                raise ValueError("Set an initial password when activating a pending account as administrator.")
             from .user_options import validate_choices
             validate_choices(connection, extra, target)
             if target["active"] and target["role"] == "admin" and (not active or role != "admin"):
@@ -168,9 +171,11 @@ def edit_user(app, user_id, email, display_name, role, active, *, actor_id, deta
                 if not other:
                     raise ValueError("The last active administrator cannot be disabled or demoted.")
             connection.execute(update(users).where(users.c.id == user_id).values(
-                email=email, display_name=display_name, role=role, active=active, **extra))
-            if new_password or target["email"] != email or target["role"] != role or target["active"] != active:
+                email=email, display_name=display_name, role=role, active=active, activation_pending=False, **extra))
+            if new_password or target["email"] != email or target["role"] != role or target["active"] != active or target["activation_pending"]:
                 connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
+                from .account_flows import invalidate_tokens
+                invalidate_tokens(connection, user_id)
             if new_password:
                 from .auth import attempt_key
                 connection.execute(delete(attempts).where(attempts.c.key.in_([
@@ -205,6 +210,8 @@ def change_password(app, user_id, old_password, new_password):
             raise ValueError("The current password is incorrect.")
         connection.execute(update(users).where(users.c.id == user_id).values(password_hash=new_hash))
         connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
+        from .account_flows import invalidate_tokens
+        invalidate_tokens(connection, user_id)
 
 
 def reset_admin_password(app, user_id, password, *, reactivate=False):
@@ -217,6 +224,8 @@ def reset_admin_password(app, user_id, password, *, reactivate=False):
             raise ValueError("Administrator not found.")
         if not user["active"] and not reactivate:
             raise ValueError("Account disabled. Use --reactivate to explicitly reactivate it.")
-        connection.execute(update(users).where(users.c.id == user_id).values(password_hash=new_hash, active=True))
+        connection.execute(update(users).where(users.c.id == user_id).values(password_hash=new_hash, active=True, activation_pending=False))
+        from .account_flows import invalidate_tokens
+        invalidate_tokens(connection, user_id)
         connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
         connection.execute(delete(attempts).where(attempts.c.key == attempt_key(app, "account", user["email"])))

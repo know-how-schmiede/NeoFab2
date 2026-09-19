@@ -5,7 +5,7 @@ Mindestzugriff und Deinstallation](doku/Plugin_Pakete_und_Lifecycle.md).
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.12 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.13 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche
@@ -13,7 +13,12 @@ Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 Version 0.1.5 ergänzt Plugin-Aktivierung im Backend mit Neustarthinweis und
 ein zweites synthetisches Testplugin zur Prüfung von Abhängigkeiten.
 
-**Neu in 0.1.12:** [SMTP und Versandaufträge](doku/Core_SMTP_und_Versand.md).
+**Neu in 0.1.13:** [Registrierung, E-Mail-Aktivierung und Passwort-Reset](doku/Core_Registrierung_und_Reset.md).
+Beide Selbstbedienungsverfahren starten ausgeschaltet. Admin-Freigabe mit
+Domain-Regeln, einmalige befristete Codes, Sitzungswiderruf und Konto-E-Mails
+über den vorhandenen Worker. Explizite Migration `0010_account_flows` erforderlich.
+
+**Seit 0.1.12:** [SMTP und Versandaufträge](doku/Core_SMTP_und_Versand.md).
 Admin-Einstellungen mit Testauftrag, persistente Warteschlange, begrenzte
 Wiederholungen und CLI-Worker. Neue Migration `0009_mail_outbox`; Versand startet
 deaktiviert und benötigt einen ausdrücklichen Worker-Aufruf.
@@ -38,9 +43,8 @@ und Kostenstellen als Benutzer-Auswahllisten. Keine Übernahme alter Freitextwer
 
 NeoFab2 ist eine modulare Webanwendung für Werkstätten und Makerspaces. Ein schlankes Core-System verwaltet Benutzer, Rechte und Systemfunktionen. Plugins ergänzen Workshops, 3D-Druck, Plotten, Transferdruck, CNC/Fräsen und Beschaffung.
 
-Die Fachbereiche sind das Zielbild. Selbstregistrierung, E-Mail-Aktivierung,
-Self-Service-Passwort-Reset, weitere Plugin-Dienste, Benutzerimport und Fachfunktionen
-folgen. Die vollständige Core-Abnahme steht aus.
+Die Fachbereiche sind das Zielbild. Audit-Logs, weitere Plugin-Dienste,
+Benutzerimport und Fachfunktionen folgen. Die vollständige Core-Abnahme steht aus.
 
 Für einen neuen Debian-13-Container unter Proxmox stehen Installations-,
 Service- und Update-Skripte bereit. Einstieg: [Installation](doku/SETUP.md).

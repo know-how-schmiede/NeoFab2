@@ -1,4 +1,4 @@
-# Gestaltung von Buttons und Oberflächen – v0.1.12
+# Gestaltung von Buttons und Oberflächen – v0.1.13
 
 Diese Regeln gelten für Core und Plugin-Oberflächen. Gemeinsame Umsetzung:
 `src/neofab2/static/core.css`, Icons: `src/neofab2/templates/ui_icons.html`.
