@@ -1,6 +1,10 @@
-# NeoFab2 – Installation und Wartung (v0.1.8)
+# NeoFab2 – Installation und Wartung (v0.1.9)
 
-Neu in 0.1.8: Abschlussübersichten der Betriebsskripte sowie
+Neu in 0.1.9: Stammdaten-Button in den Systemeinstellungen, Icons in allen
+Buttons und [UI-Gestaltungsregeln](../doku/UI_Gestaltungsregeln.md).
+Keine neue Schema-Revision gegenüber 0.1.8.
+
+Seit 0.1.8: Abschlussübersichten der Betriebsskripte sowie
 [verwaltete Benutzer-Auswahllisten und englische Feldhilfen](../doku/Core_Auswahllisten.md).
 Die Listen starten leer; alte Freitexte werden nicht übernommen.
 
@@ -14,7 +18,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.8 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.9 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
@@ -117,7 +121,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.8, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.9, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

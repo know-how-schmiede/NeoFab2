@@ -1,3 +1,4 @@
+{% from "ui_icons.html" import icon %}
 <!doctype html>
 <html lang="{{ locale }}" data-theme="{{ theme }}">
 <head>
@@ -16,7 +17,7 @@
       {% if has_permission(current_user, 'core.plugins.view') %}<a href="{{ url_for('plugins.overview') }}">{{ _('Plugins') }}</a>{% endif %}
       {% if has_permission(current_user, 'core.settings.manage') %}<a href="{{ url_for('settings.edit') }}">{{ _('System settings') }}</a>{% endif %}
       {% for plugin in plugin_navigation %}<a href="{{ url_for('plugin_' ~ plugin.plugin_id ~ '.index') }}">{{ _(plugin.name) }}</a>{% endfor %}
-      <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">{{ _('Sign out') }}</button></form>
+      <form method="post" action="{{ url_for('accounts.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="secondary">{{ icon("logout") }} {{ _('Sign out') }}</button></form>
     {% else %}<a href="{{ url_for('accounts.login') }}">{{ _('Sign in') }}</a>{% endif %}
   </nav>
   <main>

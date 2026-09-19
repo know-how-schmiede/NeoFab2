@@ -21,8 +21,8 @@ nav form { margin: 0; }
 input, select, textarea, button { font: inherit; }
 input, select, textarea { width: 100%; padding: 12px; background: var(--background); border: 1px solid var(--input-border); border-radius: 6px; color: var(--text); }
 input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
-button, .button { display: inline-block; padding: 12px 18px; border: 1px solid var(--accent); border-radius: 7px; background: var(--accent); color: var(--background); font-weight: 600; text-decoration: none; cursor: pointer; }
-button.secondary { background: transparent; color: var(--link); padding: 8px 14px; }
+button, .button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 44px; max-width: 100%; overflow-wrap: anywhere; padding: 12px 18px; border: 1px solid var(--accent); border-radius: 7px; background: var(--accent); color: var(--background); font-weight: 600; text-decoration: none; cursor: pointer; }
+button.secondary, .button.secondary { background: transparent; color: var(--link); padding: 8px 14px; }
 .checkbox { display: flex; align-items: center; gap: 10px; }
 .checkbox input { width: auto; }
 .notice, .error { border-left: 4px solid var(--link); padding: 16px; background: var(--notice); line-height: 1.6; }
@@ -39,3 +39,8 @@ textarea { resize: vertical; min-height: 130px; }
 .multiline { white-space: pre-wrap; overflow-wrap: anywhere; }
 h1, header span { overflow-wrap: anywhere; }
 .field-help { display: block; color: var(--muted); font-size: .875rem; line-height: 1.5; }
+
+.button-icon { width: 1.125rem; height: 1.125rem; flex: 0 0 auto; }
+button:not(:disabled):hover, .button:not([aria-disabled="true"]):hover { filter: brightness(1.1); }
+button:not(:disabled):active, .button:not([aria-disabled="true"]):active { filter: brightness(.9); }
+button:disabled, .button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }

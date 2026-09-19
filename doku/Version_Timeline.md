@@ -1,5 +1,59 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.9 – 2026-09-19
+
+Bereich: Benutzerverwaltung, Navigation und gemeinsame Gestaltung
+(U05, S01, S04, S12, X05/X06).
+
+### Änderungen
+
+- Stammdaten-Direktlinks aus Benutzerliste und Benutzerformularen entfernt.
+- Systemeinstellungen öffnen Stammdaten über einen sekundären Button mit Icon.
+- Alle vorhandenen Buttons einschließlich Login, Sprachwahl, Profil,
+  Plugin-Verwaltung und Testplugin erhalten passende dekorative SVG-Icons
+  zusätzlich zur sichtbaren Beschriftung. Aktivierung/Deaktivierung verwenden
+  unterschiedliche Icons. Gemeinsames Makro ohne externe Ressourcen.
+- Einheitliche Icongröße, Abstände, Mindesthöhe 44 px und Hover-/Aktiv-/
+  Deaktiviert-Zustände im gemeinsamen CSS; sekundäre Link-Buttons unterstützt.
+- Deutsche [UI-Gestaltungsregeln](UI_Gestaltungsregeln.md) mit Beispielen,
+  Semantik, Barrierefreiheit, Formularen, Tabellen und Prüfanleitung ergänzt.
+  Bedienungsanleitungen und aktuelle Versionsangaben aktualisiert.
+
+### Prüfungen
+
+- 133 bestehende Tests unter Windows bestanden (86,33 s), ausgeführt mit
+  `.venv/Scripts/python.exe -m pytest -q --basetemp .test-artifacts/pytest019`.
+- Erster Lauf wegen fehlendem Zugriff auf das allgemeine Windows-Pytest-
+  Temp-Verzeichnis abgebrochen; mit projektspezifischem Temp-Pfad erfolgreich.
+- Zusätzliche HTML-Prüfung mit synthetischem Admin: 14 gerenderte Seiten,
+  28 Buttons mit sichtbarem Text und dekorativem SVG samt nichtleerem Pfad;
+  Benutzerliste und beide Benutzerformulare ohne Stammdaten-Verwaltungslinks,
+  Stammdaten-Einstieg in den Einstellungen als Button.
+- Interaktive visuelle Prüfung nicht durchgeführt: kein Browser verbunden.
+  Keine neue vollständige Core- oder LXC-Abnahme.
+- `git diff --check` ohne Befund.
+
+### Betrieb und Migration
+
+Keine neue Schema-Revision; gegenüber 0.1.8 keine Datenmigration. Bestehende
+Auswahllisten, Rechte und CSRF-Schutz bleiben erhalten. Reguläres Update nach
+manuellem Commit/Push gemäß [Skriptübersicht](../script/README.md) und
+[Setup](SETUP.md); bei älteren Ständen weiterhin explizite Migrationen ausführen.
+Erwartete Anwendungs-/Footer-Version: 0.1.9. Bei veraltetem Aussehen Browsercache
+neu laden. Kein automatischer Commit/Push und keine Produktivdaten verändert.
+
+### Kopierbarer Commit-Text
+
+```text
+feat: release 0.1.9 with consistent button icons and master data navigation
+
+Remove master data links from user management and user forms.
+Style the system settings entry as a button and add shared SVG icons to all buttons.
+Document UI design rules and update version references and implementation evidence.
+Validation: 133 tests passed; rendered HTML checked on 14 pages.
+No schema change; interactive browser verification remains open.
+```
+
 ## Version 0.1.8 – 2026-09-19
 
 Bereich: Betriebsskripte, Formularhilfen und verwaltete Benutzer-Auswahllisten

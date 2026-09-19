@@ -22,7 +22,7 @@
   <form method="post" action="{{ url_for('plugins.change', plugin_id=plugin.plugin_id) }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="action" value="{{ 'disable' if plugin.plugin_id in selected else 'enable' }}">
-    <button type="submit">{{ _('Schedule deactivation' if plugin.plugin_id in selected else 'Schedule activation') }}</button>
+    <button type="submit">{{ icon("pause" if plugin.plugin_id in selected else "play") }} {{ _('Schedule deactivation' if plugin.plugin_id in selected else 'Schedule activation') }}</button>
   </form>
   {% endif %}
 </section>

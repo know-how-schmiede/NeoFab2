@@ -3,7 +3,7 @@
 {% block content %}
 <h1>{{ _("System settings") }}</h1>
 {% if has_permission(current_user, 'core.users.manage') %}
-<nav aria-label="{{ _('System settings') }}"><a href="{{ url_for('user_options.overview') }}">{{ _('Master data') }}</a></nav>
+<nav aria-label="{{ _('System settings') }}"><a class="button secondary" href="{{ url_for('user_options.overview') }}">{{ icon("database") }} {{ _('Master data') }}</a></nav>
 {% endif %}
 <p>{{ _("These details appear on the public home page. The default appearance applies to guests and accounts without a personal preference.") }}</p>
 <form method="post" class="card-form">
@@ -23,6 +23,6 @@
     <option value="light" {% if values.default_theme == 'light' %}selected{% endif %}>{{ _("Light") }}</option>
   </select>
   <small id="default_theme-help" class="field-help">{{ _("Choose the appearance for guests and accounts using the system default.") }}</small>
-  <button type="submit">{{ _("Save settings") }}</button>
+  <button type="submit">{{ icon("save") }} {{ _("Save settings") }}</button>
 </form>
 {% endblock %}

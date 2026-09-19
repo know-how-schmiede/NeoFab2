@@ -16,7 +16,7 @@
   <input type="hidden" name="active" value="off">
   <label class="checkbox"><input id="active" name="active" type="checkbox" value="on" {% if entry.active %}checked{% endif %} aria-describedby="active-help">{{ _('Active') }}</label>
   <small id="active-help" class="field-help">{{ _('Clear this checkbox to hide the option from new selections without removing existing assignments.') }}</small>
-  <button type="submit">{{ _('Save option') }}</button>
+  <button type="submit">{{ icon("save") }} {{ _('Save option') }}</button>
 </form>
 <div class="table-scroll"><table>
   <caption>{{ _('Saved options') }}</caption>

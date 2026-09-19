@@ -1,4 +1,4 @@
-# Nächste Schritte für das Core-System – Stand 0.1.8
+# Nächste Schritte für das Core-System – Stand 0.1.9
 
 Stand: 18.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn

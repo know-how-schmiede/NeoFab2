@@ -2,7 +2,7 @@
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.8 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.9 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche
@@ -10,7 +10,11 @@ Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 Version 0.1.5 ergänzt Plugin-Aktivierung im Backend mit Neustarthinweis und
 ein zweites synthetisches Testplugin zur Prüfung von Abhängigkeiten.
 
-**Neu in 0.1.8:** Deutliche Abschlussübersichten der Betriebsskripte, englische
+**Neu in 0.1.9:** Stammdaten-Einstieg als Button in den Systemeinstellungen,
+keine Stammdaten-Links in Benutzerliste und Benutzerformularen sowie passende
+Icons in allen Buttons. [Gestaltungsregeln](doku/UI_Gestaltungsregeln.md).
+
+**Seit 0.1.8:** Deutliche Abschlussübersichten der Betriebsskripte, englische
 übersetzbare Feldhilfen und eigene Backend-Formulare für Positionen, Studiengänge
 und Kostenstellen als Benutzer-Auswahllisten. Keine Übernahme alter Freitextwerte.
 [Nächste Core-Schritte](doku/Core_Naechste_Schritte.md).

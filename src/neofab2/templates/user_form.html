@@ -25,7 +25,7 @@
           <option value="{{ option.name }}" {% if entry[key]|default('') == option.name %}selected{% endif %}>{{ option.name }}{% if not option.active %} · {{ _('Inactive') }}{% endif %}</option>
         {% endif %}{% endfor %}
       </select>
-      <small id="{{ key }}-help" class="field-help">{{ _(detail_help[key]) }} <a href="{{ url_for('user_options.manage', kind=key) }}">{{ _('Manage options') }}</a></small>
+      <small id="{{ key }}-help" class="field-help">{{ _(detail_help[key]) }}</small>
     {% elif key == 'note' %}<textarea id="{{ key }}" name="{{ key }}" maxlength="{{ specification[1] }}" rows="4" aria-describedby="{{ key }}-help">{{ entry[key]|default('') }}</textarea>
     {% else %}<input id="{{ key }}" name="{{ key }}" value="{{ entry[key]|default('') }}" maxlength="{{ specification[1] }}" aria-describedby="{{ key }}-help">{% endif %}
     {% if key not in choices %}<small id="{{ key }}-help" class="field-help">{{ _(detail_help[key]) }}</small>{% endif %}
@@ -43,7 +43,7 @@
   <small id="confirm_password-help" class="field-help">{{ _("Enter the same new password again to avoid typing mistakes.") }}</small>
     <p>{{ _("Leave both password fields empty to keep the current password. Changes to the password, email, role or account status end all existing sessions for this account. The last active administrator remains protected.") }}</p>
   {% endif %}
-  <button type="submit">{{ _('Create user' if creating else 'Save changes') }}</button>
+  <button type="submit">{{ icon("user-plus" if creating else "save") }} {{ _('Create user' if creating else 'Save changes') }}</button>
 </form>
 <p><a href="{{ url_for('accounts.user_list') }}">{{ _("Back to user list") }}</a></p>
 {% endblock %}

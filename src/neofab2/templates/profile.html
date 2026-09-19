@@ -19,7 +19,7 @@
     {% for key, label in languages.items() %}<option value="{{ key }}" {% if current_user.locale == key %}selected{% endif %}>{{ _(label) }}</option>{% endfor %}
   </select>
   <small id="locale-help" class="field-help">{{ _("Choose the interface language. Missing translations appear in English.") }}</small>
-  <button type="submit">{{ _('Save profile') }}</button>
+  <button type="submit">{{ icon("save") }} {{ _('Save profile') }}</button>
 </form>
 <h2>{{ _('Change password') }}</h2>
 <p>{{ _('8 to 128 characters. After changing it, sign in again on all devices.') }}</p>
@@ -31,6 +31,6 @@
   <small id="new_password-help" class="field-help">{{ _("Use 8 to 128 characters. Avoid reusing a password from another service.") }}</small>
   <label for="confirm_password">{{ _('Repeat new password') }}</label><input id="confirm_password" aria-describedby="confirm_password-help" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
   <small id="confirm_password-help" class="field-help">{{ _("Enter the same new password again to avoid typing mistakes.") }}</small>
-  <button type="submit">{{ _('Change password') }}</button>
+  <button type="submit">{{ icon("key") }} {{ _('Change password') }}</button>
 </form>
 {% endblock %}

@@ -1,4 +1,4 @@
-# Betrieb und Wiederherstellung – v0.1.8
+# Betrieb und Wiederherstellung – v0.1.9
 
 Ab 0.1.7 sind die App und CLI standardmäßig englisch. Deutsche Bezeichnungen
 in dieser Anleitung gelten bei gewählter deutscher Kontosprache.
