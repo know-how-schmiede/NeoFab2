@@ -1,5 +1,7 @@
 """Persistenter Plugin-Zielzustand; laufende Registrierungen bleiben unverändert."""
 
+from neofab2.services.audit import record
+
 import json
 from pathlib import Path
 
@@ -57,6 +59,7 @@ def change_selection(app, actor_id, plugin_id, action):
         statement = insert(settings).values(key=STATE_KEY, value=json.dumps(desired))
         connection.execute(statement.on_conflict_do_update(
             index_elements=[settings.c.key], set_={"value": json.dumps(desired)}))
+        record(connection, "plugins.changed", actor_id=actor_id)
 
 
 def restore_config_selection(app):
@@ -67,3 +70,4 @@ def restore_config_selection(app):
         statement = insert(settings).values(key=STATE_KEY, value=json.dumps(desired))
         connection.execute(statement.on_conflict_do_update(
             index_elements=[settings.c.key], set_={"value": json.dumps(desired)}))
+        record(connection, "plugins.recovered")

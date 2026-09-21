@@ -1,4 +1,4 @@
-# SMTP und persistente Versandaufträge – Stand 0.1.14, eingeführt in 0.1.12
+# SMTP und persistente Versandaufträge – Stand 0.1.15, eingeführt in 0.1.12
 
 Paket 1 des [Core-Arbeitsplans](Core_Naechste_Schritte.md): S05, N05 und
 Teilumfänge von S06/N01; Migration X07, Betriebsanleitung X05. Keine Fachplugins.
@@ -159,6 +159,45 @@ fehlendem Passwort TOML-Datei und Prozessneustart prüfen. Bei Ablehnungen
 Absender-/Empfängerfreigaben beim SMTP-Anbieter kontrollieren. Ungültige gespeicherte
 SMTP-Werte stoppen den Worker; die Admin-Seite erlaubt erneutes Speichern.
 
+### „Angenommen“, aber keine Nachricht im Postfach
+
+„Angenommen“ wird erst nach SMTP-Antwort **250 auf die vollständige DATA-Übertragung**
+gespeichert (`services/mail.py`, `deliver`). Der Worker hat den Auftrag damit
+an das konfigurierte Relay übergeben. Die weitere Zustellung, Quarantäne oder
+spätere Ablehnung ist ohne Relay-/Postfachprotokolle nicht erkennbar.
+Den Timer erneut einzurichten hilft bei diesem Status nicht.
+
+Als **Administrator in der Weboberfläche** beim Vergleich mit einem funktionierenden
+Altsystem zuerst dieselbe freigegebene Absenderadresse verwenden: Nur dieses Feld
+ändern, speichern und einen **neuen** Testauftrag an dasselbe kontrollierte interne
+Testpostfach anlegen. Host, Port, Transport und Anmeldung unverändert lassen.
+Eine neue Adresse mit gleichem Domainnamen ist nicht automatisch ebenso freigegeben.
+Erwartetes Ergebnis: neuer Auftrag „Angenommen“ und Eingang im Testpostfach.
+
+Wenn weiter kein Eingang erfolgt:
+
+1. Spamordner und gegebenenfalls zentrale Quarantäne prüfen. Bei einem vorhandenen
+   Absenderpostfach auch nach einer Unzustellbarkeitsnachricht suchen.
+2. Die Mailadministration soll die Nachricht im Relay nachverfolgen: Zeitpunkt
+   aus der Übersicht (UTC), Empfänger, beim Versand verwendeter Absender und
+   Message-ID bereitstellen. NeoFab2 bildet diese als
+   `<neofab2-AUFTRAGSID@ABSENDERDOMAIN>`; die Auftrags-ID steht in der Tabelle.
+   Das ist die Nachrichtenkennung, keine SMTP-Queue-ID.
+3. Bei verschiedenen Installationen zusätzlich die tatsächlich am Relay sichtbare
+   Quell-IP und die Relay-Freigabe vergleichen. Die im Browser angezeigte Webadresse
+   beweist keine bestimmte SMTP-Quell-IP (beispielsweise bei NAT).
+
+Ein bereits angenommener Auftrag wird nicht erneut eingeplant; ein neuer Test
+bekommt eine neue Kennung. Ohne Absendervergleich und Relay-Nachverfolgung sind
+Absenderfreigabe, Filterung oder Routing nur mögliche Ursachen, keine Diagnose.
+
+Codevergleich am 21.09.2026: Bei leerem Benutzernamen und ausgeschaltetem TLS/SSL
+nutzen beide Anwendungen unverschlüsseltes SMTP und die konfigurierte Adresse
+als Envelope-Absender. NeoFab verwendet `send_message` im SMTP-Kontextmanager;
+NeoFab2 prüft MAIL/RCPT/DATA einzeln und schließt danach die Verbindung. NeoFab2
+setzt zusätzlich eine stabile Message-ID und Quoted-Printable-Kodierung. Aus
+diesen Unterschieden allein ist kein Zustellfehler nach SMTP-Annahme nachgewiesen.
+
 ## Transaktionen und Plugin-Vertrag
 
 `services/mail.py` kapselt Transport und Outbox. `core/mail.py` enthält
@@ -215,9 +254,10 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 systemctl start neofab2.service
 ```
 
-Aktueller Schemastand: `0010_account_flows` ergänzt die Kontoverfahren und
-zwei optionale Zuordnungsfelder der Outbox. Ergebnis: Readiness erfolgreich,
-Anwendungsversion 0.1.14, SMTP-Seite erreichbar.
+Aktueller Schemastand: `0011_audit_status` ergänzt Audit und Worker-Beobachtung.
+Die Kontoverfahren und zwei optionale Zuordnungsfelder der Outbox stammen aus
+`0010_account_flows`. Ergebnis: Readiness erfolgreich,
+Anwendungsversion 0.1.15, SMTP-Seite erreichbar.
 Erst anschließend Worker wieder ausführen. Plugin-Versionen bleiben 0.1.0.
 
 Die SQLite-Sicherung umfasst die Outbox samt Empfängern und Nachrichtentexten.
@@ -241,3 +281,14 @@ Ein echter SMTP-Anbieter, reale Postfachzustellung, visuelle Browserabnahme und
 Debian/systemd-Workerbetrieb sind noch nicht geprüft. Keine vollständige Core-Abnahme.
 
 Transportreferenz: [Python-Standardbibliothek smtplib](https://docs.python.org/3/library/smtplib.html).
+
+## Nutzerrückmeldung vom 21.09.2026
+
+Zwei Testnachrichten des Absenders `neofab2` wurden im Hochschulpostfach im
+Junk-Ordner gefunden; interne Zustellung damit vom Benutzer bestätigt.
+Die externe Testnachricht wurde laut Benutzer nicht empfangen. Eine Beschränkung
+des Relays auf interne Empfänger ist eine Vermutung und nicht anhand von
+Relay-Protokollen bestätigt. Der Benutzer behandelt den E-Mail-Punkt vorerst
+als gelöst. Keine Zusage externer Zustellung und keine allgemeine SMTP-Abnahme.
+Ab 0.1.15 zeigt der [Betriebsstatus](Core_Audit_und_Betriebsstatus.md) zusätzlich
+den zuletzt beobachteten Worker-Lauf; dies ersetzt keinen Zustellnachweis.

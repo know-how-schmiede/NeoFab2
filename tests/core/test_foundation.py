@@ -37,7 +37,7 @@ def test_explicit_migration_is_repeatable_and_preserves_data(app):
     with sqlite3.connect(path) as db:
         assert db.execute("SELECT value FROM core_settings").fetchone() == ("synthetic",)
         assert {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")} == {
-            "core_settings", "alembic_version", "core_users", "core_sessions", "core_login_attempts", "core_user_options", "core_files", "core_mail_outbox", "core_account_tokens", "core_account_limits"}
+            "core_settings", "alembic_version", "core_users", "core_sessions", "core_login_attempts", "core_user_options", "core_files", "core_mail_outbox", "core_account_tokens", "core_account_limits", "core_audit_events", "core_worker_status"}
     client = app.test_client()
     assert client.get("/health/ready").json == {"status": "ok"}
     page = client.get("/")

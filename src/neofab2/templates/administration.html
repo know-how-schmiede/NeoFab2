@@ -6,5 +6,7 @@
   {% if has_permission(current_user, 'core.users.manage') %}<a class="button secondary" href="{{ url_for('accounts.user_list') }}">{{ icon('users') }} {{ _('User management') }}</a>{% endif %}
   {% if has_permission(current_user, 'core.plugins.view') %}<a class="button secondary" href="{{ url_for('plugins.overview') }}">{{ icon('plugin') }} {{ _('Plugins') }}</a>{% endif %}
   {% if has_permission(current_user, 'core.settings.manage') %}<a class="button secondary" href="{{ url_for('settings.edit') }}">{{ icon('settings') }} {{ _('System settings') }}</a>{% endif %}
+  {% if has_permission(current_user, 'core.audit.view') %}<a class="button secondary" href="{{ url_for('operations.audit_page') }}">{{ icon('shield') }} {{ _('Audit log') }}</a>{% endif %}
+  {% if has_permission(current_user, 'core.status.view') %}<a class="button secondary" href="{{ url_for('operations.status_page') }}">{{ icon('database') }} {{ _('Operational status') }}</a>{% endif %}
 </nav>
 {% endblock %}

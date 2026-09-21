@@ -5,7 +5,7 @@ Mindestzugriff und Deinstallation](doku/Plugin_Pakete_und_Lifecycle.md).
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.14 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.15 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche
@@ -13,7 +13,11 @@ Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 Version 0.1.5 ergänzt Plugin-Aktivierung im Backend mit Neustarthinweis und
 ein zweites synthetisches Testplugin zur Prüfung von Abhängigkeiten.
 
-**Neu in 0.1.14:** SMTP-Formular erhält Eingaben bei Fehlern; regelmäßiger Versand
+**Neu in 0.1.15:** [Audit-Protokoll und Betriebsstatus](doku/Core_Audit_und_Betriebsstatus.md)
+für Administratoren, strukturierte Ereignisse ohne Geheimnisse, Worker-Beobachtung
+und explizite Audit-Aufbewahrung. Migration `0011_audit_status`.
+
+**Seit 0.1.14:** SMTP-Formular erhält Eingaben bei Fehlern; regelmäßiger Versand
 über eigenen systemd-Timer. Beim ersten Update anschließend die
 [Service-Einrichtung](script/README.md) erneut ausführen.
 

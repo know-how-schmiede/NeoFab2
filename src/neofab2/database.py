@@ -58,6 +58,8 @@ def database_ready(app):
             connection.execute(text("SELECT id, user_id, purpose, token_hash, fingerprint, expires_at, used_at FROM core_account_tokens LIMIT 0"))
             connection.execute(text("SELECT key, count, window_start FROM core_account_limits LIMIT 0"))
             connection.execute(text("SELECT account_user_id, account_token_id FROM core_mail_outbox LIMIT 0"))
+            connection.execute(text("SELECT id, created_at, module_id, event, actor_id, target_id, count FROM core_audit_events LIMIT 0"))
+            connection.execute(text("SELECT name, run_id, started_at, finished_at, state FROM core_worker_status LIMIT 0"))
             return actual == expected
     except SQLAlchemyError:
         return False

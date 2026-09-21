@@ -1,6 +1,14 @@
-# NeoFab2 – Installation und Wartung (v0.1.14)
+# NeoFab2 – Installation und Wartung (v0.1.15)
 
-Neu in 0.1.14: SMTP-Eingaben bleiben bei Speicherfehlern erhalten. Die
+Neu in 0.1.15: [Audit-Protokoll und Betriebsstatus](../doku/Core_Audit_und_Betriebsstatus.md).
+Das normale Update führt die explizite Migration `0011_audit_status` aus.
+Anschließend als Administrator unter **Administration** beide neuen Seiten prüfen.
+Neue Ereignisse werden ab diesem Update erfasst; kein rückwirkendes Protokoll.
+Der Versandworker meldet seinen letzten beobachteten Lauf. Standardmäßig keine
+Audit-Löschung; `audit-prune --days 180` zeigt nur eine lokale Vorschau.
+Die Detailanleitung beschreibt Rechte, Bereinigung, Fehlerhilfe und Prüfgrenzen.
+
+Seit 0.1.14: SMTP-Eingaben bleiben bei Speicherfehlern erhalten. Die
 Service-Einrichtung installiert jetzt `neofab2-mail.timer` und
 `neofab2-mail.service`: erster Lauf nach 15 Sekunden, danach 30 Sekunden nach
 Ende des vorigen Laufs, höchstens 20 Aufträge pro Lauf. SMTP bleibt standardmäßig aus.
@@ -73,7 +81,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.14 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.15 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
@@ -176,7 +184,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.14, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.15, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

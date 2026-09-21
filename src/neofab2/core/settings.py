@@ -1,5 +1,7 @@
 """S04: ausdrücklich freigegebene öffentliche Einstellungen, keine Secrets."""
 
+from neofab2.services.audit import record
+
 from flask import Blueprint, abort, current_app, flash, g, redirect, render_template, request, url_for
 from sqlalchemy import Column, MetaData, String, Table, Text, select
 from sqlalchemy.dialects.sqlite import insert
@@ -67,6 +69,7 @@ def save_settings(app, actor_id, values):
             statement = insert(settings).values(key=PREFIX + key, value=value)
             connection.execute(statement.on_conflict_do_update(
                 index_elements=[settings.c.key], set_={"value": value}))
+        record(connection, "settings.changed", actor_id=actor_id)
 
 
 @bp.route("/admin/settings", methods=["GET", "POST"])

@@ -1,5 +1,95 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.15 – 2026-09-21
+
+Bereich: Core-Paket 3, Audit-Protokoll und Betriebsstatus (S09/S12/N01,
+U06, X05–X07). Version auf Benutzerauftrag, technische Testplugins bleiben 0.1.0.
+
+### Änderungen
+
+- Zwei neue geschützte Admin-Seiten: Audit-Protokoll mit Ereignisfilter und
+  Paginierung sowie Betriebsstatus mit Core-/Schema-/Plugin-Versionen,
+  Plugin-Zielzustand, SMTP-Status und Versandauftragszahlen.
+- Transaktionale Audit-Erfassung für An-/Abmeldung, begrenzte Fehlanmeldungen,
+  zentrale Rechteablehnung, Benutzerverwaltung, Rollen-/Status-/Passwortänderungen,
+  erfolgreiche Kontocode-Einlösung und Core-/SMTP-/Plugin-Einstellungen.
+- Nur strukturierte Kennungen, Zeit und optionale Anzahl; keine Passwörter,
+  Tokens, E-Mail-Adressen, IPs, Nachrichtentexte oder freie Konfigurationsdetails.
+- Worker-Beobachtung für Beginn/Ende/Fehler, veralteter Stand nach fünf Minuten,
+  Schutz vor Überschreiben durch verspäteten parallelen Lauf. Kein systemd-Probe
+  und keine behauptete externe Zustellbestätigung.
+- Lokales `audit-prune`: Vorschau standardmäßig 180 Tage, Löschung ausschließlich
+  mit `--apply` und Bestätigung; Bereinigung wird selbst protokolliert.
+- Additiver API-1-Vertrag `record_action` für deklarierte Plugin-Aktionen mit
+  aktuellen Konto-/Aktivierungs-/Aktionsrechten und optional gemeinsamer Transaktion.
+- Deutsche Betriebsanleitung, Core-Plan, Funktionsmatrix, Setup und Schnellstart
+  ergänzt. Nächster Schritt ist Paket 4; Plugin-Pakete P1–P5 bleiben Planung.
+- Nutzer bestätigt interne Testzustellung im Junk-Ordner. E-Mail-Punkt vorerst
+  abgeschlossen; externe Relay-Zustellung bleibt ungeklärt. Keine SMTP-Umstellung.
+
+### Betrieb und Migration
+
+Neue explizite Migration **0011_audit_status** nach **0010_account_flows**:
+Tabellen `core_audit_events` und `core_worker_status`, Zeitindex für Audit.
+Bestandskonten, Einstellungen und Outbox bleiben erhalten; kein rückwirkendes Audit.
+Vor Update eigene zusätzlich gestartete Worker stoppen; das Update-Skript steuert
+Webdienst und NeoFab2-Versandtimer und erstellt eine Sicherung vor Migration.
+Nach dem normalen Update als **root**, ausgeführt durch **neofab2**, prüfen:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: Version 0.1.15 und Schema bereit. Als Administrator beide neuen Seiten
+unter Administration öffnen; Anmeldung erscheint im Audit, der nächste
+Versandworker-Lauf im Betriebsstatus. Standardmäßig werden keine Audit-Daten
+gelöscht. [Aufbewahrung, Fehlerhilfe und Grenzen](Core_Audit_und_Betriebsstatus.md).
+Rückkehr zu vorherigem Code nur mit passender Datenbanksicherung. Altes NeoFab
+und produktive Daten wurden nicht verändert.
+
+### Prüfungen
+
+- **255 Gesamttests bestanden** (Python 3.13), darunter zwölf neue Audit-/Status-
+  Prüfungen mit Admin-/Direktzugriff, Geheimnisschutz, Transaktionsrollback,
+  fehlender Audittabelle, Filter/Paginierung und deutschen Seiten.
+- Aufbewahrungsgrenze, Vorschau und Bestätigung/Abbruch; Workerfehler, fehlende/
+  veraltete Beobachtung und verspätetes Ergebnis; ungültige Konfiguration und
+  Plugin-Neustartbedarf geprüft.
+- Synthetischer Plugin-Vertrag: kein Admin-Wildcard, aktuelle Kontosperre,
+  Aktivierung ausstehend, Plugin-Pause, Namespace, Rollback und fremde Engine geprüft.
+- Upgrade 0010 → 0011, wiederholte Migration, Bestandswerterhalt, Neustart und
+  SQLite-Sicherung einschließlich Audit-/Worker-Daten geprüft. Historischer
+  Upgrade-Test legt Altbestände direkt im damaligen Schema an.
+- Wheel/sdist 0.1.15 gebaut und separat installiertes Wheel einschließlich neuer
+  Admin-Seiten geprüft; CLI-Version, Bash-Syntax und ShellCheck geprüft.
+- 150 relative Dokumentationslinks und `git diff --check` bestanden.
+- Echte Debian/LXC-/Browser-Abnahme, vollständiges HTTP-/Objekt-Audit,
+  kryptografische Manipulationssicherung und vollständige Core-Abnahme bleiben offen.
+- Kein Commit oder Push; keine produktive Migration oder Bereinigung ausgeführt.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: NeoFab2 0.1.15 – Audit-Protokoll und Betriebsstatus
+```
+
+Commit-Beschreibung:
+
+```text
+Core-Paket 3 mit geschützter Audit- und Betriebsstatus-Ansicht umsetzen.
+Sicherheitsrelevante Ereignisse transaktional ohne Geheimnisdetails erfassen.
+Worker-Beobachtung und minimalen autorisierten Plugin-Audit-Vertrag ergänzen.
+Audit-Aufbewahrung mit lokaler Vorschau und ausdrücklicher Bereinigung bereitstellen.
+Explizite Migration 0011, deutsche Anleitungen und Funktionsnachweise ergänzen.
+255 Tests, Release-Pakete, installiertes Wheel und Betriebsskript-Prüfungen bestanden.
+Interne SMTP-Zustellung bestätigt; externe Zustellung bleibt ungeprüft.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.14 – 2026-09-21
 
 Bereich: SMTP-Administration und regelmäßiger Core-Versand (S05/N05, S01,

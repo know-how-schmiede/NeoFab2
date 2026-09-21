@@ -10,6 +10,8 @@ from flask import abort, g, redirect, request, session, url_for
 from sqlalchemy import select, delete, update, or_
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from neofab2.services.audit import record
+
 from .users import users, sessions, attempts, PUBLIC_COLUMNS, has_permission, write_transaction, normalize_email
 
 # Gleicher Passwortprüfpfad auch bei unbekannter E-Mail; nie als Zugang nutzbar.
@@ -49,6 +51,7 @@ def authenticate(app, email, password, ip):
                     connection.execute(update(attempts).where(attempts.c.key == key).values(count=attempts.c.count + 1))
                 else:
                     connection.execute(attempts.insert().values(key=key, count=1, window_start=now))
+            record(connection, "login.failed")
             return None
         connection.execute(delete(attempts).where(attempts.c.key == account_key))
         connection.execute(delete(sessions).where(or_(
@@ -56,6 +59,7 @@ def authenticate(app, email, password, ip):
             sessions.c.created_at <= now - app.config["SESSION_MAX_SECONDS"])))
         token = secrets.token_urlsafe(32)
         connection.execute(sessions.insert().values(token_hash=token_hash(token), user_id=user["id"], created_at=now, last_seen=now))
+        record(connection, "login.succeeded", actor_id=user["id"])
         return token
 
 
@@ -63,7 +67,10 @@ def revoke_session(app):
     token = session.get("auth_token")
     if isinstance(token, str):
         with app.extensions["neofab2_db"].begin() as connection:
+            actor = connection.execute(select(sessions.c.user_id).where(sessions.c.token_hash == token_hash(token))).scalar_one_or_none()
             connection.execute(delete(sessions).where(sessions.c.token_hash == token_hash(token)))
+            if actor is not None:
+                record(connection, "logout", actor_id=actor)
     session.clear()
 
 
@@ -105,6 +112,9 @@ def permission_required(permission):
             if not g.get("current_user"):
                 return redirect(url_for("accounts.login"))
             if not has_permission(g.current_user, permission):
+                from flask import current_app
+                with write_transaction(current_app) as connection:
+                    record(connection, "access.denied", actor_id=g.current_user["id"])
                 abort(403)
             return view(*args, **kwargs)
         return wrapped

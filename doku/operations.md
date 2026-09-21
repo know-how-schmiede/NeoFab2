@@ -1,4 +1,12 @@
-# Betrieb und Wiederherstellung – v0.1.14
+# Betrieb und Wiederherstellung – v0.1.15
+
+Neu in 0.1.15: [Audit-Protokoll und Betriebsstatus](Core_Audit_und_Betriebsstatus.md).
+Das normale Update führt die explizite Migration `0011_audit_status` aus.
+Anschließend als Administrator unter **Administration** beide neuen Seiten prüfen.
+Neue Ereignisse werden ab diesem Update erfasst; kein rückwirkendes Protokoll.
+Der Versandworker meldet seinen letzten beobachteten Lauf. Standardmäßig keine
+Audit-Löschung; `audit-prune --days 180` zeigt nur eine lokale Vorschau.
+Die Detailanleitung beschreibt Rechte, Bereinigung, Fehlerhilfe und Prüfgrenzen.
 
 Seit 0.1.13 gehören die Kontoverfahren und ihre Tokenmetadaten zur Sicherung.
 Nach Restore öffentliche Registrierung und Passwort-Rücksetzung zunächst

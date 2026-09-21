@@ -187,3 +187,14 @@ gespeichert. Einlösung ausschließlich per CSRF-geschütztem POST, keine Tokens
 in vorgesehenen URLs. Domains mit internationalisierten Namen werden für SMTP
 in die ASCII-Darstellung normalisiert; SMTPUTF8-Lokalteile bleiben ausgeschlossen.
 [Bedienung, Schutzmaßnahmen und offene Prüfungen](Core_Registrierung_und_Reset.md).
+
+## Audit und Betriebsbeobachtung ab 0.1.15
+
+`services/audit.py` speichert ausschließlich feste Ereigniscodes, Modulkennung,
+Zeit, numerische Konto-/Objektreferenzen und ggf. Anzahl. Änderungen und Audit
+teilen die Transaktion; kein automatisches Schema und keine Geheimnisdetails.
+`core/operations.py` stellt Admin-Ansichten bereit. `plugin_api/audit.py` ergänzt
+API 1 um Audit für deklarierte, aktuell erlaubte Plugin-Aktionen.
+`services/operations.py` speichert den letzten beobachteten Worker-Lauf; das
+ist weder systemd-Status noch externer Zustellnachweis. Explizite Migration 0011,
+keine automatische Aufbewahrungsbereinigung. [Details](Core_Audit_und_Betriebsstatus.md).

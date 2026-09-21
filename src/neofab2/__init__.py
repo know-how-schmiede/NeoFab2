@@ -9,6 +9,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
 
     from .config import load_config
     from .database import init_database
+    from .core.operations import bp as operations_bp
     from .core.routes import bp
     from .core.accounts import bp as accounts_bp
     from .core.user_options import bp as user_options_bp
@@ -34,6 +35,7 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     register_auth(app)
     CSRFProtect(app)
     app.register_blueprint(bp)
+    app.register_blueprint(operations_bp)
     app.register_blueprint(accounts_bp)
     app.register_blueprint(user_options_bp)
     app.register_blueprint(mail_bp)

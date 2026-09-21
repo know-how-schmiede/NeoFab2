@@ -198,3 +198,12 @@ gespeichert, werden aber nicht übernommen. Kein direkter SMTP-Aufruf aus Plugin
 Für Plugin-Oberflächen gelten die [UI-Gestaltungsregeln](UI_Gestaltungsregeln.md).
 Alle Buttons enthalten sichtbaren übersetzbaren Text und ein passendes Icon aus
 `ui_icons.html`; Templates mit `base.html` können das gemeinsame `icon()` verwenden.
+
+## Audit-Vertrag ab Core 0.1.15 (API 1)
+
+`neofab2.plugin_api.audit.record_action(plugin_id, permission, target_id=None, connection=None)`
+protokolliert eine deklarierte Aktion nach aktueller Konto-, Einstiegs- und
+Aktionsrechteprüfung. Nur numerische Objekt-ID, kein Freitext oder Secret-Payload.
+Mit übergebener aktiver NeoFab2-Verbindung atomar zur Fachaktion; Objektberechtigung
+bleibt Aufgabe des Plugins. Administratoren erhalten keinen Wildcard-Zugriff.
+[Schnittstelle, Beispiel und Grenzen](Core_Audit_und_Betriebsstatus.md).

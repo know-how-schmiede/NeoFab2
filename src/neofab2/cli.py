@@ -217,5 +217,26 @@ def mail_worker(limit):
         app.extensions["neofab2_db"].dispose()
 
 
+@main.command("audit-prune")
+@click.option("--days", type=click.IntRange(1, 3650), default=180, show_default=True)
+@click.option("--apply", is_flag=True, help="Delete expired audit events after confirmation.")
+def audit_prune(days, apply):
+    """Preview audit retention; only --apply with confirmation deletes events."""
+    from .services.audit import prune
+    from datetime import datetime, timezone
+    app = ready_app()
+    try:
+        cutoff, count = prune(app, days)
+        click.echo(f"Audit events older than {datetime.fromtimestamp(cutoff, timezone.utc).isoformat()}: {count}")
+        if apply:
+            click.confirm("Delete expired audit events? This cannot be undone without a backup.", abort=True)
+            _, count = prune(app, days, apply=True)
+            click.echo(f"Audit events deleted: {count}")
+        else:
+            click.echo("Preview only; no events deleted.")
+    finally:
+        app.extensions["neofab2_db"].dispose()
+
+
 if __name__ == "__main__":
     main()

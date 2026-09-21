@@ -203,7 +203,11 @@ def test_explicit_upgrade_from_019_preserves_accounts(tmp_path, monkeypatch):
         with app.extensions["neofab2_db"].begin() as connection:
             config.attributes["connection"] = connection
             command.upgrade(config, "0007_user_options")
-        create_user(app, "admin@example.org", "Existing", "Test123!", "admin", bootstrap=True)
+        # Seed the historical schema directly; current user creation requires audit schema.
+        from werkzeug.security import generate_password_hash
+        with app.extensions["neofab2_db"].begin() as connection:
+            connection.execute(users.insert().values(email="admin@example.org", display_name="Existing",
+                password_hash=generate_password_hash("Test123!"), role="admin", active=True, created_at=1))
         # Compare the columns that existed in 0007; later revisions add metadata.
         original_columns = [column for column in users.c if column.name != "activation_pending"]
         with app.extensions["neofab2_db"].connect() as connection:

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Operational status') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('Operational status') }}</h1>
+<a class="button secondary" href="{{ url_for('core.administration') }}">{{ icon('shield') }} {{ _('Administration') }}</a>
+<dl><dt>{{ _('Core version') }}</dt><dd>{{ status.version }}</dd><dt>{{ _('Database schema') }}</dt><dd>{{ _('Ready') }} · {{ status.schema }}</dd><dt>{{ _('SMTP') }}</dt><dd>{{ _(status.smtp) }}</dd><dt>{{ _('Last observed mail worker') }}</dt><dd>{{ _(status.worker_state) }}</dd>
+{% if status.worker %}<dt>{{ _('Started (UTC)') }}</dt><dd>{{ status.worker.started_at|mail_time }}</dd><dt>{{ _('Finished (UTC)') }}</dt><dd>{{ status.worker.finished_at|mail_time if status.worker.finished_at else '—' }}</dd>{% endif %}</dl>
+<p>{{ _('Worker observations do not confirm timer activation or mailbox delivery. No observation for over five minutes is marked stale. Reload to refresh.') }}</p>
+<h2>{{ _('Mail queue') }}</h2>
+<ul>{% for state, count in status.counts|dictsort %}<li>{{ _(state) }}: {{ count }}</li>{% else %}<li>{{ _('No mail jobs yet.') }}</li>{% endfor %}</ul>
+<a class="button secondary" href="{{ url_for('mail.overview') }}">{{ icon('mail') }} {{ _('SMTP & mail queue') }}</a>
+<h2>{{ _('Plugins') }}</h2>
+{% if not status.selection_valid %}<p class="error" role="alert">{{ _('Saved plugin selection is invalid. Use local recovery.') }}</p>{% elif status.restart %}<p role="status">{{ _('Plugin selection changed. Restart web and worker processes.') }}</p>{% endif %}
+<div class="table-scroll"><table><thead><tr><th>{{ _('Plugin') }}</th><th>{{ _('Version') }}</th><th>{{ _('Loaded in this process') }}</th><th>{{ _('Selected for next start') }}</th></tr></thead><tbody>{% for plugin in status.plugins %}<tr><td>{{ plugin.id }}</td><td>{{ plugin.version }}</td><td>{{ _('Yes') if plugin.loaded else _('No') }}</td><td>{{ (_('Yes') if plugin.selected else _('No')) if status.selection_valid else '—' }}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

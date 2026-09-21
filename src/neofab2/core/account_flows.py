@@ -1,5 +1,7 @@
 """U02-U04/S06: configurable self-service, single-use codes and queued mail."""
 
+from neofab2.services.audit import record
+
 import hashlib
 import hmac
 import json
@@ -86,6 +88,7 @@ def save_policy(app, actor_id, values):
         connection.execute(update(tokens).where(tokens.c.purpose.in_(purposes), tokens.c.used_at.is_(None)).values(used_at=int(time.time())))
         statement = insert(settings).values(key=POLICY_KEY, value=json.dumps(values))
         connection.execute(statement.on_conflict_do_update(index_elements=[settings.c.key], set_={"value": statement.excluded.value}))
+        record(connection, "accounts.changed", actor_id=actor_id)
 
 
 def consume_limit(app, connection, scope, ip, email=None):
@@ -227,6 +230,7 @@ def redeem(app, purpose, code, password, ip):
         connection.execute(delete(sessions).where(sessions.c.user_id == user["id"]))
         connection.execute(delete(attempts).where(attempts.c.key == attempt_key(app, "account", user["email"])))
         queue_notice(app, connection, user, "welcome" if purpose == "activate" else "changed", token["id"])
+        record(connection, "account.activated" if purpose == "activate" else "account.reset", target_id=user["id"])
 
 
 def prepare_account_mail(app, job):

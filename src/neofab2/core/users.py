@@ -8,6 +8,7 @@ from sqlalchemy import Boolean, Column, Integer, BigInteger, MetaData, String, T
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 from .i18n import translate
+from neofab2.services.audit import record
 
 metadata = MetaData()
 DETAIL_FIELDS = {
@@ -34,7 +35,7 @@ ROLES = {"user": "User", "staff": "Staff", "admin": "Administrator"}
 ROLE_PERMISSIONS = {
     "user": frozenset({"core.profile"}),
     "staff": frozenset({"core.profile"}),
-    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.plugins.manage", "core.settings.manage"}),
+    "admin": frozenset({"core.profile", "core.users.manage", "core.plugins.view", "core.plugins.manage", "core.settings.manage", "core.audit.view", "core.status.view"}),
 }
 PUBLIC_COLUMNS = [users.c.id, users.c.email, users.c.display_name, users.c.role, users.c.active, users.c.created_at, users.c.theme, users.c.locale, users.c.activation_pending]
 
@@ -141,6 +142,7 @@ def create_user(app, email, display_name, password, role="user", *, actor_id=Non
             result = connection.execute(users.insert().values(email=email, display_name=display_name,
                 password_hash=password_hash, role=role, active=active, created_at=int(time.time()),
                 locale=locale, **extra))
+            record(connection, "user.created", actor_id=actor_id, target_id=result.inserted_primary_key[0])
             return result.inserted_primary_key[0]
     except IntegrityError as error:
         raise ValueError("This email address is already in use.") from error
@@ -172,6 +174,13 @@ def edit_user(app, user_id, email, display_name, role, active, *, actor_id, deta
                     raise ValueError("The last active administrator cannot be disabled or demoted.")
             connection.execute(update(users).where(users.c.id == user_id).values(
                 email=email, display_name=display_name, role=role, active=active, activation_pending=False, **extra))
+            record(connection, "user.updated", actor_id=actor_id, target_id=user_id)
+            if target["role"] != role:
+                record(connection, "user.role_changed", actor_id=actor_id, target_id=user_id)
+            if target["active"] != active:
+                record(connection, "user.enabled" if active else "user.disabled", actor_id=actor_id, target_id=user_id)
+            if new_password:
+                record(connection, "password.admin_reset", actor_id=actor_id, target_id=user_id)
             if new_password or target["email"] != email or target["role"] != role or target["active"] != active or target["activation_pending"]:
                 connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
                 from .account_flows import invalidate_tokens
@@ -212,6 +221,7 @@ def change_password(app, user_id, old_password, new_password):
         connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
         from .account_flows import invalidate_tokens
         invalidate_tokens(connection, user_id)
+        record(connection, "password.changed", actor_id=user_id, target_id=user_id)
 
 
 def reset_admin_password(app, user_id, password, *, reactivate=False):
@@ -229,3 +239,4 @@ def reset_admin_password(app, user_id, password, *, reactivate=False):
         invalidate_tokens(connection, user_id)
         connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
         connection.execute(delete(attempts).where(attempts.c.key == attempt_key(app, "account", user["email"])))
+        record(connection, "password.emergency_reset", target_id=user_id)

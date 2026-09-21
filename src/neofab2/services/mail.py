@@ -1,5 +1,7 @@
 """Persistente Outbox und begrenzter SMTP-Worker; kein Versand im Webrequest."""
 
+from .audit import record
+
 import json
 import re
 import secrets
@@ -80,6 +82,7 @@ def save_settings(app, actor_id, values):
         require_admin(connection, actor_id)
         statement = insert(settings).values(key=SETTING_KEY, value=json.dumps(values))
         connection.execute(statement.on_conflict_do_update(index_elements=[settings.c.key], set_={"value": statement.excluded.value}))
+        record(connection, "smtp.changed", actor_id=actor_id)
 
 
 def require_admin(connection, actor_id):
@@ -191,7 +194,7 @@ def deliver(config, password, job):
                 pass
 
 
-def run_worker(app, limit=20):
+def _run_worker(app, limit=20):
     if type(limit) is not int or not 1 <= limit <= 100:
         raise ValueError("The worker limit must be between 1 and 100.")
     counts = dict(sent=0, retry=0, failed=0, uncertain=0)
@@ -231,3 +234,17 @@ def retry_job(app, actor_id, job_id, acknowledge=False):
             raise ValueError("Uncertain delivery requires acknowledgement of possible duplicate delivery.")
         connection.execute(update(outbox).where(outbox.c.id == job_id).values(status="queued", attempts=0,
             error_code=None, next_attempt_at=int(time.time())))
+
+
+def run_worker(app, limit=20):
+    from .operations import worker_started, worker_finished
+    if type(limit) is not int or not 1 <= limit <= 100:
+        raise ValueError("The worker limit must be between 1 and 100.")
+    run_id = worker_started(app)
+    try:
+        result = _run_worker(app, limit)
+    except Exception:
+        worker_finished(app, run_id, failed=True)
+        raise
+    worker_finished(app, run_id)
+    return result
