@@ -26,10 +26,13 @@ def overview():
     if not database_ready(current_app):
         abort(503)
     error = None
+    submitted = None
     if request.method == "POST":
         try:
             action = request.form.get("action")
             if action == "save":
+                submitted = {key: request.form.get(key, "") for key in mail.DEFAULTS}
+                submitted["enabled"] = request.form.get("enabled") == "on"
                 fields = {"csrf_token", "action", *mail.DEFAULTS}
                 if set(request.form) - fields or request.form.get("enabled", "") not in {"", "on"}:
                     raise ValueError("Unknown SMTP setting.")
@@ -69,6 +72,9 @@ def overview():
         jobs = list(connection.execute(select(*columns).order_by(mail.outbox.c.created_at.desc(), mail.outbox.c.id)
                                        .offset((page - 1) * 25).limit(26)).mappings())
         active = mail.active_modules(current_app, connection)
-    return render_template("mail.html", values=values, jobs=jobs[:25], more=len(jobs) > 25,
+    saved_enabled = values["enabled"]
+    if submitted is not None:
+        values = submitted
+    return render_template("mail.html", values=values, saved_enabled=saved_enabled, jobs=jobs[:25], more=len(jobs) > 25,
                            page=page, active_modules=active, request_key=secrets.token_hex(16),
                            password_present=bool(current_app.config["SMTP_PASSWORD"]), error=error), 400 if error else 200

@@ -1,4 +1,26 @@
-# NeoFab2 v0.1.13 – Installation und Entwicklung
+# NeoFab2 v0.1.14 – Installation und Entwicklung
+
+Neu in 0.1.14: SMTP-Eingaben bleiben bei Speicherfehlern erhalten. Die
+Service-Einrichtung installiert jetzt `neofab2-mail.timer` und
+`neofab2-mail.service`: erster Lauf nach 15 Sekunden, danach 30 Sekunden nach
+Ende des vorigen Laufs, höchstens 20 Aufträge pro Lauf. SMTP bleibt standardmäßig aus.
+
+**Beim ersten Update von 0.1.13 oder älter anschließend als root im Container:**
+
+```bash
+bash /opt/neofab2/script/setupNeoFabService
+systemctl status neofab2-mail.timer --no-pager
+journalctl -u neofab2-mail.service -n 40 --no-pager
+```
+
+Das alte Update-Skript hat beim Start noch seine bisherigen Funktionen geladen;
+der zusätzliche Setup-Aufruf richtet den Timer auch auf dieser Installation ein.
+Ergebnis: Timer `active (waiting)`, nach einem Lauf Zähler wie `sent=1` im Journal.
+Bleibt ein Testauftrag „Wartend“, SMTP-Aktivierung und Timer prüfen.
+Relay ohne Anmeldung: Port **25**, Transport **Unverschlüsselt, ohne Anmeldung**,
+Benutzername leer; Host und freigegebene Absenderadresse eintragen und speichern.
+Bei „Verbindungsfehler“ Erreichbarkeit/Firewall, bei Ablehnung Relay-Freigaben prüfen.
+Details: [SMTP und Versand](Core_SMTP_und_Versand.md).
 
 Neu in 0.1.13: [Registrierung, Aktivierung und Passwort-Reset](Core_Registrierung_und_Reset.md),
 explizite Migration `0010_account_flows`. Beide öffentlichen Verfahren starten
@@ -18,7 +40,8 @@ konfigurieren und Testauftrag erzeugen. Als **root**, ausgeführt durch **neofab
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 mail-worker --limit 20
 ```
 
-Einmaliger Lauf, kein automatisch installierter Scheduler. Ergebniszähler und
+Dieser Befehl ist ein zusätzlicher einmaliger Lauf. Der Versandtimer übernimmt
+den regelmäßigen Betrieb nach der Service-Einrichtung. Ergebniszähler und
 Admin-Status prüfen; „Angenommen“ bestätigt nur die SMTP-Übernahme. Vor Updates
 zusätzlich gestartete Worker/Aufrufpläne stoppen. Nach Restore zuerst SMTP pausieren
 und mögliche bereits erfolgte Zustellungen abgleichen. Passwort, Standardwerte,
@@ -76,7 +99,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.13 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.14 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -190,7 +213,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.13`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.14`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:
@@ -387,7 +410,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.13, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.14, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

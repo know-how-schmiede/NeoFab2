@@ -34,17 +34,24 @@ STOPPED=0
 failed() {
   local status=$?
   trap - ERR
-  if [[ $STOPPED == 1 ]]; then systemctl stop "$SERVICE" || true; fi
+  if [[ $STOPPED == 1 ]]; then
+    stop_mail_worker || true
+    systemctl stop "$SERVICE" || true
+  fi
   printf 'Update fehlgeschlagen. Dienst nach begonnenem Update angehalten. Sicherung: %s\nWiederherstellung: doku/operations.md\n' "$BACKUP" >&2
   exit "$status"
 }
 trap failed ERR
-systemctl stop "$SERVICE"
 STOPPED=1
+stop_mail_worker
+systemctl stop "$SERVICE"
 # Root sichert in das nur für root zugängliche Backupverzeichnis.
 env NEOFAB2_CONFIG="$CONFIG_FILE" "$APP_DIR/.venv/bin/neofab2" backup --output "$BACKUP/neofab2.sqlite3"
 cp -a "$CONFIG_DIR" "$BACKUP/config"
 cp -a "$UNIT" "$BACKUP/neofab2.service"
+for mail_unit in "$MAIL_UNIT" "$MAIL_TIMER_UNIT"; do
+  if [[ -f $mail_unit ]]; then cp -a "$mail_unit" "$BACKUP/"; fi
+done
 printf '%s\n' "$OLD_REV" > "$BACKUP/revision.txt"
 as_app "$APP_DIR/.venv/bin/python" -m pip freeze > "$BACKUP/requirements.txt"
 tar -C "$APP_DIR" --exclude='./.venv' --exclude='./.git' -czf "$BACKUP/source.tar.gz" .
@@ -58,6 +65,7 @@ app_cli migrate
 app_cli check
 systemctl start "$SERVICE"
 wait_ready
+install_mail_worker
 STOPPED=0
 trap - ERR
 printf 'Update erfolgreich. Sicherung aufbewahren: %s\n' "$BACKUP"

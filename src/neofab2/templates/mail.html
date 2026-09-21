@@ -25,12 +25,12 @@
   <button type="submit">{{ icon('save') }} {{ _('Save SMTP settings') }}</button>
 </form>
 <h2>{{ _('Test email') }}</h2>
-{% if not values.enabled %}<p role="status">{{ _('Sending is paused. Jobs remain stored.') }}</p>{% endif %}
+{% if not saved_enabled %}<p role="status">{{ _('Sending is paused. Jobs remain stored.') }}</p>{% endif %}
 <form method="post" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="test">
   <input type="hidden" name="request_key" value="{{ request_key }}">
   <label for="recipient">{{ _('Test recipient') }}</label><input id="recipient" name="recipient" type="email" required maxlength="254" aria-describedby="test-help">
-  <small id="test-help" class="field-help">{{ _('Creates a job with a fixed test message. Start the worker separately.') }}</small>
+  <small id="test-help" class="field-help">{{ _('Creates a test job. Automatic sending requires the mail timer installed by service setup. Reload this page to check the result.') }}</small>
   <button type="submit">{{ icon('mail') }} {{ _('Queue test email') }}</button>
 </form>
 <h2>{{ _('Mail queue') }}</h2>

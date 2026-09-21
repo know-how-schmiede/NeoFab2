@@ -1,4 +1,4 @@
-# Betrieb und Wiederherstellung – v0.1.13
+# Betrieb und Wiederherstellung – v0.1.14
 
 Seit 0.1.13 gehören die Kontoverfahren und ihre Tokenmetadaten zur Sicherung.
 Nach Restore öffentliche Registrierung und Passwort-Rücksetzung zunächst
@@ -25,8 +25,14 @@ seit 0.1.12 Versandaufträge samt Empfängern und Nachrichtentexten. Sicherungen
 aufbewahren. Lokaler Admin-Reset: [Core-Zugang](Core_Zugang.md).
 
 **Versandworker seit 0.1.12:** `mail-worker --limit 20` ist ein einmaliger
-CLI-Aufruf, kein automatisch installierter Dienst. Vor Update oder Restore
-zusätzliche Worker und eigene Aufrufpläne stoppen; `neofab2.service` steuert
+CLI-Aufruf. Seit 0.1.14 richtet `setupNeoFabService` den Timer
+`neofab2-mail.timer` mit `neofab2-mail.service` ein. Vor Restore als root zuerst
+`systemctl stop neofab2-mail.timer` und danach
+`systemctl stop neofab2-mail.service` ausführen. Das Update-Skript ab 0.1.14
+stoppt diese Units vor Sicherung/Migration und startet den Timer nach erfolgreicher
+Bereitschaft. Versandunits werden mitgesichert. Bei Rückkehr zu älterem Code den
+Timer gestoppt lassen und mit `systemctl disable neofab2-mail.timer` deaktivieren.
+Zusätzliche Worker und eigene Aufrufpläne ebenfalls stoppen; `neofab2.service` steuert
 nur den Webprozess. Nach Restore zuerst SMTP in der Webverwaltung pausieren
 und wartende/ungeklärte Jobs mit bereits erfolgten Zustellungen abgleichen,
 bevor ein Worker startet. Ältere Sicherungen können bereits zugestellte Jobs

@@ -346,13 +346,97 @@ def test_late_worker_cannot_overwrite_new_attempt(app, monkeypatch):
 
 
 def test_standard_library_constructor_preserves_tls_hostname(app, monkeypatch):
-    # Exercise the real SMTP constructor: connect() alone does not set _host.
-    def connect(client, host, port):
+    # Exercise constructor and connect; Python versions set _host in either.
+    def get_socket(client, host, port, timeout):
         assert client._host == host == CONFIG["host"]
         client.calls = []
-        return 220, b"ready"
-    monkeypatch.setattr(mail.smtplib.SMTP, "connect", connect)
+        return object()
+    monkeypatch.setattr(mail.smtplib.SMTP, "_get_socket", get_socket)
+    monkeypatch.setattr(mail.smtplib.SMTP, "getreply", lambda self: (220, b"ready"))
     for name in ("ehlo_or_helo_if_needed", "ehlo", "starttls", "mail", "rcpt", "data", "close"):
         monkeypatch.setattr(mail.smtplib.SMTP, name, getattr(FakeSMTP, name))
     monkeypatch.setattr(mail.smtplib.SMTP, "error", None, raising=False)
     assert mail.deliver(CONFIG, "", row(app, enqueue(app)))[0] == "sent"
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_relay_port_survives_save_activation_and_restart(app, enabled):
+    client = login(app, "admin")
+    relay = {**CONFIG, "host": "192.0.2.25", "port": 25, "mode": "plain", "enabled": enabled}
+    form = {**relay, "action": "save"}
+    if enabled:
+        form["enabled"] = "on"
+    else:
+        del form["enabled"]
+    assert post(client, PATH, form).status_code == 302
+    # A second save exercises the update path, not just the initial insert.
+    form["enabled"] = "on"
+    assert post(client, PATH, form).status_code == 302
+    page = client.get(PATH).text
+    assert re.search(r'id="port"[^>]*value="25"', page)
+    assert '<option value="plain" selected>' in page
+    other = create_app({key: app.config[key] for key in ("SECRET_KEY", "DATA_DIR", "ENABLED_PLUGINS")}, plugins=[TEST_PLUGIN])
+    try:
+        with other.extensions["neofab2_db"].connect() as conn:
+            assert mail.read_settings(conn) == {**relay, "enabled": True}
+    finally:
+        other.extensions["neofab2_db"].dispose()
+
+
+def test_invalid_activation_keeps_submitted_port_without_saving(app):
+    client = login(app, "admin")
+    form = {**CONFIG, "action": "save", "enabled": "on", "port": "25", "mode": "plain", "sender": ""}
+    response = post(client, PATH, form)
+    assert response.status_code == 400
+    assert re.search(r'id="port"[^>]*value="25"', response.text)
+    assert '<option value="plain" selected>' in response.text
+    assert 'Sending is paused.' in response.text
+    with app.extensions["neofab2_db"].connect() as conn:
+        assert mail.read_settings(conn) == mail.DEFAULTS
+
+
+def test_plain_relay_over_real_socket(app):
+    """Real smtplib conversation; loopback only, no external SMTP or mailbox."""
+    from socketserver import TCPServer, StreamRequestHandler
+    from threading import Thread
+
+    commands, messages = [], []
+
+    class Relay(StreamRequestHandler):
+        def handle(self):
+            self.connection.settimeout(5)
+            self.wfile.write(b"220 synthetic relay\r\n")
+            while line := self.rfile.readline():
+                commands.append(line)
+                verb = line.split(b" ", 1)[0].strip().upper()
+                if verb in (b"EHLO", b"HELO", b"MAIL", b"RCPT"):
+                    self.wfile.write(b"250 OK\r\n")
+                elif verb == b"DATA":
+                    self.wfile.write(b"354 send data\r\n")
+                    body = []
+                    while (line := self.rfile.readline()) not in (b".\r\n", b""):
+                        body.append(line)
+                    messages.append(b"".join(body))
+                    self.wfile.write(b"250 accepted\r\n")
+                else:
+                    self.wfile.write(b"500 unsupported\r\n")
+
+    with TCPServer(("127.0.0.1", 0), Relay) as server:
+        thread = Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            app.config["SMTP_PASSWORD"] = ""
+            client = login(app, "admin")
+            settings = {**CONFIG, "host": "127.0.0.1", "port": server.server_address[1], "mode": "plain"}
+            assert post(client, PATH, {**settings, "enabled": "on", "action": "save"}).status_code == 302
+            key = re.search(r'name="request_key" value="([^"]+)"', client.get(PATH).text).group(1)
+            assert post(client, PATH, {"action": "test", "request_key": key, "recipient": "recipient@example.org"}).status_code == 302
+            assert mail.run_worker(app) == dict(sent=1, retry=0, failed=0, uncertain=0)
+            assert sum(mail.run_worker(app).values()) == 0
+            assert len(messages) == 1
+            assert b"Subject: NeoFab2 SMTP-Test" in messages[0]
+            assert not any(c.startswith((b"STARTTLS", b"AUTH")) for c in commands)
+            assert b"mail from:<sender@example.org>\r\n" in [c.lower() for c in commands]
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)

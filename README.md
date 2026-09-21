@@ -5,7 +5,7 @@ Mindestzugriff und Deinstallation](doku/Plugin_Pakete_und_Lifecycle.md).
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.13 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.14 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche
@@ -13,7 +13,11 @@ Systemeinstellungen und eine persönliche helle/dunkle Darstellung.
 Version 0.1.5 ergänzt Plugin-Aktivierung im Backend mit Neustarthinweis und
 ein zweites synthetisches Testplugin zur Prüfung von Abhängigkeiten.
 
-**Neu in 0.1.13:** [Registrierung, E-Mail-Aktivierung und Passwort-Reset](doku/Core_Registrierung_und_Reset.md).
+**Neu in 0.1.14:** SMTP-Formular erhält Eingaben bei Fehlern; regelmäßiger Versand
+über eigenen systemd-Timer. Beim ersten Update anschließend die
+[Service-Einrichtung](script/README.md) erneut ausführen.
+
+**Seit 0.1.13:** [Registrierung, E-Mail-Aktivierung und Passwort-Reset](doku/Core_Registrierung_und_Reset.md).
 Beide Selbstbedienungsverfahren starten ausgeschaltet. Admin-Freigabe mit
 Domain-Regeln, einmalige befristete Codes, Sitzungswiderruf und Konto-E-Mails
 über den vorhandenen Worker. Explizite Migration `0010_account_flows` erforderlich.
@@ -21,7 +25,7 @@ Domain-Regeln, einmalige befristete Codes, Sitzungswiderruf und Konto-E-Mails
 **Seit 0.1.12:** [SMTP und Versandaufträge](doku/Core_SMTP_und_Versand.md).
 Admin-Einstellungen mit Testauftrag, persistente Warteschlange, begrenzte
 Wiederholungen und CLI-Worker. Neue Migration `0009_mail_outbox`; Versand startet
-deaktiviert und benötigt einen ausdrücklichen Worker-Aufruf.
+deaktiviert; der Versandtimer oder ein manueller Worker-Aufruf verarbeitet Aufträge.
 
 **Seit 0.1.11:** [CheckDesign 0.1.0](doku/CheckDesign.md), ein technisches
 Core-Testplugin für Mitarbeiter und Administratoren. Galerie der gemeinsamen

@@ -62,7 +62,7 @@ MESSAGES = {
     "Test email": {"de": "Testversand"},
     "Sending is paused. Jobs remain stored.": {"de": "Der Versand ist pausiert. Aufträge bleiben gespeichert."},
     "Test recipient": {"de": "Empfänger des Tests"},
-    "Creates a job with a fixed test message. Start the worker separately.": {"de": "Erstellt einen Auftrag mit festem Testtext. Der Worker muss separat gestartet werden."},
+    "Creates a test job. Automatic sending requires the mail timer installed by service setup. Reload this page to check the result.": {"de": "Erstellt einen Testauftrag. Automatischer Versand benötigt den durch die Service-Einrichtung installierten Versandtimer. Seite neu laden, um das Ergebnis zu prüfen."},
     "Queue test email": {"de": "Testnachricht einplanen"},
     "Mail queue": {"de": "Versandaufträge"},
     "Accepted means the SMTP server has taken over the message; it is not a receipt from the recipient. Times are UTC.": {"de": "„Angenommen“ bedeutet: Der SMTP-Server hat die Nachricht übernommen. Es ist keine Bestätigung des Empfängers. Zeiten sind UTC."},

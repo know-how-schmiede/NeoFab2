@@ -1,5 +1,82 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.14 – 2026-09-21
+
+Bereich: SMTP-Administration und regelmäßiger Core-Versand (S05/N05, S01,
+X02/X03/X05/X06, S12). Version auf Benutzerauftrag; Testplugins bleiben 0.1.0.
+
+### Änderungen
+
+- SMTP-Formular erhält eingegebenen Port, Host, Transport, Absender, Benutzername
+  und Aktivierung bei abgewiesenen Speicherungen. Fehler verändern die gespeicherte
+  Konfiguration nicht; Pausenanzeige verwendet weiterhin den gespeicherten Zustand.
+- Service-Einrichtung ergänzt `neofab2-mail.service` und `neofab2-mail.timer`:
+  erster Lauf nach 15 Sekunden, weitere Läufe 30 Sekunden nach Laufende,
+  höchstens 20 Aufträge pro Lauf. SMTP bleibt standardmäßig deaktiviert.
+- Update stoppt Timer und Versanddienst vor Sicherung/Migration, sichert ihre
+  Unitdateien und startet den Timer nach erfolgreicher Web-Bereitschaft wieder.
+  Bei Fehlern nach begonnenem Update bleiben Webdienst und Versand angehalten.
+- Deutsche Betriebsanleitungen, Formularhilfe und Funktionsnachweise aktualisiert.
+
+### Betrieb und Migration
+
+Keine neue Migration; Schema bleibt `0010_account_flows`. Beim ersten Update
+von 0.1.13 oder älter anschließend als **root im NeoFab2-Container**:
+
+```bash
+bash /opt/neofab2/script/setupNeoFabService
+systemctl status neofab2-mail.timer --no-pager
+journalctl -u neofab2-mail.service -n 40 --no-pager
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+```
+
+Erwartet: Version 0.1.14, Timer aktiv; nach einem Lauf Versandzähler im Journal.
+Das alte Update-Skript lädt seine Funktionen vor dem Git-Update und kann den
+neuen Timer deshalb noch nicht selbst einrichten. Relay ohne Anmeldung:
+Port 25, unverschlüsselter Transport, leerer Benutzername, freigegebener Host
+und Absender. SMTP aktivieren und speichern, Testauftrag einplanen, Status nach
+Timerlauf neu laden. [Details und Fehlerhilfe](Core_SMTP_und_Versand.md).
+Ein aktiver Timer verarbeitet auch zuvor gespeicherte fällige Aufträge.
+Vor Restore Timer und Versanddienst stoppen; erst nach Zustellabgleich starten.
+Altes NeoFab und produktive Daten unverändert.
+
+### Prüfungen
+
+- 242 Gesamttests bestanden; danach 10 gezielte Betriebsprüfungen einschließlich
+  zusätzlich ergänztem Fehler bei der Timer-Einrichtung bestanden.
+- Port-25-Persistenz bei wiederholtem Speichern, Aktivierung und App-Neustart;
+  Formulareingaben nach fehlgeschlagener Aktivierung erhalten.
+- Reale SMTP-Kommunikation mit synthetischem Loopback-Relay ohne TLS/Anmeldung:
+  persistenter Web-Testauftrag erfolgreich angenommen, kein zweiter Versand.
+- systemd-Aktionen simuliert; Unit-Erzeugung, Erhalt vorhandener Units und
+  Update-Reihenfolge/Fehler geprüft. Bash-Syntax und ShellCheck aller fünf Skripte bestanden.
+- Wheel und sdist 0.1.14 gebaut. Separat installiertes Wheel geprüft.
+- 84 relative Dokumentationslinks und `git diff --check` bestanden.
+- Reales Zielrelay, Postfacheingang, interaktiver Browser und Debian/LXC/systemd
+  nicht geprüft. Erfolgreiches Speichern setzte Port 25 im Test nicht zurück;
+  reproduziert wurde das Verwerfen der Eingaben bei Validierungsfehlern.
+- Keine vollständige Core-Abnahme, kein Commit oder Push.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+fix: NeoFab2 0.1.14 – SMTP-Eingaben erhalten und Versandtimer einrichten
+```
+
+Commit-Beschreibung:
+
+```text
+SMTP-Formularwerte bei Validierungsfehlern erhalten und Port-25-Persistenz prüfen.
+Regelmäßigen Versand über eigene systemd-Units in Service-Setup integrieren.
+Versand beim Update vor Sicherung/Migration stoppen und danach wieder starten.
+Lokalen SMTP-Dialog, Betriebssteuerung und Fehlerpfade mit synthetischen Daten prüfen.
+Version, Betriebsanleitungen und Funktionsnachweise aktualisieren; Schema unverändert.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.13 – 2026-09-19
 
 Bereich: Core-Paket 2, Registrierung, E-Mail-Aktivierung und Passwort-Reset

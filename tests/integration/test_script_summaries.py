@@ -72,6 +72,8 @@ def test_entrypoints_summarize_cancel_failure_or_success_without_real_services(t
 APP_DIR="$TEST_ROOT"
 CONFIG_FILE="$TEST_ROOT/missing.toml"
 UNIT="$TEST_ROOT/unit"
+MAIL_UNIT="$TEST_ROOT/neofab2-mail.service"
+MAIL_TIMER_UNIT="$TEST_ROOT/neofab2-mail.timer"
 require_root() { :; }
 require_install() { :; }
 read_port() { PORT=8080; }
@@ -99,7 +101,7 @@ wait_ready() { :; }
         assert "ERGEBNIS: Abgebrochen" in result.stdout
         assert "Basisinstallation erfolgreich" not in result.stdout
     elif script_name == "setupNeoFabService":
-        assert "ERGEBNIS: Service gestartet" in result.stdout
+        assert "ERGEBNIS: Webdienst bereit" in result.stdout
         assert "IP nicht ermittelt" in result.stdout
     else:
         assert "ERGEBNIS: Admin-Passwort geändert" in result.stdout

@@ -50,4 +50,5 @@ if ! wait_ready; then
   systemctl stop "$SERVICE"
   die 'Service nach fehlgeschlagenem Start angehalten.'
 fi
-SUMMARY_RESULT='Service gestartet und Bereitschaft lokal geprüft.'
+install_mail_worker
+SUMMARY_RESULT='Webdienst bereit; Versandtimer eingerichtet (alle 30 Sekunden nach Laufende).'

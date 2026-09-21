@@ -165,7 +165,8 @@ stellt den additiven API-1-Vertrag mit explizitem `mail_permission` bereit.
 `mail-worker` reserviert Aufträge atomar, führt SMTP außerhalb der DB-Transaktion
 aus und begrenzt Wiederholungen. Verwaiste Übernahmen und mehrdeutige SMTP-Abbrüche
 werden ungeklärt statt automatisch erneut versendet. Secrets bleiben in TOML;
-Plugin-Deaktivierung pausiert neue Übernahmen. Kein Scheduler, keine Anhänge,
+Plugin-Deaktivierung pausiert neue Übernahmen. Seit 0.1.14 ruft ein eigener
+systemd-Timer den Worker regelmäßig auf (Service-Einrichtung erforderlich). Keine Anhänge,
 keine Kontoverfahren in Paket 1 und keine automatische Löschung.
 [Betrieb, Zustände, Schnittstelle und Grenzen](Core_SMTP_und_Versand.md).
 

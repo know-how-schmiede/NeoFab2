@@ -147,3 +147,66 @@ finish_summary() {
   (set +e; print_summary "$status") || true
   exit "$status"
 }
+
+# Eigene Units; keine Änderung am alten NeoFab-Dienst.
+MAIL_SERVICE=neofab2-mail.service
+MAIL_TIMER=neofab2-mail.timer
+MAIL_UNIT=/etc/systemd/system/$MAIL_SERVICE
+MAIL_TIMER_UNIT=/etc/systemd/system/$MAIL_TIMER
+
+stop_mail_worker() {
+  if [[ -f $MAIL_TIMER_UNIT ]]; then systemctl stop "$MAIL_TIMER"; fi
+  if [[ -f $MAIL_UNIT ]]; then systemctl stop "$MAIL_SERVICE"; fi
+}
+
+install_mail_worker() {
+  # Vorhandene lokale Anpassungen erhalten, aber Pfad und Benutzer prüfen.
+  if [[ -e $MAIL_UNIT ]]; then
+    grep -Fxq "WorkingDirectory=$APP_DIR" "$MAIL_UNIT" || { printf 'FEHLER: Versanddienst-Pfad passt nicht.\n' >&2; return 1; }
+    grep -Fxq "User=$APP_USER" "$MAIL_UNIT" || { printf 'FEHLER: Versanddienst-Benutzer passt nicht.\n' >&2; return 1; }
+  else
+    cat > "$MAIL_UNIT" <<EOF
+[Unit]
+Description=NeoFab2 mail queue
+After=network.target
+
+[Service]
+Type=oneshot
+User=$APP_USER
+Group=$APP_USER
+WorkingDirectory=$APP_DIR
+Environment=NEOFAB2_CONFIG=$CONFIG_FILE
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=$APP_DIR/.venv/bin/neofab2 mail-worker --limit 20
+TimeoutStartSec=240
+TimeoutStopSec=30
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=$DATA_DIR
+EOF
+    chmod 0644 "$MAIL_UNIT"
+  fi
+  if [[ ! -e $MAIL_TIMER_UNIT ]]; then
+    cat > "$MAIL_TIMER_UNIT" <<EOF
+[Unit]
+Description=NeoFab2 mail queue schedule
+
+[Timer]
+OnActiveSec=15s
+OnUnitInactiveSec=30s
+AccuracySec=1s
+Unit=$MAIL_SERVICE
+
+[Install]
+WantedBy=timers.target
+EOF
+    chmod 0644 "$MAIL_TIMER_UNIT"
+  fi
+  systemd-analyze verify "$MAIL_UNIT" "$MAIL_TIMER_UNIT"
+  systemctl daemon-reload
+  systemctl enable --now "$MAIL_TIMER"
+  systemctl is-active --quiet "$MAIL_TIMER"
+}

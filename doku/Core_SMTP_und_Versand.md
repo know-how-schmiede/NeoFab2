@@ -1,10 +1,10 @@
-# SMTP und persistente Versandaufträge – Stand 0.1.13, eingeführt in 0.1.12
+# SMTP und persistente Versandaufträge – Stand 0.1.14, eingeführt in 0.1.12
 
 Paket 1 des [Core-Arbeitsplans](Core_Naechste_Schritte.md): S05, N05 und
 Teilumfänge von S06/N01; Migration X07, Betriebsanleitung X05. Keine Fachplugins.
 Seit 0.1.13 ergänzt Paket 2 [Registrierung, Aktivierung, Willkommens- und
-Passwort-Reset-E-Mails](Core_Registrierung_und_Reset.md). Der technische
-Versand und der Testauftrag aus Paket 1 bleiben unverändert bedienbar.
+Passwort-Reset-E-Mails](Core_Registrierung_und_Reset.md). Seit 0.1.14 ergänzt die Service-Einrichtung einen regelmäßigen Versandtimer;
+der einmalige CLI-Aufruf bleibt verfügbar.
 
 ## Administration und Standardwerte
 
@@ -54,6 +54,44 @@ TLS prüft Zertifikat und Hostnamen; es gibt keinen Schalter zum Abschalten
 dieser Prüfung. Unverschlüsselter Transport ist nur für ein vertrauenswürdiges
 lokales Relay vorgesehen und erlaubt keine SMTP-Anmeldung.
 
+## Regelmäßiger Versand ab 0.1.14
+
+Als **root im NeoFab2-Container** nach dem ersten Update von 0.1.13 oder älter:
+
+```bash
+bash /opt/neofab2/script/setupNeoFabService
+systemctl status neofab2-mail.timer --no-pager
+journalctl -u neofab2-mail.service -n 40 --no-pager
+```
+
+Setup erhält den vorhandenen Webdienst und richtet eigene NeoFab2-Versandunits ein.
+Bestehende Versandunits werden beibehalten, Dienstpfad/Benutzer geprüft.
+Der Timer startet nach 15 Sekunden, dann jeweils 30 Sekunden nach Laufende.
+Ein Lauf verarbeitet höchstens 20 fällige Aufträge unter dem Benutzer `neofab2`
+mit `/etc/neofab2/config.toml`. Dieselbe systemd-Unit läuft nicht parallel zu sich
+selbst. Nach 240 Sekunden beendet systemd einen überlangen Lauf; angefangene
+ungeklärte Zustellungen behandelt die bestehende Übernahmefrist von 300 Sekunden.
+
+Ergebnis: Timer `active (waiting)`; der kurzlebige Versanddienst darf zwischen
+Läufen `inactive (dead)` sein. Zähler stehen im Journal, Auftragsstatus im Web.
+Bei fehlendem Timer Setup ausführen; bei Dienstfehlern Journal und `neofab2 check`
+prüfen. Ein laufender Timer kann bereits gespeicherte Aufträge versenden, sofern
+SMTP aktiviert ist. Nach Restore deshalb zunächst Timer und Worker stoppen.
+Spätere Updates mit dem neuen Skript stoppen beide vor Sicherung/Migration und
+starten den Timer erst nach erfolgreicher Web-Bereitschaft wieder.
+Beim ersten Update ist der zusätzliche Setup-Aufruf erforderlich, weil das alte
+Update-Skript seine bisherigen Funktionen schon vor dem Git-Update geladen hat.
+
+### Relay auf Port 25 ohne Anmeldung
+
+Als Administrator Host und freigegebene Absenderadresse setzen, Port **25**,
+Transport **Unverschlüsselt, ohne Anmeldung**, Benutzername leer lassen.
+`SMTP_PASSWORD` ist dafür nicht erforderlich. **Versand aktivieren** anhaken und
+**SMTP-Einstellungen speichern** wählen. Nach erneutem Laden müssen Port 25,
+Transport und Aktivierung erhalten bleiben. Bei Validierungsfehlern bleibt der
+Formularinhalt zur Korrektur sichtbar; der gespeicherte Zustand ändert sich nicht.
+Ein automatisches Zurücksetzen des Ports beim Aktivieren ist nicht vorgesehen.
+
 ## Testauftrag und einmaliger Worker
 
 SMTP konfigurieren und speichern. Auf derselben Seite eine kontrollierte
@@ -74,11 +112,9 @@ sind alle Zähler null. Sie beschreiben ausschließlich diesen Aufruf, nicht
 den gesamten Bestand. Fehlerhafte Aufträge stehen in der Admin-Übersicht;
 der erfolgreiche CLI-Lauf allein bestätigt nicht die Zustellung aller Jobs.
 
-Der Befehl arbeitet einmalig und beendet sich. Er installiert keinen Scheduler
-und keinen weiteren systemd-Dienst. Für einen erneuten Versuch nach der
-angezeigten Fälligkeit denselben Befehl wieder ausführen. Ein späterer
-regelmäßiger Betrieb kann diese CLI unter demselben Dienstbenutzer aufrufen;
-ein automatisch installierter Timer ist noch nicht Bestandteil dieses Pakets.
+Der Befehl arbeitet einmalig und beendet sich. Der oben eingerichtete Timer
+ruft denselben Worker regelmäßig auf. Ohne Timer muss für erneute Versuche nach
+der angezeigten Fälligkeit derselbe Befehl wieder ausgeführt werden.
 
 Ergebnisprüfung: Seite neu laden, Status und Versuchszähler prüfen; bei
 „Angenommen“ zusätzlich den Eingang im kontrollierten Testpostfach prüfen.
@@ -169,7 +205,8 @@ keine automatische Migration beim App-Start, keine Änderung alter NeoFab-Daten.
 
 Beim normalen Update das bestehende Update-Skript verwenden. Zuvor alle
 zusätzlich gestarteten Worker bzw. selbst eingerichteten Aufrufpläne stoppen:
-das Update-Skript kennt nur den Webdienst. Alternativ nach Sicherung bei
+das Update-Skript ab 0.1.14 stoppt die eigenen Versandunits automatisch.
+Eigene Cronjobs oder manuelle Worker bleiben Betreiberverantwortung. Alternativ nach Sicherung bei
 gestopptem Webdienst/Worker als **root**, ausgeführt durch **neofab2**:
 
 ```bash
@@ -180,7 +217,7 @@ systemctl start neofab2.service
 
 Aktueller Schemastand: `0010_account_flows` ergänzt die Kontoverfahren und
 zwei optionale Zuordnungsfelder der Outbox. Ergebnis: Readiness erfolgreich,
-Anwendungsversion 0.1.13, SMTP-Seite erreichbar.
+Anwendungsversion 0.1.14, SMTP-Seite erreichbar.
 Erst anschließend Worker wieder ausführen. Plugin-Versionen bleiben 0.1.0.
 
 Die SQLite-Sicherung umfasst die Outbox samt Empfängern und Nachrichtentexten.
@@ -198,6 +235,8 @@ Testdatenbanken und simulierte SMTP-Transporte. Geprüft werden Rechte/CSRF,
 Secretschutz, Einstellungen, Migration von 0008, Sicherung, Neustart,
 Idempotenz/Rollback, Plugin-Pause, parallele Worker, begrenzte Wiederholung,
 abgelaufene Übernahme, verspätetes Ergebnis, TLS-Modi, Status und CLI.
+Zusätzlich ab 0.1.14: realer SMTP-Dialog an einem lokalen synthetischen Relay,
+Port-25-Persistenz und Formularfehler sowie simulierte systemd-Steuerung geprüft.
 Ein echter SMTP-Anbieter, reale Postfachzustellung, visuelle Browserabnahme und
 Debian/systemd-Workerbetrieb sind noch nicht geprüft. Keine vollständige Core-Abnahme.
 
