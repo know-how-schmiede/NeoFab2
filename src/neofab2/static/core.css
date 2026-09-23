@@ -44,3 +44,5 @@ h1, header span { overflow-wrap: anywhere; }
 button:not(:disabled):hover, .button:not([aria-disabled="true"]):hover { filter: brightness(1.1); }
 button:not(:disabled):active, .button:not([aria-disabled="true"]):active { filter: brightness(.9); }
 button:disabled, .button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+
+.public-content { overflow-wrap: anywhere; }

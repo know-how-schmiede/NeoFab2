@@ -1,5 +1,7 @@
 # Audit-Protokoll und Betriebsstatus – 0.1.15
 
+Seit 0.1.16 zeigen Oberflächenzeiten die eingestellte IANA-Zeitzone samt UTC-Abstand; Speicherung bleibt UTC. [Zeitzone einstellen](Core_Oberflaeche_und_Einstellungen.md).
+
 Paket 3 des [Core-Arbeitsplans](Core_Naechste_Schritte.md): S09, S12 und N01,
 Rechte U06, Migration X07, Betrieb X05/X06. Nur Core und technische Testplugins.
 
@@ -154,7 +156,7 @@ runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
 ```
 
-Erwartet: 0.1.15, Schema bereit; beide Admin-Seiten erreichbar. Eine neue Anmeldung
+Erwartet: 0.1.16, Schema bereit; beide Admin-Seiten erreichbar. Eine neue Anmeldung
 erscheint im Audit-Protokoll, nach dem nächsten Worker-Lauf dessen Beobachtung.
 Die neuen Tabellen sind Teil der SQLite-Sicherung. Nach Restore wie bisher SMTP
 pausieren und Zustellstand prüfen; ein alter Worker-Zeitpunkt ist keine aktuelle

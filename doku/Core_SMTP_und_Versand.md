@@ -1,5 +1,7 @@
 # SMTP und persistente Versandaufträge – Stand 0.1.15, eingeführt in 0.1.12
 
+Seit 0.1.16 zeigen Oberflächenzeiten die eingestellte IANA-Zeitzone samt UTC-Abstand; Speicherung bleibt UTC. [Zeitzone einstellen](Core_Oberflaeche_und_Einstellungen.md).
+
 Paket 1 des [Core-Arbeitsplans](Core_Naechste_Schritte.md): S05, N05 und
 Teilumfänge von S06/N01; Migration X07, Betriebsanleitung X05. Keine Fachplugins.
 Seit 0.1.13 ergänzt Paket 2 [Registrierung, Aktivierung, Willkommens- und
@@ -179,7 +181,7 @@ Wenn weiter kein Eingang erfolgt:
 1. Spamordner und gegebenenfalls zentrale Quarantäne prüfen. Bei einem vorhandenen
    Absenderpostfach auch nach einer Unzustellbarkeitsnachricht suchen.
 2. Die Mailadministration soll die Nachricht im Relay nachverfolgen: Zeitpunkt
-   aus der Übersicht (UTC), Empfänger, beim Versand verwendeter Absender und
+   aus der Übersicht (einschließlich Zonenname und UTC-Abstand), Empfänger, beim Versand verwendeter Absender und
    Message-ID bereitstellen. NeoFab2 bildet diese als
    `<neofab2-AUFTRAGSID@ABSENDERDOMAIN>`; die Auftrags-ID steht in der Tabelle.
    Das ist die Nachrichtenkennung, keine SMTP-Queue-ID.
@@ -257,7 +259,7 @@ systemctl start neofab2.service
 Aktueller Schemastand: `0011_audit_status` ergänzt Audit und Worker-Beobachtung.
 Die Kontoverfahren und zwei optionale Zuordnungsfelder der Outbox stammen aus
 `0010_account_flows`. Ergebnis: Readiness erfolgreich,
-Anwendungsversion 0.1.15, SMTP-Seite erreichbar.
+Anwendungsversion 0.1.16, SMTP-Seite erreichbar.
 Erst anschließend Worker wieder ausführen. Plugin-Versionen bleiben 0.1.0.
 
 Die SQLite-Sicherung umfasst die Outbox samt Empfängern und Nachrichtentexten.

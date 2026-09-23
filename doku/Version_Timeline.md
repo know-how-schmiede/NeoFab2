@@ -1,5 +1,81 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.16 – 2026-09-23
+
+Bereich: Core-Paket 4 (S01–S04/S08, U06/U07, N01, S09/S12, X05–X07).
+Version auf Benutzerauftrag; technische Testplugins bleiben 0.1.0.
+
+### Änderungen
+
+- Öffentliche Infoseite, Impressum und Datenschutz mit Administratorpflege und
+  sicherer kleiner Markdown-Teilmenge. Leere Texte zeigen einen Hinweis.
+- Konfigurierbare IANA-Zeitzone, UTC als Standard. Startseite, Info, Audit, Versand
+  und Workerzeiten zeigen Zone und UTC-Abstand einschließlich Sommerzeit.
+- Versionierter JSON-Import/-Export nur für Darstellung, öffentliche Inhalte und
+  Zone; keine Geheimnisse, Konten, SMTP- oder Plugin-Freischaltungen. Strikte
+  Validierung und atomare Speicherung einschließlich Audit.
+- Rollenübersicht mit Core-/Plugin-Rechten; vorhandene Rollenzuordnung,
+  Sitzungswiderruf und Letzter-Admin-Schutz nachgewiesen. Keine frei editierbaren
+  Rechtebündel; Mindestzugriff P2 bleibt Planung.
+- Deutsche/französische Texte ergänzt und isolierter Plugin-Übersetzungsvertrag
+  mit englischem Fallback und geprüften Platzhaltern. Nachweis mit `core_test`.
+- Betriebsanleitung, Funktionsmatrix, Core-Plan und Paketprüfung ergänzt.
+  Paket 5 folgt; keine vollständige Core-Abnahme oder Fachplugin-Freigabe.
+
+### Betrieb und Migration
+
+Keine neue Migration; Schema bleibt `0011_audit_status`. Neue Einstellungen
+verwenden `core_settings` unter `core.site.*`. Vorhandene Installationen starten
+mit UTC und leeren öffentlichen Inhalten. Normalen Updateablauf verwenden.
+Als **root**, ausgeführt durch **neofab2**, Standardpfade:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: 0.1.16, Schema bereit. Öffentliche Seiten als Gast und neue Einstellungen
+als Admin prüfen. Vor einem Einstellungsimport bisherigen Export sichern; Fehler
+und Rückfall sind in [Core-Oberfläche und Einstellungen](Core_Oberflaeche_und_Einstellungen.md)
+beschrieben. Kein automatischer Versand, keine produktive Migration oder Löschung.
+
+### Prüfungen
+
+- **282 Gesamttests bestanden** unter Python 3.13, davon 27 neue Paket-4-Prüfungen.
+- Öffentliche Seiten und Escaping, Admin-/Direktzugriff, CSRF, frischer Kontostatus,
+  Import-Rundlauf, ungültige/übergroße Dateien, Geheimnisschutz und Audit-Rollback geprüft.
+- Beide Sommerzeitwechsel einschließlich doppelter Herbststunde, UTC-Fallback,
+  Neustart, Rollen-/Sitzungsschutz und isolierte DE/FR-Plugin-Kataloge geprüft.
+- Wheel und Quelldistribution 0.1.16 gebaut; separat installiertes Wheel aus
+  neutralem Verzeichnis einschließlich neuer öffentlicher und Admin-Seiten geprüft.
+- CLI meldet 0.1.16; 162 relative Dokumentationslinks und `git diff --check` bestanden.
+
+Grenzen: keine interaktive visuelle Browserabnahme und kein echter Debian-/LXC-Lauf.
+Ältere Detailtexte teilweise englischer Fallback; keine vollständige Core-Abnahme.
+Altes NeoFab und produktive Daten unverändert. Kein Commit oder Push.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: NeoFab2 0.1.16 – Core-Oberfläche und Einstellungen
+```
+
+Commit-Beschreibung:
+
+```text
+Core-Paket 4 mit Infoseite, Impressum, Datenschutz und sicherem Markdown ergänzen.
+IANA-Zeitzone und Sommerzeitdarstellung mit eindeutigem UTC-Abstand bereitstellen.
+Öffentliche Einstellungen validiert und atomar ohne Geheimnisse importieren/exportieren.
+Rollenübersicht und isolierte DE/FR-Plugin-Kataloge mit englischem Fallback ergänzen.
+Rollenpflege, Rechte, CSRF, Importfehler, Rollback, Sommerzeit und Paketierung prüfen.
+Deutsche Betriebsanleitungen, Funktionsnachweise und nächsten Core-Schritt aktualisieren.
+Keine neue Migration; vollständige Core- und Browser-/LXC-Abnahme bleiben offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.15 – 2026-09-21
 
 Bereich: Core-Paket 3, Audit-Protokoll und Betriebsstatus (S09/S12/N01,

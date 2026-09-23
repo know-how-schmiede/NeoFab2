@@ -11,7 +11,7 @@ Komponenten und PrintFleet erst nach dem MVP. Sie ersetzt die frühere Prioritä
 
 ## 1. Ziel und verbindliche Rahmenbedingungen
 
-Umsetzungsstand 21.09.2026 / 0.1.15: Paket 1 mit SMTP/Outbox/Worker und
+Umsetzungsstand 23.09.2026 / 0.1.16: Paket 1 mit SMTP/Outbox/Worker und
 Paket 2 mit abschaltbarer Registrierung, E-Mail-Aktivierung und Passwort-Reset
 sind implementiert. [Versand](Core_SMTP_und_Versand.md) und
 [Kontoverfahren, Freigaberegeln und Prüfgrenzen](Core_Registrierung_und_Reset.md).
@@ -19,7 +19,9 @@ Betroffen: S05/N05, U02–U04/S06 und Teilumfänge N01. Konkrete Registrierungsd
 legt der Administrator vor Freischaltung fest; standardmäßig bleibt der Zugang
 geschlossen. Paket 3 mit [Audit-Protokoll und Betriebsstatus](Core_Audit_und_Betriebsstatus.md)
 ist in 0.1.15 umgesetzt (S09/S12/N01; explizite Migration 0011).
-Paket 4 folgt; Core-Abnahme und produktive Fachplugins bleiben offen.
+Paket 4 mit [Core-Oberfläche und Einstellungen](Core_Oberflaeche_und_Einstellungen.md)
+ist in 0.1.16 umgesetzt (S01–S04/S08, U06/U07, N01). Paket 5 folgt;
+Core-Abnahme und produktive Fachplugins bleiben offen.
 
 NeoFab2 wird als neue modulare Webanwendung in einem eigenen Repository aufgebaut. Zuerst entsteht ein unabhängig lauffähiges Core-System. Fachfunktionen werden anschließend einzeln als Plugins ergänzt.
 

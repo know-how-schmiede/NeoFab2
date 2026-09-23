@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ _('Roles and permissions') }}</h1>
+<p>{{ _('Assign roles through user management. Role changes end existing sessions. The last active administrator remains protected.') }}</p>
+<a class="button secondary" href="{{ url_for('accounts.user_list') }}">{{ icon('users') }} {{ _('User management') }}</a>
+<p>{{ _('Role bundles are defined by the core and installed plugins. This list shows permissions loaded in this process; paused plugins still deny access.') }}</p>
+{% for role, name in roles.items() %}<h2>{{ _(name) }}</h2><ul>{% for permission in permissions[role]|sort %}<li>{{ permission }}</li>{% endfor %}</ul>{% endfor %}
+{% endblock %}

@@ -34,7 +34,7 @@
   <button type="submit">{{ icon('mail') }} {{ _('Queue test email') }}</button>
 </form>
 <h2>{{ _('Mail queue') }}</h2>
-<p>{{ _('Accepted means the SMTP server has taken over the message; it is not a receipt from the recipient. Times are UTC.') }}</p>
+<p>{{ _('Accepted means the SMTP server has taken over the message; it is not a receipt from the recipient.') }}</p>
 {% set labels = {'queued': 'Queued', 'sending': 'Sending', 'retry': 'Retry scheduled', 'sent': 'Accepted', 'failed': 'Failed', 'uncertain': 'Uncertain'} %}
 {% set reasons = {'worker_interrupted': 'Worker interrupted', 'delivery_unknown': 'SMTP result unknown', 'credentials_missing': 'Password missing', 'smtp_rejected': 'SMTP server rejected the message', 'connection_failed': 'Connection failed', 'smtp_protocol': 'SMTP protocol error', 'transport_error': 'Transport error', 'attempts_exhausted': 'Attempt limit reached', 'account_request_invalid': 'Account request expired or no longer valid'} %}
 <div class="table-scroll"><table>
@@ -43,8 +43,8 @@
     <td>{{ job.module_id }}<br><small>{{ job.id }}</small></td><td>{{ job.recipient }}</td>
     <td>{{ _(labels[job.status]) }}{% if job.module_id not in active_modules and job.status in ['queued', 'retry'] %} ({{ _('Plugin paused') }}){% endif %}
       {% if job.error_code %}<br>{{ _(reasons.get(job.error_code, 'Unknown error')) }}{% endif %}
-      {% if job.status in ['queued', 'retry'] %}<br><small>{{ _('Due:') }} {{ job.next_attempt_at|mail_time }}</small>{% endif %}
-      {% if job.sent_at %}<br><small>{{ job.sent_at|mail_time }}</small>{% endif %}</td>
+      {% if job.status in ['queued', 'retry'] %}<br><small>{{ _('Due:') }} {{ job.next_attempt_at|local_time }}</small>{% endif %}
+      {% if job.sent_at %}<br><small>{{ job.sent_at|local_time }}</small>{% endif %}</td>
     <td>{{ job.attempts }} / 5<br><small>{{ _('Total:') }} {{ job.total_attempts }}</small></td>
     <td>{% if job.status in ['failed', 'uncertain'] %}<form method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="retry"><input type="hidden" name="job_id" value="{{ job.id }}">

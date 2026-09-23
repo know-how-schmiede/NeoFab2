@@ -4,6 +4,7 @@ import re
 from types import MappingProxyType
 
 from . import API_VERSION
+from .i18n import freeze_catalog
 
 
 def version_tuple(value):
@@ -15,6 +16,7 @@ def version_tuple(value):
 class Registry:
     def __init__(self, plugins, enabled):
         available = {}
+        translations = {}
         for plugin in plugins:
             key = plugin.plugin_id
             if not isinstance(key, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", key) or key == "core":
@@ -26,6 +28,7 @@ class Registry:
                     or not plugin.roles or not set(plugin.roles) <= {"user", "staff", "admin"}
                     or not callable(plugin.blueprint_factory)):
                 raise ValueError(f"Invalid plugin contract: {key}")
+            translations[key] = freeze_catalog(plugin.translations)
             names = {plugin.permission}
             for permission in plugin.permissions:
                 if (not isinstance(permission.name, str)
@@ -90,6 +93,7 @@ class Registry:
 
         for key in enabled:
             visit(key)
+        self.translations = MappingProxyType(translations)
         self.available = MappingProxyType(available)
         self.enabled = active
         self.ordered = tuple(ordered)

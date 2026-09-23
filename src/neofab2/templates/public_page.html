@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ _(title) }} · {{ site_settings.site_name }}{% endblock %}
+{% block content %}
+<h1>{{ _(title) }}</h1>
+{% if content %}<article class="public-content">{{ content }}</article>{% else %}<p>{{ _('No content has been published yet.') }}</p>{% endif %}
+{% if is_info %}<dl><dt>{{ _('Core version') }}</dt><dd>{{ version }}</dd><dt>{{ _('Local time') }}</dt><dd>{{ current_time|local_time }}</dd></dl><p>{{ _('Time shown when this page was loaded.') }}</p>{% endif %}
+{% endblock %}

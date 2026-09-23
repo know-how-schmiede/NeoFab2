@@ -207,3 +207,23 @@ Aktionsrechteprüfung. Nur numerische Objekt-ID, kein Freitext oder Secret-Paylo
 Mit übergebener aktiver NeoFab2-Verbindung atomar zur Fachaktion; Objektberechtigung
 bleibt Aufgabe des Plugins. Administratoren erhalten keinen Wildcard-Zugriff.
 [Schnittstelle, Beispiel und Grenzen](Core_Audit_und_Betriebsstatus.md).
+
+## Übersetzungen (API 1, ab Core 0.1.16)
+
+Optionales `Plugin.translations`: `{"de": {englischer_text: übersetzung},
+"fr": {...}}`. Die Registry validiert die Sprachen und übernimmt eine unveränderliche
+Kopie; Kataloge sind je Plugin getrennt. Fehlende Texte fallen auf den englischen
+Quelltext zurück. Platzhalter müssen gleich sein; nur `{name}` ohne Attributzugriff,
+Formatangaben oder Konvertierung ist zulässig. HTML bleibt in Jinja escaped.
+
+```python
+from neofab2.plugin_api.i18n import translate
+message = translate("core_test", "Hello {name}", name="Synthetic")
+```
+
+Im Template: `{{ plugin_translate("core_test", "Hello {name}", name="Synthetic") }}`.
+Ein App-Kontext ist erforderlich; außerhalb einer Anfrage ist die Sprache Englisch.
+Unbekannte oder nicht geladene Plugins werden abgewiesen. Die Übersetzung selbst
+vergibt keine Zugriffsrechte; bestehende Blueprint-/Aktionssperren gelten weiter.
+`core_test` liefert einen deutschen/französischen Vertragsnachweis. Keine API- oder
+Testplugin-Versionsanhebung, da das neue Feld optional und rückwärtskompatibel ist.

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ _('Public contents and time zone') }}</h1>
+<a href="{{ url_for('settings.edit') }}">{{ _('System settings') }}</a>
+<form method="post" class="card-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="timezone">{{ _('Time zone') }}</label>
+<input id="timezone" name="timezone" value="{{ values.timezone }}" maxlength="100" required aria-describedby="timezone-help">
+<small id="timezone-help">{{ _('IANA name, for example Europe/Berlin or UTC. Daylight saving time is applied automatically.') }}</small>
+{% for key, label in labels.items() %}
+<label for="{{ key }}">{{ _(label) }}</label>
+<textarea id="{{ key }}" name="{{ key }}" rows="8" maxlength="20000" aria-describedby="markdown-help">{{ values[key] }}</textarea>
+{% endfor %}
+<p id="markdown-help">{{ _('Up to 20000 characters per page. Markdown: # headings, **bold**, - lists and paragraphs. HTML, images and links remain plain text. Empty pages show a notice.') }}</p>
+<button type="submit">{{ icon('save') }} {{ _('Save settings') }}</button>
+</form>
+<h2>{{ _('Settings transfer') }}</h2>
+<p>{{ _('Export and import replace presentation, public contents and time zone only. Accounts, permissions, SMTP and secrets are excluded. Maximum file size: 256 KiB.') }}</p>
+<a class="button secondary" href="{{ url_for('site.export') }}">{{ icon('download') }} {{ _('Export settings') }}</a>
+<form method="post" action="{{ url_for('site.import_settings') }}" enctype="multipart/form-data" class="card-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="file">{{ _('Settings file (JSON)') }}</label>
+<input type="file" id="file" name="file" accept="application/json,.json" required>
+<button type="submit">{{ icon('upload') }} {{ _('Import and replace settings') }}</button>
+</form>
+{% endblock %}

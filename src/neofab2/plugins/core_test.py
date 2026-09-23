@@ -22,4 +22,8 @@ plugin = Plugin(
     plugin_id="core_test", name="Core test plugin", version="0.1.0",
     api_version=1, permission="core_test.access", roles=("admin",),
     blueprint_factory=blueprint, tasks=(("self_check", self_check),),
+    translations={
+        "de": {"Translation supplied by this plugin.": "Übersetzung aus diesem Plugin."},
+        "fr": {"Translation supplied by this plugin.": "Traduction fournie par ce plugin."},
+    },
 )

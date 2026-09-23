@@ -35,6 +35,8 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.get("/admin/settings/mail").status_code == 200
         assert client.get("/admin/audit").status_code == 200
         assert client.get("/admin/status").status_code == 200
+        for path in ("/info", "/impressum", "/datenschutz", "/admin/settings/site", "/admin/settings/export", "/admin/roles"):
+            assert client.get(path).status_code == 200
         assert client.get("/admin/settings/accounts").status_code == 200
         assert client.get("/activate").status_code == 200
         assert client.get("/reset-password").status_code == 200

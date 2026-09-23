@@ -43,6 +43,8 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     register_plugins(app, registry)
     register_presentation(app)
     register_i18n(app)
+    from .core.site import register as register_site
+    register_site(app)
     app.context_processor(lambda: {"version": __version__})
 
     @app.errorhandler(CSRFError)

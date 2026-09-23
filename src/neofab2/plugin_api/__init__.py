@@ -1,6 +1,6 @@
 """Öffentlicher Plugin-Vertrag, API-Version 1."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable
 
 API_VERSION = 1
@@ -42,6 +42,7 @@ class Plugin:
     permissions: tuple[Permission, ...] = ()
     files: FilePolicy | None = None
     mail_permission: str | None = None
+    translations: dict[str, dict[str, str]] = field(default_factory=dict)
 
 
 def has_permission(user, permission):

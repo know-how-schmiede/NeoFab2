@@ -24,6 +24,6 @@
     {% if error %}<p class="error" role="alert">{{ _(error) }}</p>{% endif %}
     {% block content %}{% endblock %}
   </main>
-  <footer>NeoFab2 · Version {{ version }} · {{ _('Core under development') }}</footer>
+  <footer><a href="{{ url_for('site.public_page') }}">{{ _('Information') }}</a> · <a href="{{ url_for('site.public_page', page='imprint_markdown') }}">{{ _('Imprint') }}</a> · <a href="{{ url_for('site.public_page', page='privacy_markdown') }}">{{ _('Privacy') }}</a> · NeoFab2 · Version {{ version }} · {{ _('Core under development') }}</footer>
 </body>
 </html>

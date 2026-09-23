@@ -9,5 +9,6 @@
   {% if ready %}<p>{{ _("The core is running. Sign in with your workshop account to manage your profile.") }}</p>
   {% else %}<p>{{ _("Setup is not complete yet. Please contact the administration.") }}</p>{% endif %}
   <p>{{ _("Workshops and manufacturing areas will follow as separate extensions.") }}</p>
+<p>{{ _('Local time') }}: {{ current_time|local_time }} · {{ _('Time shown when this page was loaded.') }}</p>
 </section>
 {% endblock %}

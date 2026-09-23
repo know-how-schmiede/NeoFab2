@@ -790,6 +790,138 @@ MESSAGES = {
     }
 }
 
+# Paket 4: public pages, transfer and shared presentation catalogs.
+MESSAGES.update({
+    "Information": {
+        "de": "Information",
+        "fr": "Informations"
+    },
+    "Imprint": {
+        "de": "Impressum",
+        "fr": "Mentions légales"
+    },
+    "Privacy": {
+        "de": "Datenschutz",
+        "fr": "Confidentialité"
+    },
+    "Public contents and time zone": {
+        "de": "Öffentliche Inhalte und Zeitzone",
+        "fr": "Contenus publics et fuseau horaire"
+    },
+    "Time zone": {
+        "de": "Zeitzone",
+        "fr": "Fuseau horaire"
+    },
+    "Local time": {
+        "de": "Ortszeit",
+        "fr": "Heure locale"
+    },
+    "Started": {
+        "de": "Beginn",
+        "fr": "Début"
+    },
+    "Finished": {
+        "de": "Ende",
+        "fr": "Fin"
+    },
+    "No content has been published yet.": {
+        "de": "Es wurden noch keine Inhalte veröffentlicht.",
+        "fr": "Aucun contenu n’a encore été publié."
+    },
+    "Time shown when this page was loaded.": {
+        "de": "Zeitpunkt beim Laden dieser Seite.",
+        "fr": "Heure au chargement de cette page."
+    },
+    "IANA name, for example Europe/Berlin or UTC. Daylight saving time is applied automatically.": {
+        "de": "IANA-Name, zum Beispiel Europe/Berlin oder UTC. Sommerzeit wird automatisch berücksichtigt.",
+        "fr": "Nom IANA, par exemple Europe/Berlin ou UTC. L’heure d’été est appliquée automatiquement."
+    },
+    "Up to 20000 characters per page. Markdown: # headings, **bold**, - lists and paragraphs. HTML, images and links remain plain text. Empty pages show a notice.": {
+        "de": "Bis zu 20000 Zeichen pro Seite. Markdown: # Überschriften, **Fettdruck**, - Listen und Absätze. HTML, Bilder und Links bleiben Klartext. Leere Seiten zeigen einen Hinweis.",
+        "fr": "Jusqu’à 20000 caractères par page. Markdown : # titres, **gras**, - listes et paragraphes. HTML, images et liens restent du texte. Les pages vides affichent un avis."
+    },
+    "Settings transfer": {
+        "de": "Einstellungen übertragen",
+        "fr": "Transfert des paramètres"
+    },
+    "Export and import replace presentation, public contents and time zone only. Accounts, permissions, SMTP and secrets are excluded. Maximum file size: 256 KiB.": {
+        "de": "Export und Import ersetzen nur Darstellung, öffentliche Inhalte und Zeitzone. Konten, Rechte, SMTP und Geheimnisse sind ausgeschlossen. Maximale Dateigröße: 256 KiB.",
+        "fr": "L’export et l’import remplacent uniquement la présentation, les contenus publics et le fuseau horaire. Comptes, autorisations, SMTP et secrets sont exclus. Taille maximale : 256 Kio."
+    },
+    "Export settings": {
+        "de": "Einstellungen exportieren",
+        "fr": "Exporter les paramètres"
+    },
+    "Settings file (JSON)": {
+        "de": "Einstellungsdatei (JSON)",
+        "fr": "Fichier de paramètres (JSON)"
+    },
+    "Import and replace settings": {
+        "de": "Einstellungen importieren und ersetzen",
+        "fr": "Importer et remplacer les paramètres"
+    },
+    "Invalid settings file.": {
+        "de": "Ungültige Einstellungsdatei.",
+        "fr": "Fichier de paramètres invalide."
+    },
+    "Choose a valid IANA time zone.": {
+        "de": "Bitte eine gültige IANA-Zeitzone wählen.",
+        "fr": "Choisissez un fuseau horaire IANA valide."
+    },
+    "Public contents must contain at most 20000 characters per page.": {
+        "de": "Öffentliche Inhalte dürfen höchstens 20000 Zeichen pro Seite enthalten.",
+        "fr": "Les contenus publics sont limités à 20000 caractères par page."
+    },
+    "Roles and permissions": {
+        "de": "Rollen und Berechtigungen",
+        "fr": "Rôles et autorisations"
+    },
+    "Assign roles through user management. Role changes end existing sessions. The last active administrator remains protected.": {
+        "de": "Rollen über die Benutzerverwaltung zuweisen. Rollenänderungen beenden bestehende Sitzungen. Der letzte aktive Administrator bleibt geschützt.",
+        "fr": "Attribuez les rôles via la gestion des utilisateurs. Les changements de rôle terminent les sessions existantes. Le dernier administrateur actif reste protégé."
+    },
+    "Role bundles are defined by the core and installed plugins. This list shows permissions loaded in this process; paused plugins still deny access.": {
+        "de": "Rechtebündel werden vom Core und den installierten Plugins definiert. Die Liste zeigt die in diesem Prozess geladenen Rechte; pausierte Plugins sperren weiterhin den Zugriff.",
+        "fr": "Les droits sont définis par le cœur et les extensions installées. Cette liste affiche les droits chargés dans ce processus ; les extensions suspendues refusent toujours l’accès."
+    },
+    "Events contain identifiers only, without passwords, tokens or message contents.": {
+        "de": "Ereignisse enthalten nur Kennungen, keine Passwörter, Tokens oder Nachrichteninhalte.",
+        "fr": "Les événements ne contiennent que des identifiants, sans mots de passe, jetons ni contenu des messages."
+    },
+    "Accepted means the SMTP server has taken over the message; it is not a receipt from the recipient.": {
+        "de": "Angenommen bedeutet, dass der SMTP-Server die Nachricht übernommen hat; es ist keine Empfangsbestätigung.",
+        "fr": "Accepté signifie que le serveur SMTP a pris en charge le message ; ce n’est pas un accusé de réception du destinataire."
+    }
+})
+for _source, _translation in {
+    "System settings": "Paramètres système",
+    "Save settings": "Enregistrer les paramètres",
+    "System settings saved.": "Paramètres système enregistrés.",
+    "Workshop name": "Nom de l’atelier",
+    "Short description": "Description courte",
+    "Welcome text": "Texte de bienvenue",
+    "Default appearance": "Apparence par défaut",
+    "Core version": "Version du cœur",
+    "Audit log": "Journal d’audit",
+    "Operational status": "État du service",
+    "Database schema": "Schéma de la base de données",
+    "Unknown or missing system setting.": "Paramètre système inconnu ou manquant.",
+    "Settings must contain text.": "Les paramètres doivent contenir du texte.",
+    "Please select a valid default appearance.": "Choisissez une apparence par défaut valide.",
+    "These details appear on the public home page. The default appearance applies to guests and accounts without a personal preference.": "Ces informations apparaissent sur la page d’accueil publique. L’apparence par défaut s’applique aux visiteurs et aux comptes sans préférence personnelle.",
+    "Use the public workshop name shown on the home page. Maximum 80 characters.": "Nom public de l’atelier affiché sur l’accueil. Maximum 80 caractères.",
+    "Write a short public description for the page header. Maximum 160 characters.": "Description publique courte pour l’en-tête. Maximum 160 caractères.",
+    "Write a public welcome message. Plain text only, up to 2000 characters.": "Message d’accueil public en texte brut, jusqu’à 2000 caractères.",
+    "Choose the appearance for guests and accounts using the system default.": "Choisissez l’apparence des visiteurs et des comptes utilisant le réglage système.",
+    "Welcome to": "Bienvenue à",
+    "Workshop & Makerspace": "Atelier et espace de fabrication",
+    "Welcome to {site_name}.": "Bienvenue à {site_name}.",
+    "Core under development": "Cœur en cours de développement",
+    "Account registration and recovery": "Inscription et récupération de compte",
+    "SMTP & mail queue": "SMTP et file d’envoi"
+}.items():
+    MESSAGES.setdefault(_source, {})["fr"] = _translation
+
 bp = Blueprint("language", __name__)
 
 
@@ -823,4 +955,5 @@ def register_i18n(app):
 
     @app.context_processor
     def language_context():
-        return {"_": translate, "locale": current_language(), "languages": LANGUAGES}
+        from neofab2.plugin_api.i18n import translate as plugin_translate
+        return {"plugin_translate": plugin_translate, "_": translate, "locale": current_language(), "languages": LANGUAGES}

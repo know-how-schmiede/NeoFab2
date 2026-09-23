@@ -3,14 +3,14 @@
 {% block content %}
 <h1>{{ _('Audit log') }}</h1>
 <a class="button secondary" href="{{ url_for('core.administration') }}">{{ icon('shield') }} {{ _('Administration') }}</a>
-<p>{{ _('Events contain identifiers only, without passwords, tokens or message contents. Times are UTC.') }}</p>
+<p>{{ _('Events contain identifiers only, without passwords, tokens or message contents.') }}</p>
 <form method="get" class="card-form">
 <label for="event">{{ _('Event') }}</label>
 <select id="event" name="event"><option value="">{{ _('All events') }}</option>{% for name in event_names %}<option value="{{ name }}" {% if name == event %}selected{% endif %}>{{ _(name) }}</option>{% endfor %}</select>
 <button type="submit">{{ icon('shield') }} {{ _('Filter') }}</button>
 </form>
-<div class="table-scroll"><table><thead><tr><th>{{ _('Time (UTC)') }}</th><th>{{ _('Module') }}</th><th>{{ _('Event') }}</th><th>{{ _('Actor ID') }}</th><th>{{ _('Target ID') }}</th><th>{{ _('Count') }}</th></tr></thead>
-<tbody>{% for row in rows %}<tr><td>{{ row.created_at|mail_time }}</td><td>{{ row.module_id }}</td><td>{{ _(row.event) }}</td><td>{{ row.actor_id if row.actor_id is not none else '—' }}</td><td>{{ row.target_id if row.target_id is not none else '—' }}</td><td>{{ row.count if row.count is not none else '—' }}</td></tr>{% else %}<tr><td colspan="6">{{ _('No events found.') }}</td></tr>{% endfor %}</tbody></table></div>
+<div class="table-scroll"><table><thead><tr><th>{{ _('Local time') }}</th><th>{{ _('Module') }}</th><th>{{ _('Event') }}</th><th>{{ _('Actor ID') }}</th><th>{{ _('Target ID') }}</th><th>{{ _('Count') }}</th></tr></thead>
+<tbody>{% for row in rows %}<tr><td>{{ row.created_at|local_time }}</td><td>{{ row.module_id }}</td><td>{{ _(row.event) }}</td><td>{{ row.actor_id if row.actor_id is not none else '—' }}</td><td>{{ row.target_id if row.target_id is not none else '—' }}</td><td>{{ row.count if row.count is not none else '—' }}</td></tr>{% else %}<tr><td colspan="6">{{ _('No events found.') }}</td></tr>{% endfor %}</tbody></table></div>
 {% if page > 1 %}<a class="button secondary" href="{{ url_for('operations.audit_page', page=page-1, event=event) }}">{{ icon('shield') }} {{ _('Previous page') }}</a>{% endif %}
 {% if more %}<a class="button secondary" href="{{ url_for('operations.audit_page', page=page+1, event=event) }}">{{ icon('shield') }} {{ _('Next page') }}</a>{% endif %}
 <p>{{ _('Audit retention: preview and explicit cleanup through the local audit-prune command; default 180 days. No automatic deletion.') }}</p>
