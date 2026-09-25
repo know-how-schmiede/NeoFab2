@@ -1,5 +1,8 @@
 # Benutzer anlegen und bearbeiten – v0.1.13
 
+Ergänzt: [Benutzer exportieren](Core_Benutzerexport.md) direkt in der Benutzerverwaltung
+oder über CLI; einschließlich erneut importierbarer Rollen-/Statusdaten.
+
 Seit 0.1.18: [Benutzerimport mit Vorschau und Ergebnisbericht](Core_Benutzerimport.md),
 Admin-Oberfläche und lokaler CLI-Betrieb. Keine automatische Produktivübernahme.
 

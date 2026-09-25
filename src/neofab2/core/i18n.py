@@ -5,6 +5,13 @@ from flask import Blueprint, abort, g, has_request_context, redirect, request, s
 LANGUAGES = {"en": "English", "de": "Deutsch", "fr": "Français"}
 # English messages are stable lookup keys and the fallback. No HTML.
 MESSAGES = {
+    'Export users': {"de": 'Benutzer exportieren', "fr": 'Exporter les utilisateurs'},
+    'The user export contains personal data and password hashes. Store the downloaded file securely.': {"de": 'Der Benutzerexport enthält personenbezogene Daten und Passwort-Hashes. Die heruntergeladene Datei geschützt aufbewahren.', "fr": 'L’export contient des données personnelles et des empreintes de mots de passe. Conservez le fichier en lieu sûr.'},
+    'users.exported': {"de": 'Benutzerexport erstellt', "fr": 'Export des utilisateurs créé'},
+    'Invalid saved export identity. Restore a valid backup.': {"de": 'Ungültige gespeicherte Exportkennung. Gültige Sicherung wiederherstellen.', "fr": 'Identifiant d’export invalide. Restaurez une sauvegarde valide.'},
+    'Too many accounts for a user export.': {"de": 'Zu viele Konten für einen Benutzerexport.', "fr": 'Trop de comptes pour un export.'},
+    'User export exceeds the size limit.': {"de": 'Der Benutzerexport überschreitet das Größenlimit.', "fr": 'L’export dépasse la taille maximale.'},
+    'User export failed. No export was delivered.': {"de": 'Benutzerexport fehlgeschlagen. Es wurde kein Export ausgeliefert.', "fr": 'L’export a échoué. Aucun export livré.'},
     'User import': {"de": 'Benutzerimport', "fr": 'Importation des utilisateurs'},
     'Upload the prepared NeoFab user export. Preview does not change accounts or send email.': {"de": 'Vorbereiteten NeoFab-Benutzerexport hochladen. Die Vorschau ändert keine Konten und versendet keine E-Mails.', "fr": 'Téléversez l’export NeoFab préparé. L’aperçu ne modifie aucun compte et n’envoie aucun courriel.'},
     'Import file': {"de": 'Importdatei', "fr": 'Fichier d’importation'},

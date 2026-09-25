@@ -1,4 +1,4 @@
-# Nächste Schritte für das Core-System – Stand 0.1.18
+# Nächste Schritte für das Core-System – Stand 0.1.9 (erneute Benutzervorgabe)
 
 Stand: 25.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn
@@ -11,6 +11,8 @@ spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 wurde in 0.1.12
 umgesetzt; Paket 2 in 0.1.13, Paket 3 in 0.1.15. Paket 4 wurde in 0.1.16 umgesetzt.
 Der Basisumfang von Paket 5 ist in 0.1.17 umgesetzt; P1/P2 bleiben offen.
 Paket 6 (Benutzerimport) ist in 0.1.18 umgesetzt und synthetisch geprüft.
+[NeoFab2-Benutzerexport](Core_Benutzerexport.md) nachträglich ergänzt; aktuelle
+Version auf Benutzerwunsch erneut 0.1.9, ohne Code-/Schema-Rückbau.
 
 Planungsnachtrag: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
 beschreibt eigene Plugin-Verzeichnisse, Mindestzugriff, ZIP-Bereitstellung und

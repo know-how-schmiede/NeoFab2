@@ -289,5 +289,32 @@ def users_import(source_file, apply, expected_plan):
         app.extensions["neofab2_db"].dispose()
 
 
+
+@main.command("users-export")
+@click.option("--output", required=True, type=click.Path(path_type=Path))
+def users_export(output):
+    """Export NeoFab2 accounts to a new private JSON file, including password hashes."""
+    from .core.user_export import export_users
+    from .core.user_import import ImportFailure
+    from sqlalchemy.exc import SQLAlchemyError
+    app = ready_app()
+    created = False
+    try:
+        fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        created = True
+        with os.fdopen(fd, 'wb') as stream:
+            stream.write(export_users(app, operator=True))
+    except (OSError, ImportFailure, SQLAlchemyError):
+        if created:
+            try:
+                output.unlink()
+            except OSError:
+                pass
+        raise click.ClickException("User export failed. Check schema, limits and output path; existing files are never overwritten.") from None
+    finally:
+        app.extensions['neofab2_db'].dispose()
+    click.echo("User export created. Keep it private; it contains personal data and password hashes.")
+
+
 if __name__ == "__main__":
     main()

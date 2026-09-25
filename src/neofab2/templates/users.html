@@ -3,6 +3,11 @@
 {% block content %}
 <p><a href="{{ url_for('user_import.index') }}">{{ _('User import') }}</a></p>
 <h1>{{ _("User management") }}</h1>
+<form method="post" action="{{ url_for('user_import.export') }}" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p>{{ _('The user export contains personal data and password hashes. Store the downloaded file securely.') }}</p>
+  <button type="submit">{{ icon('database') }} {{ _('Export users') }}</button>
+</form>
 <p><a class="button" href="{{ url_for('accounts.user_new') }}">{{ icon("user-plus") }} {{ _("Create user") }}</a></p>
 <div class="table-scroll"><table><caption>{{ _("User accounts · Page") }} {{ page }}</caption>
   <thead><tr><th scope="col">{{ _("Name") }}</th><th scope="col">{{ _("Email") }}</th><th scope="col">{{ _("Role") }}</th><th scope="col">{{ _("Status") }}</th><th scope="col">{{ _("Action") }}</th></tr></thead>

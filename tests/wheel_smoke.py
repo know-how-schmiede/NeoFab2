@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory() as folder:
         token = re.search(r'name="csrf_token" value="([^"]+)"', login_page.text).group(1)
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
         from neofab2.version import __version__
-        assert __version__ == "0.1.18"
+        assert __version__ == "0.1.9"
         page = client.get("/plugins/core_test/")
         setting_token = re.search(r'name="csrf_token" value="([^"]+)"', page.text).group(1)
         assert client.post("/plugins/core_test/", data={"csrf_token": setting_token,
@@ -40,6 +40,12 @@ with tempfile.TemporaryDirectory() as folder:
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
         assert client.get("/admin/users/import").status_code == 200
+        user_page = client.get("/admin/users")
+        export_token = re.search(r'name="csrf_token" value="([^"]+)"', user_page.text).group(1)
+        exported = client.post("/admin/users/export", data={"csrf_token": export_token})
+        assert exported.status_code == 200 and exported.json["format"] == 2
+        assert exported.headers["Content-Disposition"].startswith("attachment;")
+
         from neofab2.core.user_import import preview, apply_import
         from neofab2.core.users import DETAIL_FIELDS
         from werkzeug.security import generate_password_hash

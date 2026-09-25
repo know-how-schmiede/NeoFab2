@@ -1,5 +1,88 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.9 – 2026-09-25 (erneute Versionsvergabe auf Benutzerwunsch)
+
+Bereich: fehlenden NeoFab2-Benutzerexport ergänzen (U09/U06, U05/U07/N04,
+S09/S12/X05–X07). Der Benutzer hat ausdrücklich **0.1.9** angegeben.
+Die frühere gleichnamige Version vom 19.09.2026 bleibt unten dokumentiert.
+Kein Code-/Schema-Rückbau gegenüber 0.1.18; API 1/Testplugins 0.1.0 unverändert.
+
+### Änderungen
+
+- „Benutzer exportieren“ in der Benutzerverwaltung: Admin-/POST-/CSRF-geschützter
+  JSON-Download aller Konten, einschließlich deaktivierter und wartender Konten.
+- `users-export --output ...` schreibt neue Dateien mit 0600 ohne Überschreiben;
+  keine Benutzerdaten oder Hashes auf der Konsole.
+- Natives Format 2 mit stabiler automatisch gespeicherter Quellkennung, Konto-IDs,
+  Profil, Passwort-Hashes, nativen Rollen, Sprache/Theme und Aktivierungsstatus.
+  Keine Sitzungen, Kontocodes, Fachdateien oder Plugin-Daten im Export.
+- Bestehender Import akzeptiert Format 2 zusätzlich zum unveränderten Altformat 1.
+  Wartende Konten bleiben wartend, Mitarbeiter behalten die Rolle staff.
+  Wiederholung/Quellzuordnung und bestehende Kollisionsregeln bleiben wirksam.
+- Audit protokolliert Erstellung mit Akteur und Anzahl, ohne personenbezogene
+  Nutzlast. Download als Attachment, mit no-store und nosniff.
+- Deutsche Anleitung und EN/DE/FR-Beschriftungen ergänzt.
+
+### Betrieb und Migration
+
+**Keine neue Migration**, Schema bleibt `0012_user_import`.
+Die erste Exporterstellung speichert `core.users.export_source` in der bestehenden
+Einstellungstabelle. Diese Kennung mit Konten sichern und wiederherstellen.
+Exportgrenzen: 5000 Konten/8 MiB; für erneuten Webimport gilt weiterhin das
+1-MiB-Requestlimit, größere zulässige Dateien über CLI importieren.
+
+Normalen Updateablauf verwenden. Wegen der erneut vergebenen Versionsnummer bei
+Bedarf aktuellen Checkout explizit neu installieren; kopierbare Befehle und
+Fehlerhilfe stehen in [Benutzerexport](Core_Benutzerexport.md). Ein alter
+0.1.9-Paketstand ist nicht dieser neue Stand. Kein Downgrade der Datenbank.
+Als **root**, Ausführung durch **neofab2**, Standardpfade:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: **0.1.9**, Schema bereit, Exportknopf in der Benutzerverwaltung.
+Exportdateien enthalten Passwort-Hashes und persönliche Daten: geschützt halten.
+Der Benutzerexport ersetzt keine vollständige Sicherung und führt im Quellsystem
+keine Löschungen aus. Kein produktiver Export oder Import durch Codex.
+
+### Prüfungen
+
+- **379 Gesamttests bestanden**, Python 3.13; darunter 14 neue Exporttests.
+- Export-/Importtests zusammen: 73 bestanden; native Rollen, Profil/Hashes,
+  gesperrte/wartende Konten, strikte Typen und wiederholbarer Rundlauf geprüft.
+- Admin-/Direktzugriff, CSRF, frischer Kontostatus, Downloadheader, private Datei,
+  Überschreibschutz, Limits, Auditfehler und Geheimnisschutz geprüft.
+- Stabile Quellkennung bei Parallelität und Neustart geprüft.
+- Wheel/Quelldistribution 0.1.9 gebaut; separat installiertes Wheel einschließlich
+  Benutzerexport erfolgreich geprüft. CLI-Version, Dokumentationslinks und Diff geprüft.
+
+Grenzen: synthetische Daten, keine interaktive Browser-/LXC-/Core-Abnahme.
+P1/P2 bleiben offen. Kein Commit oder Push.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: NeoFab2 0.1.9 – Benutzerexport über Oberfläche und CLI ergänzen
+```
+
+Commit-Beschreibung:
+
+```text
+Fehlenden NeoFab2-Benutzerexport mit Admin-/CSRF-Schutz und privater CLI-Datei ergänzen.
+Natives Format 2 mit stabiler Quellkennung, Profilen, Rollen und Aktivierungsstatus liefern.
+Erneuten Import inklusive wartender Konten und Mitarbeiterrolle staff unterstützen.
+Sitzungen und Tokens ausschließen; Exporterstellung ohne Nutzdaten auditieren.
+379 Tests, Export-/Importrundlauf, Paketbau und installiertes Wheel prüfen.
+Version auf ausdrücklichen Benutzerwunsch erneut 0.1.9 setzen und Historie abgrenzen.
+Keine neue Migration; Schema bleibt 0012_user_import, keine Produktivübernahme.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.18 – 2026-09-25
 
 Bereich: Core-Paket 6 (U09/N04/U06, U01/U04/U05/U07/U08, S09/S12, X05–X07).

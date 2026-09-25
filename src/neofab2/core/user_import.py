@@ -46,14 +46,14 @@ def parse_export(raw):
     except (ValueError, UnicodeError, RecursionError) as error:
         raise ImportFailure("Invalid import JSON.") from None
     if (type(payload) is not dict or set(payload) != {"format", "source", "users"}
-            or type(payload['format']) is not int or payload['format'] != 1
+            or type(payload['format']) is not int or payload['format'] not in (1, 2)
             or not isinstance(payload['source'], str)
             or not re.fullmatch(r'[a-z][a-z0-9_-]{0,63}', payload['source'])
             or type(payload['users']) is not list or len(payload['users']) > MAX_USERS):
         raise ImportFailure("Invalid import envelope.")
     ids = set()
     for row in payload['users']:
-        if (type(row) is not dict or set(row) != FIELDS
+        if (type(row) is not dict or set(row) != (FIELDS | {'activation_pending'} if payload['format'] == 2 else FIELDS)
                 or type(row['id']) is not int or not 1 <= row['id'] < 2**63 or row['id'] in ids
                 or type(row['deleted']) is not bool):
             raise ImportFailure("Invalid or duplicate source identity.")
@@ -69,8 +69,11 @@ def compatible_hash(value):
                 or re.fullmatch(r'pbkdf2:sha256:(?:[1-9][0-9]{0,5}|1000000)\$[a-zA-Z0-9]{1,64}\$[0-9a-f]{64}', value))
 
 
-def _values(row):
-    if (type(row['active']) is not bool or row['role'] not in ROLE_MAP
+def _values(row, format_version=1):
+    role_map = ROLE_MAP if format_version == 1 else {'user': 'user', 'staff': 'staff', 'admin': 'admin'}
+    if format_version == 2 and type(row['activation_pending']) is not bool:
+        raise ImportFailure('Invalid account fields.')
+    if (type(row['active']) is not bool or row['role'] not in role_map
             or row['locale'] not in ('en', 'de', 'fr') or row['theme'] not in ('system', 'dark', 'light')
             or type(row['created_at']) is not int or not 0 <= row['created_at'] <= 253402300799
             or type(row['details']) is not dict or set(row['details']) != set(DETAIL_FIELDS)
@@ -79,9 +82,9 @@ def _values(row):
         raise ImportFailure("Invalid account fields.")
     try:
         values = dict(validate_details(row['details']), email=normalize_email(row['email']),
-            display_name=validate_name(row['display_name']), role=ROLE_MAP[row['role']],
+            display_name=validate_name(row['display_name']), role=role_map[row['role']],
             active=row['active'], created_at=row['created_at'], locale=row['locale'], theme=row['theme'],
-            activation_pending=False, password_hash=row['password_hash'])
+            activation_pending=row.get('activation_pending', False), password_hash=row['password_hash'])
     except (ValueError, TypeError, AttributeError):
         raise ImportFailure("Invalid account fields.") from None
     if not compatible_hash(row['password_hash']):
@@ -111,7 +114,7 @@ def _plan(app, conn, payload):
             entry.update(action='conflict' if link else 'skip', reason='source_deleted')
             continue
         try:
-            value = _values(row)
+            value = _values(row, payload['format'])
         except (ImportFailure, TypeError):
             entry['reason'] = 'invalid_fields'
             continue

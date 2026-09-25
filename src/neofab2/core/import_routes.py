@@ -1,5 +1,5 @@
 """Admin-only two-step import; source hashes never enter HTML or sessions."""
-from flask import Blueprint, current_app, g, render_template, request
+from flask import Response, Blueprint, current_app, g, render_template, request
 from sqlalchemy.exc import SQLAlchemyError
 
 from .auth import permission_required
@@ -43,3 +43,19 @@ def index():
             # Never expose SQL parameters/password hashes in a traceback or response.
             error = 'Import database operation failed. No accounts were changed.'
     return render_template('user_import.html', report=report, error=error, labels=REPORT_LABELS), 400 if error else 200
+
+
+@bp.post('/admin/users/export')
+@permission_required('core.users.manage')
+def export():
+    from .user_export import export_users
+    try:
+        raw = export_users(current_app, actor_id=g.current_user['id'])
+    except ImportFailure as failure:
+        return render_template('error.html', message=str(failure)), 400
+    except SQLAlchemyError:
+        return render_template('error.html', message='User export failed. No export was delivered.'), 503
+    return Response(raw, mimetype='application/json', headers={
+        'Content-Disposition': 'attachment; filename="neofab2-users.json"',
+        'Cache-Control': 'no-store',
+    })

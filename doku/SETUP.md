@@ -1,6 +1,6 @@
-# NeoFab2 v0.1.18 – Installation und Entwicklung
+# NeoFab2 v0.1.9 – Installation und Entwicklung
 
-Neu in 0.1.18: [Benutzerimport](Core_Benutzerimport.md) mit geschütztem Export aus einer SQLite-Kopie, Vorschau, bestätigtem Import und Ergebnisbericht. Explizite Migration `0012_user_import` erforderlich.
+Neu: [Benutzerexport](Core_Benutzerexport.md) aus NeoFab2 über Benutzerverwaltung und CLI, mit erneut importierbarem Format. Version auf Benutzerwunsch 0.1.9; Schema bleibt `0012_user_import`, keine neue Migration.
 
 Seit 0.1.15: [Audit-Protokoll und Betriebsstatus](Core_Audit_und_Betriebsstatus.md).
 Das normale Update führt die explizite Migration `0011_audit_status` aus.
@@ -109,7 +109,7 @@ und geprüft. Betriebssystem-Updates bleiben ein separater Administrationsschrit
 
 ## 2. Basisinstallation
 
-Voraussetzung: v0.1.18 wurde manuell in GitHub Desktop committed und auf den
+Voraussetzung: v0.1.9 wurde manuell in GitHub Desktop committed und auf den
 gewählten Branch gepusht. Codex und Installer übernehmen keinen Commit/Push.
 
 ```bash
@@ -223,7 +223,7 @@ Den neuen Arbeitsstand zunächst manuell committen und auf den verwendeten
 Remote-Branch pushen. Dann das Update-Skript **vor einem manuellen Git-Pull**
 ausführen: Es sichert mit dem noch installierten alten Code und migriert nach
 der Paketinstallation von `0001_core_settings` auf `0002_core_users`.
-Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.18`;
+Die Anwendungsversionsnummer dieses Arbeitspakets ist `0.1.9`;
 der Schemawechsel wird unabhängig davon durch Alembic verwaltet.
 
 Nach erfolgreichem Update, als root:
@@ -420,7 +420,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.18, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.9, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.

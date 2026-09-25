@@ -1,5 +1,11 @@
 # Benutzerimport – Vertrag für 0.1.18
 
+Ergänzung vom 25.09.2026, aktuelle Version auf Benutzerwunsch **0.1.9**:
+[NeoFab2-Benutzerexport](Core_Benutzerexport.md) liefert natives Format 2, das
+dieser Import zusätzlich akzeptiert. Format 1 und seine Altrollen bleiben gültig.
+Format 2 verwendet `staff` statt `worker` und verlangt `activation_pending` als
+Boolean. Die folgenden Format-1-Regeln beziehen sich auf den Altimport.
+
 Paket 6: U09/N04/U06, ergänzend U01/U05/U07/S09/X07.
 Importdienst, Admin-Oberfläche, CLI und explizite Migration sind implementiert.
 Automatisierte Nachweise stehen in `tests/core/test_user_import.py`.
