@@ -1,5 +1,36 @@
 # NeoFab2 – Versionshistorie
 
+## Nachtrag zu 0.1.21 – 2026-09-25: gelöschte Importkonten erneut anlegen
+
+Benutzer meldet Konflikt nach erneutem Löschen/Importieren. Bisher sperrte die
+Löschmarkierung jeden Wiederimport. U05/U09/N04/U06: ausdrückliche Freigabe vor
+Vorschau und bei Ausführung ergänzt; Modus ist Bestandteil der Zustandsbindung.
+Die Vorschau zeigt Wiederanlage, das Konto erhält eine neue ID und die Werte der
+Importdatei. Bestehende Importzuordnung wird atomar aktualisiert. Standard bleibt
+blockiert; E-Mail-Kollisionen und andere Schutzregeln bleiben bestehen.
+Keine Wiederherstellung alter Sitzungen, Kontocodes oder Fachverknüpfungen.
+
+Version auf **0.1.21 belassen**, da kein neuer Versionsauftrag vorliegt.
+Keine Migration; Schema `0013_user_deletion`. [Bedienung und Updatehinweise](Core_Benutzerimport.md).
+411 Tests sowie Chromium mit wiederholter Löschung und bestätigtem Wiederimport
+bestanden. Nur synthetische Daten; keine Produktivoperation, kein Commit/Push.
+
+Manueller Commit-Titel:
+
+```text
+fix: bestätigten Wiederimport gelöschter Konten in 0.1.21 ermöglichen
+```
+
+Beschreibung:
+
+```text
+Wiederanlage gelöschter Importkonten in Vorschau und Bestätigung freigeben.
+Freigabe an Quelldatei und Zielstand binden; neue Benutzer-ID vergeben.
+Importzuordnung atomar aktualisieren, Kollisionen weiterhin sperren.
+Wiederholte Zyklen, fehlende Freigabe, Rollback und Chromium-Ablauf prüfen.
+Version 0.1.21 und Schema 0013 beibehalten; keine Produktivdaten ändern.
+```
+
 ## Version 0.1.21 – 2026-09-25
 
 Bereich U09/N04/U06, S01/S12/X05–X07: Import nach gemischter Vorschau abschließen.

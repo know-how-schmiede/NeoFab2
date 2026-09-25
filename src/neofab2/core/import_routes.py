@@ -31,12 +31,14 @@ def index():
             raw = upload.stream.read(MAX_BYTES + 1)
             action = request.form.get('action')
             if action == 'preview':
-                report = preview(current_app, raw, actor_id=g.current_user['id'])
+                report = preview(current_app, raw, actor_id=g.current_user['id'],
+                                 recreate_deleted=request.form.get('recreate_deleted') == 'yes')
             elif action == 'apply':
                 if request.form.get('confirm') != 'yes':
                     raise ImportFailure('Confirm the import explicitly.')
                 report = apply_import(current_app, raw, request.form.get('plan'), actor_id=g.current_user['id'],
-                                      skip_conflicts=request.form.get('skip_conflicts') == 'yes')
+                                      skip_conflicts=request.form.get('skip_conflicts') == 'yes',
+                                      recreate_deleted=request.form.get('recreate_deleted') == 'yes')
             else:
                 raise ImportFailure('Invalid import action.')
         except ImportFailure as failure:

@@ -71,8 +71,28 @@ with tempfile.TemporaryDirectory() as folder:
             assert page.get_by_role('heading', name='Importergebnis', exact=True).is_visible()
             with app.extensions['neofab2_db'].connect() as conn:
                 assert conn.execute(select(users.c.id).where(users.c.email == 'disabled@example.org')).first() is not None
+            with app.extensions['neofab2_db'].connect() as conn:
+                imported_id = conn.execute(select(users.c.id).where(users.c.email == 'disabled@example.org')).scalar_one()
+            page.goto(base + f'/admin/users/{imported_id}/edit')
+            page.get_by_role('link', name='Benutzer löschen', exact=True).click()
+            page.get_by_role('checkbox').check()
+            page.get_by_role('button', name='Benutzer endgültig löschen', exact=True).click()
+            page.wait_for_url('**/admin/users')
+            page.goto(base + '/admin/users/import')
+            page.locator('#import-file').set_input_files(upload)
+            page.locator('form:has(#import-file) input[name="recreate_deleted"]').check()
+            page.get_by_role('button', name='Import prüfen', exact=True).click()
+            assert page.get_by_text('Gelöschtes Konto erneut anlegen', exact=False).is_visible()
+            page.locator('#confirm-file').set_input_files(upload)
+            page.locator('form:has(#confirm-file) input[name="recreate_deleted"]').check()
+            page.locator('input[name="skip_conflicts"]').check()
+            page.locator('input[name="confirm"]').check()
+            page.locator('form:has(#confirm-file) button[type="submit"]').click()
+            assert page.get_by_role('heading', name='Importergebnis', exact=True).is_visible()
+            with app.extensions['neofab2_db'].connect() as conn:
+                assert conn.execute(select(users.c.id).where(users.c.email == 'disabled@example.org')).scalar_one() > imported_id
             browser.close()
-        print('Chromium: toolbar dark/light at 1440/390 px; cancel, confirmed deletion and mixed-conflict import passed.')
+        print('Chromium: toolbar dark/light at 1440/390 px; cancel, confirmed deletion and mixed-conflict import and deleted-account recreation passed.')
     finally:
         server.shutdown()
         thread.join()

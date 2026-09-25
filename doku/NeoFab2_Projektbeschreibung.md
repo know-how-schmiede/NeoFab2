@@ -34,7 +34,9 @@ In 0.1.20 ergänzt: einheitliche Benutzer-Buttonleiste und
 (U05/U06/S01/S09, Migration 0013). Ungeklärte Referenzen sperren die Löschung.
 In 0.1.21 können in der Importvorschau Konfliktzeilen ausdrücklich übersprungen
 und bereite Konten bestätigt übernommen werden (U09/N04/U06); bestehende
-Konfliktkonten und der Letzter-Admin-Schutz bleiben erhalten.
+Konfliktkonten und der Letzter-Admin-Schutz bleiben erhalten. Ein Nachtrag zu
+0.1.21 erlaubt zusätzlich die ausdrücklich bestätigte Wiederanlage gelöschter
+Importkonten mit neuer ID (U05/U09/N04/U06).
 Core-Abnahme und produktive Fachplugins bleiben offen.
 
 NeoFab2 wird als neue modulare Webanwendung in einem eigenen Repository aufgebaut. Zuerst entsteht ein unabhängig lauffähiges Core-System. Fachfunktionen werden anschließend einzeln als Plugins ergänzt.

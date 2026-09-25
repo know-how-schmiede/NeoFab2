@@ -485,3 +485,11 @@ jährliche Bereinigung (N06) bleiben offen; vollständige Core-Abnahme steht aus
 | U05, U09 | Benutzerrückmeldung | Rückmeldung zu 0.1.20: Löschung, Export und Importvorschau funktionieren | Vom Benutzer bestätigt; endgültiger Import bei gemischten Konflikten bislang nicht bedienbar | Keine vollständige Core-Abnahme |
 | U09, N04, U06 | implementiert / geprüft | `src/neofab2/core/user_import.py`, `core/import_routes.py`, `templates/user_import.html`, `core/i18n.py`, `tests/core/test_user_import.py` | Gemischte Vorschau mit explizitem Konflikt-Überspringen, keine Änderung an Konfliktkonten, veraltete Vorschau, keine bereiten Zeilen, Letzter-Admin-Sperre und atomarer Rollback | CLI bleibt strikt; keine automatische Verknüpfung oder Überschreibung, kein Umgehen von Löschmarkierungen |
 | S01, S12, X05/X06, X07 | geprüft / dokumentiert | `tests/browser_user_management.py`, `tests/wheel_smoke.py`, `src/neofab2/version.py`, `doku/Core_Benutzerimport.md`, `Version_Timeline.md`, `SETUP.md`, `script/README.md` | Chromium führt gemischten Import nach Vorschau vollständig aus; Version 0.1.21, Gesamttests und Paketprüfung siehe Timeline | Keine neue Migration; Schema 0013; nur synthetische Testdaten, kein Commit/Push; vollständige Core-Abnahme offen |
+
+
+### Nachtrag 0.1.21: bestätigte Wiederanlage gelöschter Importkonten (25.09.2026)
+
+| IDs | Status | Nachweis | Prüfungen / Grenzen |
+|---|---|---|---|
+| U05/U09, N04, U06 | implementiert / geprüft | `src/neofab2/core/user_import.py`, `core/import_routes.py`, `templates/user_import.html`, `core/i18n.py`, `tests/core/test_user_deletion.py` | Opt-in bereits in Vorschau und erneut bei Ausführung, HMAC bindet Modus/Quelle/Ziel; neue IDs, atomare Neuzuordnung, wiederholte Lösch-/Importzyklen, Kollisionsschutz und Rollback. Standard bleibt gesperrt; keine Wiederherstellung alter Sitzungen/Referenzen, CLI unverändert. |
+| S01/S12, X05/X06/X07 | geprüft / dokumentiert | `tests/browser_user_management.py`, `doku/Core_Benutzerimport.md`, `Core_Benutzerloeschung.md`, `Version_Timeline.md` | 411 Gesamttests; Chromium mit erneutem Löschen/Importieren. Version unverändert 0.1.21, Schema 0013 ohne Migration. Nur synthetische Daten, keine vollständige Core-Abnahme, kein Commit/Push. |

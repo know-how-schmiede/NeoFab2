@@ -234,3 +234,48 @@ def test_upgrade_from_0012_and_restore_marker(tmp_path,monkeypatch):
             restored.extensions['neofab2_db'].dispose()
     finally:
         app.extensions['neofab2_db'].dispose()
+
+
+def test_recreate_deleted_import_requires_matching_preview_and_new_identity(app):
+    from neofab2.core.user_import import ImportFailure
+    from test_user_import import post_import
+    data = raw(source(active=False))
+    apply(app, data)
+    first_id = rows(app, links)[0]['user_id']
+    for old_id in (first_id, first_id + 2):
+        perform(app, old_id)
+        default = preview(app, data, actor_id=1)
+        assert default['rows'][0]['reason'] == 'target_deleted'
+        with pytest.raises(ImportFailure, match='stale'):
+            apply_import(app, data, default['plan'], actor_id=1, recreate_deleted=True)
+        admin = login(app)
+        page = post_import(admin, data, recreate_deleted='yes')
+        assert 'Recreate deleted account' in page.text
+        plan = re.search(r'name="plan" value="([^"]+)"', page.text).group(1)
+        assert post_import(admin, data, action='apply', plan=plan, confirm='yes').status_code == 400
+        result = post_import(admin, data, action='apply', plan=plan, confirm='yes', recreate_deleted='yes')
+        assert result.status_code == 200
+        new_id = rows(app, links)[0]['user_id']
+        assert new_id > old_id
+        assert preview(app, data, actor_id=1)['counts']['unchanged'] == 1
+        assert len(rows(app, links)) == 1
+
+
+def test_recreate_deleted_import_still_checks_email_collision_and_rolls_back(app, monkeypatch):
+    from neofab2.core.user_import import ImportFailure
+    data = raw(source(active=False))
+    apply(app, data)
+    perform(app, rows(app, links)[0]['user_id'])
+    report = preview(app, data, actor_id=1, recreate_deleted=True)
+    before = rows(app), rows(app, links), rows(app, events)
+    def fail(*args, **kwargs):
+        raise RuntimeError('synthetic')
+    monkeypatch.setattr('neofab2.core.user_import.record', fail)
+    with pytest.raises(RuntimeError):
+        apply_import(app, data, report['plan'], actor_id=1, recreate_deleted=True)
+    assert (rows(app), rows(app, links), rows(app, events)) == before
+    create_user(app, 'import@example.org', 'Replacement', PASSWORD, actor_id=1)
+    conflict = preview(app, data, actor_id=1, recreate_deleted=True)
+    assert conflict['rows'][0]['reason'] == 'email_collision'
+    with pytest.raises(ImportFailure):
+        apply_import(app, data, conflict['plan'], actor_id=1, recreate_deleted=True)

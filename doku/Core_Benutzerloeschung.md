@@ -30,7 +30,9 @@ Akteur- und Ziel-ID ins Audit, ohne Profil oder Passwort. Bei Fehlern erfolgt
 keine Teillöschung. Audit-Einträge und vorhandene Sicherungen bleiben erhalten.
 
 Importzuordnungen bleiben mit leerer `user_id` erhalten: Derselbe Quellschlüssel
-kann das Konto nicht unbemerkt wieder anlegen (`target_deleted`). Andere Quellen
+kann das Konto nicht unbemerkt wieder anlegen (`target_deleted`). Seit dem Nachtrag
+zu 0.1.21 erlaubt eine ausdrücklich freigegebene [Importvorschau](Core_Benutzerimport.md)
+die erneute Anlage mit neuer ID. Andere Quellen
 oder eine bewusste manuelle Neuanlage sind keine globale Identitätssperre.
 Der Zähler `core.users.id_high_water` verhindert Wiederverwendung gelöschter
 Konto-IDs bei Anlage, Registrierung und Import. Lücken in IDs sind beabsichtigt.

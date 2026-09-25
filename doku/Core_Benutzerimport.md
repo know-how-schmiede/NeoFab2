@@ -1,5 +1,31 @@
 # Benutzerimport – Vertrag für 0.1.18
 
+## Ergänzung zu 0.1.21: gelöschte Konten erneut importieren
+
+Die bisherige Löschmarkierung blockierte auch eine beabsichtigte erneute Anlage.
+Als Administrator vor „Import prüfen“ die Option „Bereits gelöschte Konten zur
+ erneuten Anlage in die Vorschau aufnehmen“ wählen und dieselbe Datei hochladen.
+Die Vorschau kennzeichnet geeignete Zeilen als „Gelöschtes Konto erneut anlegen“.
+Danach dieselbe Datei erneut auswählen, die erneute Anlage ausdrücklich bestätigen
+und den Import bestätigen. Bei weiteren Konflikten zusätzlich deren Überspringen
+bestätigen. Ohne diese Freigabe bleibt die Löschmarkierung wirksam.
+
+Die neue Vorschau bindet die Freigabe an Datei und Zielstand. Eine alte Vorschau
+kann nicht nachträglich für Wiederanlage verwendet werden. Das Konto erhält eine
+neue ID und Profil, Passwort sowie Aktivierungs-/Zugangsstatus aus der Datei.
+Alte Sitzungen, Kontocodes und Fachverknüpfungen werden nicht wiederhergestellt.
+Die vorhandene Importzuordnung wird atomar auf die neue Konto-ID gesetzt;
+erneuter Import ist anschließend unverändert, erneutes Löschen wieder möglich.
+E-Mail-Kollisionen, ungültige Felder, fehlende Auswahlwerte, unbekannte fehlende
+Ziele und der Letzter-Admin-Schutz bleiben geprüft. Andere Quellzuordnungen zum
+zuvor gelöschten Konto werden nicht automatisch verbunden.
+
+Version bleibt **0.1.21**, keine neue Migration (weiterhin `0013_user_deletion`).
+CLI bietet diese Option nicht an. Zum Aktualisieren den normalen gesicherten
+[Updateablauf](../script/README.md) verwenden; bei gleichem Versionsetikett den
+neuen Quellstand und die dortige Neuinstallation prüfen. Kein Produktivimport
+oder Löschen produktiver Konten durch Codex.
+
 ## Korrektur 0.1.21: Import nach Vorschau abschließen
 
 Bei gemischten Ergebnissen wurde bislang die gesamte Bestätigung ausgeblendet.
@@ -16,7 +42,7 @@ Bei ausschließlich Konflikten oder unveränderten Konten erklärt die Seite, da
 keine Konten zum Import bereit sind. Datei gegebenenfalls korrigieren und neu prüfen.
 Der Schutz des letzten aktiven Administrators blockiert weiterhin den gesamten
 Import. Veraltete Vorschauen, fehlende Bestätigung und Datenbankfehler führen zu
-keinen Änderungen. Löschmarkierungen werden nicht umgangen.
+keinen Änderungen. Löschmarkierungen gelten standardmäßig; die oben beschriebene erneute Anlage benötigt eine eigene Vorschau und Bestätigung.
 Die CLI bleibt unverändert strikt: Konflikte verhindern dort die Übernahme.
 
 Keine neue Migration; Schema bleibt `0013_user_deletion`. Normalen

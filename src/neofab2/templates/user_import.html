@@ -8,6 +8,8 @@
   <input type="hidden" name="action" value="preview">
   <label for="import-file">{{ _('Import file') }}</label>
   <input id="import-file" name="file" type="file" accept=".json" required>
+  <label><input type="checkbox" name="recreate_deleted" value="yes"> {{ _('Include previously deleted accounts for recreation in the preview.') }}</label>
+  <p class="field-help">{{ _('Recreated accounts receive new IDs and the profile, password and access status from the import file. Old sessions and references are not restored.') }}</p>
   <button type="submit">{{ icon('shield') }} {{ _('Preview import') }}</button>
 </form>
 {% if report %}
@@ -16,7 +18,7 @@
 <ul>{% for action, count in report.counts.items() %}<li>{{ _(labels[action]) }}: {{ count }}</li>{% endfor %}</ul>
 <div class="table-scroll"><table>
 <thead><tr><th>{{ _('Source ID') }}</th><th>{{ _('Email') }}</th><th>{{ _('Role') }}</th><th>{{ _('Active') }}</th><th>{{ _('Action') }}</th><th>{{ _('Reason') }}</th></tr></thead>
-<tbody>{% for row in report.rows %}<tr><td>{{ row.source_id or '' }}</td><td>{{ row.email|default('') }}</td><td>{{ _(row.role|default('')) }}</td><td>{{ _('Yes') if row.active|default(false) else _('No') }}</td><td>{{ _(labels[row.action]) }}</td><td>{{ _(labels[row.reason]) }}</td></tr>{% endfor %}</tbody>
+<tbody>{% for row in report.rows %}<tr><td>{{ row.source_id or '' }}</td><td>{{ row.email|default('') }}</td><td>{{ _(row.role|default('')) }}</td><td>{{ _('Yes') if row.active|default(false) else _('No') }}</td><td>{{ _(labels[row.action]) }}</td><td>{% if row.recreating|default(false) %}{{ _('Recreate deleted account') }} · {% endif %}{{ _(labels[row.reason]) }}</td></tr>{% endfor %}</tbody>
 </table></div>
 {% if report.counts.conflict %}
 <p role="status">{{ _('Conflicting rows remain unchanged. Only rows marked Create or Update can be imported.') }}</p>
@@ -31,6 +33,9 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="action" value="apply">
   <input type="hidden" name="plan" value="{{ report.plan }}">
+  {% if report.recreate_deleted %}
+  <label><input type="checkbox" name="recreate_deleted" value="yes" required> {{ _('Confirm recreation of the deleted accounts shown in this preview.') }}</label>
+  {% endif %}
   {% if report.counts.conflict %}
   <label><input type="checkbox" name="skip_conflicts" value="yes" required> {{ _('Skip conflicts and import only the ready accounts.') }}</label>
   {% endif %}

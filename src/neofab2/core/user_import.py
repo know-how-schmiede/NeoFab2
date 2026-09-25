@@ -96,12 +96,12 @@ def _target_digest(row):
     return digest({key: row[key] for key in users.c.keys() if key != 'id'})
 
 
-def _plan(app, conn, payload):
+def _plan(app, conn, payload, recreate_deleted=False):
     current = {r['id']: dict(r) for r in conn.execute(select(users).order_by(users.c.id)).mappings()}
     imported = {(r['source'], r['source_id']): dict(r) for r in conn.execute(select(links).order_by(links.c.source, links.c.source_id)).mappings()}
     choices = [dict(r) for r in conn.execute(select(options).order_by(options.c.id)).mappings()]
     # HMAC binds source and all relevant target data, without publishing password hashes.
-    state = digest([payload, list(current.values()), list(imported.values()), choices])
+    state = digest([payload, list(current.values()), list(imported.values()), choices, recreate_deleted])
     token = hmac.new(app.config['SECRET_KEY'].encode(), state.encode(), hashlib.sha256).hexdigest()
     emails = {r['email']: uid for uid, r in current.items()}
     source_emails = set()
@@ -123,7 +123,8 @@ def _plan(app, conn, payload):
             entry['reason'] = 'duplicate_email'
             continue
         source_emails.add(value['email'])
-        if link and link['user_id'] not in current:
+        recreating = bool(link and link['user_id'] is None and recreate_deleted is True)
+        if link and link['user_id'] not in current and not recreating:
             entry['reason'] = 'target_deleted' if link['user_id'] is None else 'missing_target'
             continue
         old = current.get(link['user_id']) if link else None
@@ -144,6 +145,7 @@ def _plan(app, conn, payload):
             entry['reason'] = 'unknown_option'
             continue
         entry.update(action='update' if old else 'create', reason='reset_required' if value['activation_pending'] else 'ready')
+        entry['recreating'] = recreating
         writes.append((entry, value, source_digest))
     # Simultaneous demotions must not remove the last usable administrator.
     after = {uid: r for uid, r in current.items()}
@@ -153,28 +155,29 @@ def _plan(app, conn, payload):
             r['role'] == 'admin' and r['active'] and not r['activation_pending'] for r in after.values()):
         rows.append({'source_id': None, 'user_id': None, 'action': 'conflict', 'reason': 'last_admin'})
     report = {'source': payload['source'], 'plan': token, 'applied': False, 'rows': rows,
+              'recreate_deleted': recreate_deleted,
               'blocked': any(r['reason'] == 'last_admin' for r in rows),
               'counts': {action: sum(r['action'] == action for r in rows) for action in ('create', 'update', 'unchanged', 'skip', 'conflict')}}
     return report, writes
 
 
-def preview(app, raw, *, actor_id=None, operator=False):
+def preview(app, raw, *, actor_id=None, operator=False, recreate_deleted=False):
     payload = parse_export(raw)
     with app.extensions['neofab2_db'].connect() as conn:
         # Explicit read snapshot; no schema or import/audit mutation.
         conn.exec_driver_sql('BEGIN')
         if not operator:
             require_actor(conn, actor_id)
-        report, _writes = _plan(app, conn, payload)
+        report, _writes = _plan(app, conn, payload, recreate_deleted)
         return report
 
 
-def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False, skip_conflicts=False):
+def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False, skip_conflicts=False, recreate_deleted=False):
     payload = parse_export(raw)
     with write_transaction(app) as conn:
         if not operator:
             require_actor(conn, actor_id)
-        report, writes = _plan(app, conn, payload)
+        report, writes = _plan(app, conn, payload, recreate_deleted)
         if (not isinstance(expected_plan, str) or not re.fullmatch(r'[0-9a-f]{64}', expected_plan)
                 or not hmac.compare_digest(report['plan'], expected_plan)):
             raise ImportFailure('Import preview is stale. Create a new preview.')
@@ -188,8 +191,13 @@ def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False, skip
                 from .users import reserve_user_id
                 uid = conn.execute(users.insert().values(id=reserve_user_id(conn), **value)).inserted_primary_key[0]
                 entry['user_id'] = uid
-                conn.execute(links.insert().values(source=payload['source'], source_id=entry['source_id'],
-                    user_id=uid, source_digest=source_digest, target_digest=_target_digest(value)))
+                if entry['recreating']:
+                    conn.execute(update(links).where(links.c.source == payload['source'],
+                        links.c.source_id == entry['source_id'], links.c.user_id.is_(None)).values(
+                            user_id=uid, source_digest=source_digest, target_digest=_target_digest(value)))
+                else:
+                    conn.execute(links.insert().values(source=payload['source'], source_id=entry['source_id'],
+                        user_id=uid, source_digest=source_digest, target_digest=_target_digest(value)))
             else:
                 conn.execute(update(users).where(users.c.id == uid).values(**value))
                 conn.execute(update(links).where(links.c.source == payload['source'], links.c.source_id == entry['source_id']).values(
