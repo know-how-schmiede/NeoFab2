@@ -1,5 +1,7 @@
 # Datei- und Plugin-Dienstverträge – 0.1.17
 
+Ergänzung 0.1.20: Die [bestätigte Löschung deaktivierter Core-Konten](Core_Benutzerloeschung.md) ist nun umgesetzt. Dateibesitz, unbekannte Tabellen/Plugins und ungeklärte Versandbezüge blockieren sie. Die nachfolgenden Aussagen zu 0.1.17 beschreiben den damaligen Stand; allgemeine Plugin-Lösch-Hooks und jährliche Bereinigung bleiben Planung.
+
 Paket 5, Basisumfang: S10, N01, U05/N06 als Löschvertrag sowie U06/S09/X05–X07.
 Nur technische Testplugins. API bleibt 1, Testplugins bleiben 0.1.0.
 P1/P2 (eigene Plugin-Verzeichnisse und Mindestzugriff) sind weiterhin ausdrücklich

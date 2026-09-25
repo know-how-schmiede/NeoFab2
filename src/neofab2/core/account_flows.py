@@ -159,7 +159,8 @@ def request_email(app, purpose, email, ip, *, display_name="", locale="en"):
         if purpose == "register":
             if user:
                 return
-            result = connection.execute(users.insert().values(email=email, display_name=display_name,
+            from .users import reserve_user_id
+            result = connection.execute(users.insert().values(id=reserve_user_id(connection), email=email, display_name=display_name,
                 password_hash=DUMMY_HASH, role="user", active=False, activation_pending=True,
                 created_at=int(time.time()), locale=locale))
             user = connection.execute(select(users).where(users.c.id == result.inserted_primary_key[0])).mappings().one()

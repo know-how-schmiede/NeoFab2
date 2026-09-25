@@ -1,5 +1,7 @@
 # Benutzerimport – Vertrag für 0.1.18
 
+Seit Schema `0013_user_deletion` darf `core_user_imports.user_id` leer sein: Nach bestätigter Kontolöschung bleibt die Quellzuordnung als Sperrmarkierung erhalten. Wiederimport derselben Quelle/Quell-ID liefert `target_deleted` und legt das Konto nicht erneut an. [Löschung und Wiederherstellung](Core_Benutzerloeschung.md).
+
 Ergänzung vom 25.09.2026, aktuelle Version auf Benutzerwunsch **0.1.9**:
 [NeoFab2-Benutzerexport](Core_Benutzerexport.md) liefert natives Format 2, das
 dieser Import zusätzlich akzeptiert. Format 1 und seine Altrollen bleiben gültig.

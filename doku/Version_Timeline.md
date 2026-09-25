@@ -1,5 +1,72 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.20 – 2026-09-25
+
+Benutzerauftrag: gemeinsame Buttonleiste und bestätigte Löschung deaktivierter
+Konten (S01, U05/U06/U09, N04, S09/S12, X05–X07).
+Die vorherige erneut vergebene Version 0.1.9 bleibt historisch dokumentiert.
+
+### Änderungen
+
+- Anlegen, Export und Import gemeinsam als gleichartige Buttons über der Liste;
+  flexibler Umbruch, Icons, Exporthinweis und DE/EN/FR-Beschriftungen.
+- „Benutzer löschen“ beim Bearbeiten eines deaktivierten Kontos. Eigene und
+  aktive Konten geschützt; separate Sicherheitsabfrage mit Kontoidentität,
+  Folgen, Pflicht-Checkbox und Abbrechen. Erst bestätigter POST löscht.
+- Admin-/CSRF-Prüfung und zehn Minuten gültige signierte Zustandsbestätigung;
+  erneute Prüfung und atomare Löschung samt Audit. Veränderte Daten oder
+  Speicherfehler verhindern eine Teillöschung.
+- Kontositzungen, Kontocodes und zugehörige Core-Kontomails werden entfernt.
+  Dateibesitz, unbekannte Plugins/Tabellen und ungeklärte Versandbezüge blockieren.
+- Importzuordnungen behalten Löschmarkierungen; dieselbe Quelle/ID führt beim
+  Wiederimport zu `target_deleted`. Persistenter ID-Zähler schützt historische
+  Kontoreferenzen vor Wiederverwendung bei Anlage, Registrierung und Import.
+
+### Betrieb und Migration
+
+**Neue explizite Migration `0013_user_deletion`** macht das Importziel nullable.
+Vorhandene Zuordnungen bleiben erhalten. Der normale gesicherte Updateablauf
+führt die Migration aus; kein Schemaaufbau beim Anwendungsstart.
+Version/API: **0.1.20**, Plugin-API 1, Testplugins 0.1.0 unverändert.
+[Bedienung, kopierbare Prüfbefehle und Fehlerhilfe](Core_Benutzerloeschung.md).
+
+Datenbank einschließlich Importmarkierungen und `core.users.id_high_water`
+sichern/wiederherstellen. Rückmigration wird bei vorhandenen Markierungen
+verweigert; ältere Backups können gelöschte Konten wiederherstellen.
+Keine produktiven Daten verändert, kein Produktivupdate ausgeführt.
+Allgemeine Plugin-Lösch-Hooks, jährliche Bereinigung, P1/P2 und vollständige
+Core-/LXC-Abnahme bleiben offen.
+
+### Prüfungen
+
+- **405 Tests bestanden**, Python 3.13; darunter **26 neue Löschtests**.
+- Bestätigung, Rechte/CSRF, Ablaufzeit, Datenänderung, Reaktivierung,
+  Referenzblockaden, Audit-Rollback, ID-Schutz, Wiederimport und Migration/Restore.
+- Chromium: Buttonleiste bei 1440/390 Pixeln in Hell/Dunkel, Größen/Umbruch;
+  Abbrechen und bestätigte Löschung mit synthetischen Daten erfolgreich.
+- Wheel/sdist und separat installiertes Wheel einschließlich Kontolöschung,
+  Wiederimportsperre und Version geprüft. Dokumentationslinks und Diff geprüft.
+
+### Manueller Commit
+
+Kein automatischer Commit oder Push. Titel für GitHub Desktop:
+
+```text
+feat: NeoFab2 0.1.20 – Benutzeraktionen bündeln und Kontolöschung bestätigen
+```
+
+Beschreibung:
+
+```text
+Anlegen, Export und Import in einer einheitlichen Buttonleiste zusammenfassen.
+Deaktivierte Konten nach separater Sicherheitsabfrage atomar löschen.
+Admin-, CSRF-, Zustands- und Referenzprüfungen sowie Audit ergänzen.
+Import-Löschmarkierungen und dauerhaften Benutzer-ID-Zähler einführen.
+Explizite Migration 0013_user_deletion und Betriebsdokumentation ergänzen.
+405 Tests sowie Chromium- und installierte Wheel-Prüfung erfolgreich.
+Nur synthetische Daten; Core-Abnahme und allgemeine Plugin-Lösch-Hooks offen.
+```
+
 ## Version 0.1.9 – 2026-09-25 (erneute Versionsvergabe auf Benutzerwunsch)
 
 Bereich: fehlenden NeoFab2-Benutzerexport ergänzen (U09/U06, U05/U07/N04,

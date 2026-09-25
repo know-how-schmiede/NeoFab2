@@ -1,5 +1,7 @@
 # Gestaltung von Buttons und Oberflächen – v0.1.13
 
+Ergänzung 0.1.20: Zusammengehörige Benutzeraktionen stehen in einer umbrechenden `.button-bar` mit identischen primären Buttons und Icons. Destruktive Aktionen verwenden `.danger` und eine eigene Bestätigungsseite mit Pflicht-Checkbox, Kontoidentität und Abbrechen-Link; JavaScript ist nicht erforderlich. Chromium-Prüfung bei 1440/390 Pixeln in Hell/Dunkel bestanden; dies ersetzt keine vollständige Browser-/Core-Abnahme.
+
 Diese Regeln gelten für Core und Plugin-Oberflächen. Gemeinsame Umsetzung:
 `src/neofab2/static/core.css`, Icons: `src/neofab2/templates/ui_icons.html`.
 Bestehende Templates erweitern `base.html`; dadurch ist `icon()` verfügbar.

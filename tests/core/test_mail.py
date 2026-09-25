@@ -81,7 +81,7 @@ def test_admin_ui_secret_csrf_and_test_idempotency(app):
     with app.extensions["neofab2_db"].connect() as conn:
         jobs = conn.execute(select(mail.outbox)).mappings().all()
         assert len(jobs) == 1 and jobs[0]["status"] == "queued"
-        assert "synthetic-secret" not in conn.execute(select(mail.settings.c.value)).scalar_one()
+        assert "synthetic-secret" not in conn.execute(select(mail.settings.c.value).where(mail.settings.c.key == mail.SETTING_KEY)).scalar_one()
     assert post(client, PATH, {**CONFIG, "enabled": "on", "action": "save", "SMTP_PASSWORD": "inject"}).status_code == 400
 
 

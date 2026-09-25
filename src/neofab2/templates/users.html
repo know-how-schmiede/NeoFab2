@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block title %}{{ _("User management") }} · NeoFab2{% endblock %}
 {% block content %}
-<p><a href="{{ url_for('user_import.index') }}">{{ _('User import') }}</a></p>
 <h1>{{ _("User management") }}</h1>
-<form method="post" action="{{ url_for('user_import.export') }}" class="card-form">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <p>{{ _('The user export contains personal data and password hashes. Store the downloaded file securely.') }}</p>
-  <button type="submit">{{ icon('database') }} {{ _('Export users') }}</button>
-</form>
-<p><a class="button" href="{{ url_for('accounts.user_new') }}">{{ icon("user-plus") }} {{ _("Create user") }}</a></p>
+<div class="button-bar" role="group" aria-label="{{ _('User actions') }}">
+  <a class="button" href="{{ url_for('accounts.user_new') }}">{{ icon('user-plus') }} {{ _('Create user') }}</a>
+  <form method="post" action="{{ url_for('user_import.export') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" aria-describedby="export-help">{{ icon('database') }} {{ _('Export users') }}</button>
+  </form>
+  <a class="button" href="{{ url_for('user_import.index') }}">{{ icon('upload') }} {{ _('Import users') }}</a>
+</div>
+<p id="export-help" class="field-help">{{ _('The user export contains personal data and password hashes. Store the downloaded file securely.') }}</p>
 <div class="table-scroll"><table><caption>{{ _("User accounts · Page") }} {{ page }}</caption>
   <thead><tr><th scope="col">{{ _("Name") }}</th><th scope="col">{{ _("Email") }}</th><th scope="col">{{ _("Role") }}</th><th scope="col">{{ _("Status") }}</th><th scope="col">{{ _("Action") }}</th></tr></thead>
   <tbody>{% for entry in entries %}<tr><td>{{ entry.display_name }}</td><td>{{ entry.email }}</td><td>{{ _(roles[entry.role]) }}</td><td>{{ _('Awaiting email activation' if entry.activation_pending else ('Active' if entry.active else 'Disabled')) }}</td><td><a href="{{ url_for('accounts.user_edit', user_id=entry.id) }}">{{ _("Edit") }}<span class="sr-only">: {{ entry.display_name }}</span></a></td></tr>{% endfor %}</tbody>

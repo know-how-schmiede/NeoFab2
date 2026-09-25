@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Delete user') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('Delete user') }}</h1>
+<p>{{ _('Permanently delete this disabled account?') }}</p>
+<p><strong>{{ entry.display_name }}</strong> · {{ entry.email }}</p>
+<p>{{ _('The profile, password, sessions, account codes and associated account mail records will be removed. This cannot be undone without a backup.') }}</p>
+<ul>
+  <li>{{ _('Sessions') }}: {{ counts.sessions }}</li>
+  <li>{{ _('Account codes') }}: {{ counts.tokens }}</li>
+  <li>{{ _('Account mail records') }}: {{ counts.mail }}</li>
+  <li>{{ _('Import identities retained to prevent recreation') }}: {{ counts.imports }}</li>
+</ul>
+<p>{{ _('Audit records remain without profile data. Existing backups and exports are not changed.') }}</p>
+{% if blockers %}
+{% for blocker in blockers %}<p class="error" role="alert">{{ _(blocker) }}</p>{% endfor %}
+{% else %}
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="confirmation" value="{{ confirmation }}">
+  <label class="checkbox"><input type="checkbox" name="confirm" value="yes" required> {{ _('Yes, permanently delete this user.') }}</label>
+  <button class="danger" type="submit">{{ icon('trash') }} {{ _('Permanently delete user') }}</button>
+</form>
+{% endif %}
+<p><a class="button secondary" href="{{ url_for('accounts.user_edit', user_id=entry.id) }}">{{ icon('users') }} {{ _('Cancel') }}</a></p>
+{% endblock %}

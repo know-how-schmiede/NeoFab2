@@ -139,7 +139,7 @@ def create_user(app, email, display_name, password, role="user", *, actor_id=Non
                 require_actor(connection, actor_id)
             from .user_options import validate_choices
             validate_choices(connection, extra)
-            result = connection.execute(users.insert().values(email=email, display_name=display_name,
+            result = connection.execute(users.insert().values(id=reserve_user_id(connection), email=email, display_name=display_name,
                 password_hash=password_hash, role=role, active=active, created_at=int(time.time()),
                 locale=locale, **extra))
             record(connection, "user.created", actor_id=actor_id, target_id=result.inserted_primary_key[0])
@@ -240,3 +240,23 @@ def reset_admin_password(app, user_id, password, *, reactivate=False):
         connection.execute(delete(sessions).where(sessions.c.user_id == user_id))
         connection.execute(delete(attempts).where(attempts.c.key == attempt_key(app, "account", user["email"])))
         record(connection, "password.emergency_reset", target_id=user_id)
+
+
+def reserve_user_id(connection):
+    """Monotonic IDs also after physical deletion; caller holds write_transaction."""
+    from sqlalchemy import func
+    from sqlalchemy.dialects.sqlite import insert
+    from .settings import settings
+    key = 'core.users.id_high_water'
+    maximum = connection.execute(select(func.max(users.c.id))).scalar_one() or 0
+    saved = connection.execute(select(settings.c.value).where(settings.c.key == key)).scalar_one_or_none()
+    if saved is not None:
+        if not saved.isdecimal() or len(saved) > 19:
+            raise ValueError('Invalid user ID counter.')
+        maximum = max(maximum, int(saved))
+    if maximum >= 2**63 - 1:
+        raise ValueError('User ID limit reached.')
+    allocated = maximum + 1
+    statement = insert(settings).values(key=key, value=str(allocated))
+    connection.execute(statement.on_conflict_do_update(index_elements=[settings.c.key], set_={'value': str(allocated)}))
+    return allocated

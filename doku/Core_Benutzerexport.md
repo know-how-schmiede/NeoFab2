@@ -1,5 +1,7 @@
 # Benutzerexport – 0.1.9 (Benutzervorgabe vom 25.09.2026)
 
+Aktueller Stand 0.1.20: Der Export steht gemeinsam mit Anlegen und Import in einer Buttonleiste. Gelöschte Konten fehlen im Export; der Export enthält keine Löschmarkierungen und ist kein vollständiges Backup. [Kontolöschung](Core_Benutzerloeschung.md). Die folgenden Angaben zur erneut vergebenen Version 0.1.9 beschreiben die Einführung des Exports.
+
 U09/U06/S09: Export aller aktuellen NeoFab2-Konten, einschließlich gesperrter und
 auf Aktivierung wartender Konten. Benutzerverwaltung → **Benutzer exportieren**.
 Der Download heißt `neofab2-users.json`. Nur aktive Administratoren erhalten

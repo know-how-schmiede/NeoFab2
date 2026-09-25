@@ -7,6 +7,7 @@ from .user_import import MAX_BYTES, ImportFailure, preview, apply_import
 
 bp = Blueprint('user_import', __name__)
 REPORT_LABELS = {
+    'target_deleted': 'Previously imported account was deleted',
     'create': 'Create', 'update': 'Update', 'unchanged': 'Unchanged', 'skip': 'Skip', 'conflict': 'Conflict',
     'source_deleted': 'Source account marked deleted', 'invalid_fields': 'Invalid account fields',
     'duplicate_email': 'Duplicate source email', 'missing_target': 'Target account missing',

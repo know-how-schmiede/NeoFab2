@@ -1,4 +1,4 @@
-# Nächste Schritte für das Core-System – Stand 0.1.9 (erneute Benutzervorgabe)
+# Nächste Schritte für das Core-System – Stand 0.1.20
 
 Stand: 25.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn
@@ -11,8 +11,11 @@ spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 wurde in 0.1.12
 umgesetzt; Paket 2 in 0.1.13, Paket 3 in 0.1.15. Paket 4 wurde in 0.1.16 umgesetzt.
 Der Basisumfang von Paket 5 ist in 0.1.17 umgesetzt; P1/P2 bleiben offen.
 Paket 6 (Benutzerimport) ist in 0.1.18 umgesetzt und synthetisch geprüft.
-[NeoFab2-Benutzerexport](Core_Benutzerexport.md) nachträglich ergänzt; aktuelle
-Version auf Benutzerwunsch erneut 0.1.9, ohne Code-/Schema-Rückbau.
+[NeoFab2-Benutzerexport](Core_Benutzerexport.md) nachträglich unter der erneut
+vergebenen Version 0.1.9 ergänzt, ohne Code-/Schema-Rückbau.
+Aktuell 0.1.20: [Buttonleiste und bestätigte Kontolöschung](Core_Benutzerloeschung.md);
+nur deaktivierte Konten ohne ungeklärte Referenzen. Jährliche Bereinigung und
+allgemeine Plugin-Lösch-Hooks bleiben offen.
 
 Planungsnachtrag: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
 beschreibt eigene Plugin-Verzeichnisse, Mindestzugriff, ZIP-Bereitstellung und

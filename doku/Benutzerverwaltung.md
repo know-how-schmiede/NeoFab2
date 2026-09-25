@@ -1,5 +1,7 @@
 # Benutzer anlegen und bearbeiten – v0.1.13
 
+Seit 0.1.20 stehen „Benutzer anlegen“, „Benutzer exportieren“ und „Benutzer importieren“ gemeinsam in einer Buttonleiste oberhalb der Kontenliste. Deaktivierte Konten können beim Bearbeiten über eine gesonderte Sicherheitsabfrage gelöscht werden. [Ablauf und Grenzen](Core_Benutzerloeschung.md).
+
 Ergänzt: [Benutzer exportieren](Core_Benutzerexport.md) direkt in der Benutzerverwaltung
 oder über CLI; einschließlich erneut importierbarer Rollen-/Statusdaten.
 

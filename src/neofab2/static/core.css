@@ -46,3 +46,7 @@ button:not(:disabled):active, .button:not([aria-disabled="true"]):active { filte
 button:disabled, .button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 
 .public-content { overflow-wrap: anywhere; }
+
+.button-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 24px 0 12px; }
+.button-bar form { margin: 0; max-width: 100%; }
+button.danger, .button.danger { background: var(--error-bg); border-color: var(--error-border); color: var(--error-text); }

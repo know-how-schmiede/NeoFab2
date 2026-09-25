@@ -1,13 +1,13 @@
 # NeoFab2
 
-Neu: [Benutzerexport](doku/Core_Benutzerexport.md) aus NeoFab2 über Benutzerverwaltung und CLI, mit erneut importierbarem Format. Version auf Benutzerwunsch 0.1.9; Schema bleibt `0012_user_import`, keine neue Migration.
+Neu in 0.1.20: einheitliche Buttonleiste für Anlegen, Export und Import sowie bestätigte Löschung deaktivierter Konten. [Bedienung, Schutzregeln und Migration](doku/Core_Benutzerloeschung.md). Neue explizite Schema-Revision: `0013_user_deletion`.
 
 Geplanter Ausbau (noch nicht umgesetzt): [Plugin-Pakete, eigene Ressourcenverzeichnisse,
 Mindestzugriff und Deinstallation](doku/Plugin_Pakete_und_Lifecycle.md).
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.9 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.20 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche

@@ -48,5 +48,8 @@
   {% endif %}
   <button type="submit">{{ icon("user-plus" if creating else "save") }} {{ _('Create user' if creating else 'Save changes') }}</button>
 </form>
+{% if not creating and can_delete|default(false) %}
+<p><a class="button danger" href="{{ url_for('accounts.user_delete', user_id=entry.id) }}">{{ icon('trash') }} {{ _('Delete user') }}</a></p>
+{% endif %}
 <p><a href="{{ url_for('accounts.user_list') }}">{{ _("Back to user list") }}</a></p>
 {% endblock %}

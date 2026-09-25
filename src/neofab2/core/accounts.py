@@ -150,7 +150,27 @@ def user_edit(user_id):
             safe_fields = set(DETAIL_FIELDS) | {"display_name", "email", "role", "locale"}
             submitted = {**entry, **{key: request.form[key] for key in safe_fields if key in request.form},
                          "active": "on" in request.form.getlist("active")}
-            return render_user_form(entry=submitted, creating=False, roles=ROLES, error=str(error)), 400
+            return render_user_form(entry=submitted, creating=False, roles=ROLES, can_delete=not entry["active"], error=str(error)), 400
         flash("User saved. Changes to credentials, role or account status end existing sessions.")
         return redirect(url_for("accounts.user_list"))
-    return render_user_form(entry=entry, creating=False, roles=ROLES)
+    return render_user_form(entry=entry, creating=False, roles=ROLES, can_delete=not entry["active"])
+
+
+@bp.route('/admin/users/<int:user_id>/delete', methods=['GET', 'POST'])
+@permission_required('core.users.manage')
+def user_delete(user_id):
+    from .user_deletion import deletion_preview, delete_disabled_user
+    from sqlalchemy.exc import SQLAlchemyError
+    try:
+        if request.method == 'POST':
+            if request.form.get('confirm') != 'yes':
+                raise ValueError('Please confirm that this account should be permanently deleted.')
+            delete_disabled_user(current_app, g.current_user['id'], user_id, request.form.get('confirmation'))
+            flash('User deleted.')
+            return redirect(url_for('accounts.user_list'))
+        preview = deletion_preview(current_app, g.current_user['id'], user_id)
+    except ValueError as failure:
+        return render_template('error.html', message=str(failure)), 400
+    except SQLAlchemyError:
+        return render_template('error.html', message='Account deletion failed. No data was deleted.'), 503
+    return render_template('user_delete.html', **preview)

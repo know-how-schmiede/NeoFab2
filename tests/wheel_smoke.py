@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory() as folder:
         token = re.search(r'name="csrf_token" value="([^"]+)"', login_page.text).group(1)
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
         from neofab2.version import __version__
-        assert __version__ == "0.1.9"
+        assert __version__ == "0.1.20"
         page = client.get("/plugins/core_test/")
         setting_token = re.search(r'name="csrf_token" value="([^"]+)"', page.text).group(1)
         assert client.post("/plugins/core_test/", data={"csrf_token": setting_token,
@@ -60,6 +60,17 @@ with tempfile.TemporaryDirectory() as folder:
         assert planned["counts"]["create"] == 1
         assert apply_import(app, import_data, planned["plan"], actor_id=1)["applied"]
         assert preview(app, import_data, actor_id=1)["counts"]["unchanged"] == 1
+        from neofab2.core.users import users
+        from sqlalchemy import select
+        with app.extensions["neofab2_db"].connect() as connection:
+            imported_id = connection.execute(select(users.c.id).where(users.c.email == "import-wheel@example.org")).scalar_one()
+        deletion_page = client.get(f"/admin/users/{imported_id}/delete")
+        confirmation = re.search(r'name="confirmation" value="([^"]+)"', deletion_page.text).group(1)
+        deletion_token = re.search(r'name="csrf_token" value="([^"]+)"', deletion_page.text).group(1)
+        assert client.post(f"/admin/users/{imported_id}/delete", data={"csrf_token": deletion_token,
+            "confirmation": confirmation, "confirm": "yes"}).status_code == 302
+        assert preview(app, import_data, actor_id=1)["rows"][0]["reason"] == "target_deleted"
+
 
         assert client.get("/admin/settings/mail").status_code == 200
         assert client.get("/admin/audit").status_code == 200

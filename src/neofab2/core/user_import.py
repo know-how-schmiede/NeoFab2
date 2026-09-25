@@ -124,7 +124,7 @@ def _plan(app, conn, payload):
             continue
         source_emails.add(value['email'])
         if link and link['user_id'] not in current:
-            entry['reason'] = 'missing_target'
+            entry['reason'] = 'target_deleted' if link['user_id'] is None else 'missing_target'
             continue
         old = current.get(link['user_id']) if link else None
         entry['user_id'] = old['id'] if old else None
@@ -184,7 +184,8 @@ def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False):
                 value['password_hash'] = hash_password(secrets.token_urlsafe(48))
             uid = entry['user_id']
             if uid is None:
-                uid = conn.execute(users.insert().values(**value)).inserted_primary_key[0]
+                from .users import reserve_user_id
+                uid = conn.execute(users.insert().values(id=reserve_user_id(conn), **value)).inserted_primary_key[0]
                 entry['user_id'] = uid
                 conn.execute(links.insert().values(source=payload['source'], source_id=entry['source_id'],
                     user_id=uid, source_digest=source_digest, target_digest=_target_digest(value)))
