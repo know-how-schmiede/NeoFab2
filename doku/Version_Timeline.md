@@ -1,5 +1,88 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.17 – 2026-09-25
+
+Bereich: Basisumfang Core-Paket 5 (S10/N01, U06/S09, U05/N06 als
+Dokumentationsvertrag, S12/X05–X07). Version auf Benutzerauftrag;
+Plugin-API bleibt 1 und technische Testplugins bleiben 0.1.0.
+
+### Änderungen
+
+- Deklarierte nicht geheime Plugin-Einstellungen mit strikten Namen, Typen und
+  Grenzen, eigenen Namensräumen und explizitem Schreibrecht. Aktueller Kontostatus,
+  Einstieg und gespeicherte Plugin-Pause werden serverseitig geprüft.
+- Speicherung und Audit ohne Werte atomar; optional gemeinsame Transaktion mit
+  dem Aufrufer. Savepoint und explizite SQLite-Transaktion verhindern Teilstände
+  bei Auditfehlern sowie vorzeitigen Commit bei `engine.begin()`.
+- Core-Testplugin um persistente Testeinstellung mit DE/FR-Beschriftung ergänzt.
+- Dateiuploads können eine gemeinsame Transaktion verwenden. Dateioperationen
+  beachten gespeicherte Deaktivierung und Aktivierungsstatus sofort; Dateidaten
+  bleiben erhalten. Bestehende Pfad-, Besitzer- und Größenregeln gelten weiter.
+- Benutzerlöschung und jährliche Bereinigung abgegrenzt: Vorschau, Referenzen,
+  Bestätigung, Aufbewahrung, Wiederaufnahme und Restore als Vertrag dokumentiert.
+  Keine Löschfunktion oder Fachplugins umgesetzt.
+- Deutsche Anleitung, Plugin-Vertrag, Funktionsmatrix und Core-Plan aktualisiert.
+  Der Basisumfang von Paket 5 ist umgesetzt; P1/P2 bleiben ausdrücklich nur
+  geplant und damit das erweiterte Gesamtpaket 5 offen. Paket 6 ist der nächste
+  unabhängige Core-Ausbau. Keine vollständige Core-Abnahme.
+
+### Betrieb und Migration
+
+Keine neue Migration; Schema bleibt `0011_audit_status`. Plugin-Einstellungen
+verwenden die vorhandene Tabelle `core_settings` unter `plugin.<kennung>.*`.
+Normalen Updateablauf verwenden. Alle Webprozesse anschließend neu starten,
+damit Registrierung und Navigation zur gespeicherten Auswahl passen.
+Datei-/Einstellungsdienste sperren deaktivierte Plugins schon vor dem Neustart.
+Als **root**, ausgeführt durch **neofab2**, Standardpfade:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: **0.1.17**, Schema bereit. Testplugins bleiben standardmäßig aus.
+Bedienung, Standards und Fehlerhilfe: [Datei- und Plugin-Dienstverträge](Core_Plugin_Dienstvertraege.md).
+Vorhandene Dateien werden nicht gelöscht. Keine Produktivmigration ausgeführt.
+
+### Prüfungen
+
+- **306 Gesamttests bestanden**, Python 3.13; davon 24 neue Vertragstests.
+- HTTP/CSRF/Rollen, Escaping, Typen/Grenzen, Namensraumtrennung, fehlende Rechte,
+  deaktivierte/wartende Konten, beschädigte Werte, sofortige Pause über zwei
+  App-Instanzen und Datenerhalt bei Wiederaktivierung geprüft.
+- Gemeinsamer Commit und Rollback mit Datei/Einstellung/Audit, fremde Engine,
+  fehlende Transaktion, abgefangener Auditfehler und SQLite-Savepoint geprüft.
+- Neustart und synthetische SQLite-Sicherung/Wiederherstellung geprüft.
+- Wheel/Quelldistribution 0.1.17 gebaut; separat installiertes Wheel aus neutralem
+  Verzeichnis einschließlich Speichern der Testeinstellung erfolgreich geprüft.
+- CLI-Version, relative Dokumentationslinks und `git diff --check` bestanden.
+
+Grenzen: keine interaktive visuelle Browserabnahme oder echte Debian-/LXC-Abnahme.
+Keine P1–P5-Umsetzung, keine Produktivdaten, kein Zugriff auf das alte NeoFab.
+Benutzerlöschung/Bereinigung nur definiert. Kein Commit oder Push.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: NeoFab2 0.1.17 – Datei- und Plugin-Dienstverträge
+```
+
+Commit-Beschreibung:
+
+```text
+Core-Paket 5 im Basisumfang um deklarierte Plugin-Einstellungen ergänzen.
+Namensräume, Typen, Schreibrechte, frischen Kontostatus und Plugin-Pause prüfen.
+Einstellungen samt Audit und Dateiuploads in gemeinsamen Transaktionen unterstützen.
+SQLite-Savepoint-Rollback auch bei engine.begin() absichern.
+Testeinstellung im Core-Testplugin und Lösch-/Bereinigungsvertrag dokumentieren.
+306 Tests, Paketbau, installiertes Wheel, CLI-Version und Dokumentationslinks prüfen.
+Keine neue Migration; P1/P2 und vollständige Core-Abnahme bleiben offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.16 – 2026-09-23
 
 Bereich: Core-Paket 4 (S01–S04/S08, U06/U07, N01, S09/S12, X05–X07).

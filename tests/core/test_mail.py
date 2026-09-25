@@ -23,7 +23,7 @@ from neofab2.services import mail
 
 PATH = "/admin/settings/mail"
 CONFIG = {**mail.DEFAULTS, "enabled": True, "host": "smtp.example.org", "sender": "sender@example.org"}
-TEST_PLUGIN = replace(plugin, permissions=(Permission("core_test.mail", ("staff",)),),
+TEST_PLUGIN = replace(plugin, permissions=(*plugin.permissions, Permission("core_test.mail", ("staff",)),),
                       roles=("user", "staff", "admin"), mail_permission="core_test.mail")
 
 

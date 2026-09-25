@@ -4,9 +4,9 @@ from io import BytesIO
 from flask import send_file
 
 
-def store_file(plugin_id, upload):
+def store_file(plugin_id, upload, *, connection=None):
     from neofab2.services.files import store
-    return store(plugin_id, upload)
+    return store(plugin_id, upload, connection=connection)
 
 
 def list_files(plugin_id):

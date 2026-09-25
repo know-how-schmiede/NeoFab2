@@ -1,13 +1,13 @@
 # NeoFab2
 
-Neu in 0.1.16: [Core-Oberfläche und Einstellungen](doku/Core_Oberflaeche_und_Einstellungen.md) mit öffentlichen Seiten, Zeitzone und Einstellungsübertragung. Keine neue Migration.
+Neu in 0.1.17: [Datei- und Plugin-Dienstverträge](doku/Core_Plugin_Dienstvertraege.md) mit deklarierten Plugin-Einstellungen, gemeinsamen Dateitransaktionen und dokumentierten Löschgrenzen. Keine neue Migration.
 
 Geplanter Ausbau (noch nicht umgesetzt): [Plugin-Pakete, eigene Ressourcenverzeichnisse,
 Mindestzugriff und Deinstallation](doku/Plugin_Pakete_und_Lifecycle.md).
 
 ![NeoFab2](src/neofab2/static/branding/neofab2-logo.png)
 
-**Version 0.1.16 — Startfähiges Core-Grundsystem.** Application Factory,
+**Version 0.1.17 — Startfähiges Core-Grundsystem.** Application Factory,
 Konfiguration, explizite Migration, Startseite und Betriebsprüfung sind vorhanden.
 Der aktuelle Arbeitsstand ergänzt Anmeldung, Benutzerverwaltung, Rollen,
 Profil, widerrufbare Sitzungen, lokalen Admin-Passwort-Reset, öffentliche

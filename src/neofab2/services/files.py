@@ -20,17 +20,20 @@ files = Table("core_files", MetaData(),
 
 def context(connection, plugin_id):
     registry = current_app.extensions["neofab2_plugins"]
-    if plugin_id not in registry.enabled or registry.available[plugin_id].files is None:
+    from neofab2.services.mail import active_modules
+    if (plugin_id not in registry.available
+            or plugin_id not in active_modules(current_app, connection)
+            or registry.available[plugin_id].files is None):
         raise NotFound()
     user = get_user(connection, g.current_user["id"]) if g.get("current_user") else None
     plugin = registry.available[plugin_id]
-    if not registry.allows(user, plugin.permission):
+    if not user or user["activation_pending"] or not registry.allows(user, plugin.permission):
         raise PermissionError()
     return user, plugin.files, registry
 
 
-def store(plugin_id, upload):
-    with write_transaction(current_app) as connection:
+def store(plugin_id, upload, *, connection=None):
+    def submit(connection):
         user, policy, registry = context(connection, plugin_id)
         if not registry.allows(user, policy.upload):
             raise PermissionError()
@@ -50,6 +53,13 @@ def store(plugin_id, upload):
         connection.execute(files.insert().values(id=file_id, plugin_id=plugin_id,
             owner_id=user["id"], filename=name, size=len(content), created_at=int(time.time()), content=content))
         return file_id
+
+    if connection is not None:
+        from neofab2.services.plugin_settings import validate_connection
+        validate_connection(connection)
+        return submit(connection)
+    with write_transaction(current_app) as connection:
+        return submit(connection)
 
 
 def readable(plugin_id, file_id=None):

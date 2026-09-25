@@ -76,8 +76,8 @@ def test_backend_selection_applies_on_restart_and_config_is_fallback(app, config
         assert "successfully" in restarted.extensions["neofab2_plugins"].run_task("management_test", "self_check")
         assert change(new_client, "management_test", "disable").status_code == 302
         assert change(new_client, "core_test", "disable").status_code == 302
-        # Laufende Prozesse behalten ihre Registrierung, bis sie neu starten.
-        assert new_client.get("/plugins/management_test/").status_code == 200
+        # Registrierung bleibt geladen; Dateidienst sperrt ab 0.1.17 sofort.
+        assert new_client.get("/plugins/management_test/").status_code == 404
         assert "Restart required" in new_client.get("/admin/plugins").text
         disabled = create_app({**config, "ENABLED_PLUGINS": ["core_test"]})
         try:

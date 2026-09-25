@@ -21,7 +21,7 @@ from neofab2.plugin_api import Permission
 from neofab2.plugin_api.audit import record_action
 from neofab2.plugins.core_test import plugin
 
-TEST_PLUGIN = replace(plugin, roles=("staff", "admin"), permissions=(Permission("core_test.action", ("staff",)),))
+TEST_PLUGIN = replace(plugin, roles=("staff", "admin"), permissions=(*plugin.permissions, Permission("core_test.action", ("staff",)),))
 PASSWORD = "Synthetic123!"
 
 

@@ -1,6 +1,6 @@
-# Nächste Schritte für das Core-System – Stand 0.1.16
+# Nächste Schritte für das Core-System – Stand 0.1.17
 
-Stand: 23.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
+Stand: 25.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn
 Abnahmekriterien in der [Projektbeschreibung](NeoFab2_Projektbeschreibung.md)
 und der [Umsetzungsnachweis](NeoFab2_Funktionsmatrix.md).
@@ -8,7 +8,8 @@ und der [Umsetzungsnachweis](NeoFab2_Funktionsmatrix.md).
 Zusätzlich auf Benutzerauftrag in 0.1.11: [CheckDesign 0.1.0](CheckDesign.md)
 als technische Designgalerie für Mitarbeiter/Admins. Die Galerie unterstützt die
 spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 wurde in 0.1.12
-umgesetzt; Paket 2 in 0.1.13, Paket 3 in 0.1.15. Paket 4 wurde in 0.1.16 umgesetzt; Paket 5 ist der nächste offene Schritt.
+umgesetzt; Paket 2 in 0.1.13, Paket 3 in 0.1.15. Paket 4 wurde in 0.1.16 umgesetzt.
+Der Basisumfang von Paket 5 ist in 0.1.17 umgesetzt; P1/P2 bleiben offen.
 
 Planungsnachtrag: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
 beschreibt eigene Plugin-Verzeichnisse, Mindestzugriff, ZIP-Bereitstellung und
@@ -23,7 +24,7 @@ P1–P5 werden unten nach Abhängigkeiten eingeordnet, ohne Fachplugins freizuge
 | 2 – umgesetzt in 0.1.13 | Registrierung, E-Mail-Aktivierung und Self-Service-Passwort-Reset (U02–U04, S06) | Abschaltbare Registrierung/Reset, genaue Domain-Regeln, befristete Einmalcodes, Kontostatus, Sitzungswiderruf und Versand über vorhandenen Worker. [Bedienung, Prüfungen und Grenzen](Core_Registrierung_und_Reset.md). Produktionsregeln werden vor ausdrücklicher Freischaltung durch den Admin festgelegt; echte SMTP-/Browser-/LXC-Abnahme bleibt offen. |
 | 3 – umgesetzt in 0.1.15 | Audit-Logs und Betriebsstatus (S09, S12, N01) | Admin-Rechte, feste Ereignisse ohne Geheimnisse, transaktionales Audit, Aufbewahrung mit Vorschau/Bestätigung, Worker-Beobachtung und Plugin-Vertrag geprüft. [Bedienung und Grenzen](Core_Audit_und_Betriebsstatus.md). Kein vollständiges HTTP-Protokoll oder manipulationssicheres Archiv; echte Betriebs-/Browser-Abnahme offen. |
 | 4 – umgesetzt in 0.1.16 | Core-Oberfläche und Einstellungen vervollständigen (S01–S04, S08, U06/U07) | Öffentliche Seiten, sichere Markdown-Teilmenge, IANA-Zeitzonen/Sommerzeit, strikt begrenzter atomarer Einstellungsimport/-export, Rollenübersicht und bestehende Rollenzuordnung geprüft. DE/FR-Kataloge und isolierter Plugin-Übersetzungsvertrag ergänzt. [Bedienung und Abgrenzungen](Core_Oberflaeche_und_Einstellungen.md); ältere Detailtexte mit englischem Fallback und visuelle Abnahme offen. |
-| 5 | Technischen Datei- und Plugin-Vertrag vervollständigen (S10, N01, U05, N06 als Vertrag) | Modulzuordnung, Pfad-/Downloadrechte, Größenlimits, Plugin-Einstellungen und Dienstverträge ausschließlich mit Testplugins prüfen. Benutzerlöschung und spätere Plugin-Auswirkungen zuerst definieren. Noch keine jährliche Löschung produktiver Daten. |
+| 5 – Basisumfang umgesetzt in 0.1.17 | Technischen Datei- und Plugin-Vertrag vervollständigen (S10, N01, U05, N06 als Vertrag) | Modulzuordnung, Pfad-/Downloadrechte und Limits mit Testplugins geprüft; deklarierte Plugin-Einstellungen, Audit, gemeinsame Dateitransaktion und sofortige Dienstpause ergänzt. U05/N06 als Vertrag definiert, keine Löschung implementiert. [Nachweise und Grenzen](Core_Plugin_Dienstvertraege.md). Gesamtpaket bleibt wegen geplanter P1/P2 offen. |
 | 6 | Benutzerimport mit Vorschau und Ergebnisbericht (U09, N04, U06) | Nur synthetische Daten: wiederholbarer Import ohne Duplikate, Rollen-/Statuszuordnung, E-Mail-Kollisionen und Hash-Kompatibilität. Altrollen und gelöschte Konten vor Umsetzung verbindlich behandeln. Keine Übernahme alter Tokens/Sitzungen. |
 | 7 | Isolierte Betriebsprüfung und vollständige Core-Abnahme (X01–X07, alle Core-IDs) | Saubere Debian-/LXC-Installation, systemd, Update vom vorherigen Schema, Worker, Notfall-Reset sowie vollständige Sicherung/Wiederherstellung nachweisen. Browserprüfung in Hell/Dunkel und schmaler Ansicht; direkte HTTP-Rechteprüfungen. Alle zehn Abnahmekriterien einzeln mit Beleg abschließen. |
 
@@ -43,9 +44,9 @@ P3 ist eine technische Voraussetzung für P4/P5, keine automatische Freigabe
 zur Paketinstallation oder Erweiterung der zehn ursprünglichen Abnahmekriterien.
 
 Paket 0 wurde in 0.1.10, Paket 1 in 0.1.12 und Paket 2 in 0.1.13 umgesetzt.
-Paket 3 wurde in 0.1.15 umgesetzt. Paket 4 wurde in 0.1.16 umgesetzt. Als nächstes folgt Paket 5 mit Datei- und Plugin-Verträgen; P1–P5 bleiben bis zu ihrem Umsetzungsauftrag Planung.
+Paket 3 wurde in 0.1.15 umgesetzt. Paket 4 wurde in 0.1.16 umgesetzt. Paket 5 ist im Basisumfang umgesetzt; P1–P5 bleiben bis zu ihrem ausdrücklichen Umsetzungsauftrag Planung. Vor Abschluss des erweiterten Pakets 5 ist die Umsetzung von P1/P2 zu beauftragen. Paket 6 (Benutzerimport) bleibt der nächste unabhängige Core-Ausbau.
 Registrierungs- und Domain-Regeln sind vor einer betrieblichen Freischaltung
-festzulegen; beide Kontoverfahren bleiben standardmäßig aus. Paket 5 ergänzt die weitergehenden
+festzulegen; beide Kontoverfahren bleiben standardmäßig aus. Paket 5 ergänzt im umgesetzten Basisumfang die weitergehenden
 Dienstverträge; die übrigen Core-Abnahmekriterien werden nicht übersprungen. Es wird dabei kein neues Fachmodul
 eingeführt. Dienste gehören nach `src/neofab2/services/`, Core-Administration
 nach `src/neofab2/core/` und öffentliche Verträge nach `src/neofab2/plugin_api/`.

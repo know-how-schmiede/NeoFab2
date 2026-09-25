@@ -22,6 +22,13 @@ class FilePolicy:
 
 
 @dataclass(frozen=True)
+class Setting:
+    """Non-secret scalar setting; type is inferred from the immutable default."""
+    name: str
+    default: str | int | bool
+
+
+@dataclass(frozen=True)
 class Dependency:
     plugin_id: str
     minimum_version: str
@@ -43,6 +50,8 @@ class Plugin:
     files: FilePolicy | None = None
     mail_permission: str | None = None
     translations: dict[str, dict[str, str]] = field(default_factory=dict)
+    settings: tuple[Setting, ...] = ()
+    settings_permission: str | None = None
 
 
 def has_permission(user, permission):

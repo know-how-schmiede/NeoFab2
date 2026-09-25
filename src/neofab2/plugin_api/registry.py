@@ -37,6 +37,8 @@ class Registry:
                         or not set(permission.roles) <= {"user", "staff", "admin"}):
                     raise ValueError(f"Invalid plugin permission contract: {key}")
                 names.add(permission.name)
+            from neofab2.services.plugin_settings import validate_contract
+            validate_contract(plugin, names)
             policy = plugin.files
             if plugin.mail_permission is not None and plugin.mail_permission not in {p.name for p in plugin.permissions}:
                 raise ValueError(f"Invalid plugin mail permission: {key}")

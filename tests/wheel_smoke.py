@@ -30,6 +30,13 @@ with tempfile.TemporaryDirectory() as folder:
         login_page = client.get("/login")
         token = re.search(r'name="csrf_token" value="([^"]+)"', login_page.text).group(1)
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
+        from neofab2.version import __version__
+        assert __version__ == "0.1.17"
+        page = client.get("/plugins/core_test/")
+        setting_token = re.search(r'name="csrf_token" value="([^"]+)"', page.text).group(1)
+        assert client.post("/plugins/core_test/", data={"csrf_token": setting_token,
+            "message": "Wheel synthetic setting"}).status_code == 302
+        assert "Wheel synthetic setting" in client.get("/plugins/core_test/").text
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
         assert client.get("/admin/settings/mail").status_code == 200

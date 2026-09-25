@@ -5,4 +5,10 @@
 <p>{{ _("The plugin is working. Your account has the required access permission.") }}</p>
 <p>{{ _("This test page checks the core extension. It does not store business data.") }}</p>
 <p>{{ plugin_translate("core_test", "Translation supplied by this plugin.") }}</p>
+<form method="post" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="message">{{ plugin_translate('core_test', 'Test setting') }}</label>
+  <input id="message" name="message" maxlength="2000" value="{{ values.message }}">
+  <button type="submit">{{ icon('save') }} {{ plugin_translate('core_test', 'Save test setting') }}</button>
+</form>
 {% endblock %}

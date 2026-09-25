@@ -1,5 +1,8 @@
 # Plugin-Rechte, Testdateien und Administration – 0.1.10
 
+Ergänzung ab 0.1.17: [Dienstverträge](Core_Plugin_Dienstvertraege.md) für gemeinsame
+Dateitransaktionen, sofortige Dienstpause, Plugin-Einstellungen und Löschgrenzen.
+
 Paket 0 des [Core-Arbeitsplans](Core_Naechste_Schritte.md), IDs N01, U06, S10,
 S01/S12 und X05–X07. Keine Fachfunktionen und keine vollständige Core-Abnahme.
 
