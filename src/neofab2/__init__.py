@@ -37,6 +37,8 @@ def create_app(test_config=None, *, plugins=None, use_config_plugins=False):
     app.register_blueprint(bp)
     app.register_blueprint(operations_bp)
     app.register_blueprint(accounts_bp)
+    from .core.import_routes import bp as user_import_bp
+    app.register_blueprint(user_import_bp)
     app.register_blueprint(user_options_bp)
     app.register_blueprint(mail_bp)
     register_account_flows(app)

@@ -185,3 +185,13 @@ benötigt eine neue Installation statt Wiederverwendung des venv-Archivs.
 SQLite-Sicherung und Wiederherstellung sind mit synthetischen Daten geprüft.
 Die vollständige Betriebssystem-/Service-Wiederherstellung dieser Anleitung
 muss noch in einem isolierten Debian-LXC erprobt werden.
+
+
+## Benutzerimport ab 0.1.18
+
+Explizite Migration `0012_user_import` ergänzt die stabile Zuordnung zur
+Altinstallation. Vorschau schreibt nichts; Import ausschließlich nach erneuter
+Prüfung und Bestätigung, mit Atomarität und Audit. Beim Backup/Restore müssen
+Konten und `core_user_imports` zusammen erhalten bleiben. Quelle ist eine
+abgeschlossene SQLite-Kopie; keine direkte Produktivquelle verwenden.
+[Komplette Anleitung, Format, Konflikte und Rückfall](Core_Benutzerimport.md).

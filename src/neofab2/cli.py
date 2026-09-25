@@ -238,5 +238,56 @@ def audit_prune(days, apply):
         app.extensions["neofab2_db"].dispose()
 
 
+
+@main.command("prepare-user-import")
+@click.option("--database", required=True, type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--source-id", required=True, help="Stable lowercase identifier of the legacy installation.")
+@click.option("--output", required=True, type=click.Path(path_type=Path))
+def prepare_user_import(database, source_id, output):
+    """Read a legacy SQLite snapshot and create a protected account export."""
+    from .services.legacy_users import export_snapshot
+    from .core.user_import import ImportFailure
+    try:
+        raw = export_snapshot(database, source_id)
+        fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(raw)
+    except (ImportFailure, OSError):
+        raise click.ClickException("Export failed. Check snapshot schema and output path; existing files are never overwritten.") from None
+    click.echo("Protected user export created. Keep it private; it contains password hashes.")
+
+
+@main.command("users-import")
+@click.argument("source_file", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--apply", is_flag=True, help="Apply a reviewed preview after explicit confirmation.")
+@click.option("--expected-plan", help="Plan value from the previous preview; required with --apply.")
+def users_import(source_file, apply, expected_plan):
+    """Preview accounts by default; operator access, no mail or source writes."""
+    from .core.user_import import MAX_BYTES, ImportFailure, preview, apply_import
+    from sqlalchemy.exc import SQLAlchemyError
+    app = ready_app()
+    try:
+        with source_file.open('rb') as stream:
+            raw = stream.read(MAX_BYTES + 1)
+        report = preview(app, raw, operator=True)
+        if apply:
+            if not expected_plan or expected_plan != report['plan']:
+                raise ImportFailure("Import preview is stale or missing. Create a new preview.")
+            if report['counts']['conflict']:
+                raise ImportFailure("Import has conflicts. No accounts were changed.")
+            click.echo(json.dumps(report, ensure_ascii=True, indent=2))
+            click.confirm("Apply this user import and end sessions of updated accounts?", abort=True)
+            report = apply_import(app, raw, expected_plan, operator=True)
+        click.echo(json.dumps(report, ensure_ascii=True, indent=2))
+        if report['counts']['conflict']:
+            raise click.ClickException("Preview contains conflicts. No accounts were changed.")
+    except ImportFailure as error:
+        raise click.ClickException(str(error)) from None
+    except (OSError, SQLAlchemyError):
+        raise click.ClickException("Import failed. Check file access and database readiness; no accounts were changed.") from None
+    finally:
+        app.extensions["neofab2_db"].dispose()
+
+
 if __name__ == "__main__":
     main()

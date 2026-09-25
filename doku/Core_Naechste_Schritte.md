@@ -1,4 +1,4 @@
-# Nächste Schritte für das Core-System – Stand 0.1.17
+# Nächste Schritte für das Core-System – Stand 0.1.18
 
 Stand: 25.09.2026. Dies ist ein priorisierter Arbeitsplan, keine Fertigmeldung
 und kein Auftrag für produktive Fachplugins. Grundlage sind die zehn
@@ -10,6 +10,7 @@ als technische Designgalerie für Mitarbeiter/Admins. Die Galerie unterstützt d
 spätere visuelle Abnahme; sie ersetzt diese nicht. Paket 1 wurde in 0.1.12
 umgesetzt; Paket 2 in 0.1.13, Paket 3 in 0.1.15. Paket 4 wurde in 0.1.16 umgesetzt.
 Der Basisumfang von Paket 5 ist in 0.1.17 umgesetzt; P1/P2 bleiben offen.
+Paket 6 (Benutzerimport) ist in 0.1.18 umgesetzt und synthetisch geprüft.
 
 Planungsnachtrag: [Plugin-Pakete und Lifecycle](Plugin_Pakete_und_Lifecycle.md)
 beschreibt eigene Plugin-Verzeichnisse, Mindestzugriff, ZIP-Bereitstellung und
@@ -25,7 +26,7 @@ P1–P5 werden unten nach Abhängigkeiten eingeordnet, ohne Fachplugins freizuge
 | 3 – umgesetzt in 0.1.15 | Audit-Logs und Betriebsstatus (S09, S12, N01) | Admin-Rechte, feste Ereignisse ohne Geheimnisse, transaktionales Audit, Aufbewahrung mit Vorschau/Bestätigung, Worker-Beobachtung und Plugin-Vertrag geprüft. [Bedienung und Grenzen](Core_Audit_und_Betriebsstatus.md). Kein vollständiges HTTP-Protokoll oder manipulationssicheres Archiv; echte Betriebs-/Browser-Abnahme offen. |
 | 4 – umgesetzt in 0.1.16 | Core-Oberfläche und Einstellungen vervollständigen (S01–S04, S08, U06/U07) | Öffentliche Seiten, sichere Markdown-Teilmenge, IANA-Zeitzonen/Sommerzeit, strikt begrenzter atomarer Einstellungsimport/-export, Rollenübersicht und bestehende Rollenzuordnung geprüft. DE/FR-Kataloge und isolierter Plugin-Übersetzungsvertrag ergänzt. [Bedienung und Abgrenzungen](Core_Oberflaeche_und_Einstellungen.md); ältere Detailtexte mit englischem Fallback und visuelle Abnahme offen. |
 | 5 – Basisumfang umgesetzt in 0.1.17 | Technischen Datei- und Plugin-Vertrag vervollständigen (S10, N01, U05, N06 als Vertrag) | Modulzuordnung, Pfad-/Downloadrechte und Limits mit Testplugins geprüft; deklarierte Plugin-Einstellungen, Audit, gemeinsame Dateitransaktion und sofortige Dienstpause ergänzt. U05/N06 als Vertrag definiert, keine Löschung implementiert. [Nachweise und Grenzen](Core_Plugin_Dienstvertraege.md). Gesamtpaket bleibt wegen geplanter P1/P2 offen. |
-| 6 | Benutzerimport mit Vorschau und Ergebnisbericht (U09, N04, U06) | Nur synthetische Daten: wiederholbarer Import ohne Duplikate, Rollen-/Statuszuordnung, E-Mail-Kollisionen und Hash-Kompatibilität. Altrollen und gelöschte Konten vor Umsetzung verbindlich behandeln. Keine Übernahme alter Tokens/Sitzungen. |
+| 6 – umgesetzt in 0.1.18 | Benutzerimport mit Vorschau und Ergebnisbericht (U09, N04, U06) | Synthetisch geprüft: lesender SQLite-Export mit Alt-IDs, Admin-/CLI-Vorschau, Bestätigung und Ergebnisbericht; atomarer Import, Wiederholung, Konflikte, Rollen-/Status-/Hashregeln, Sitzungswiderruf und Restore. [Vertrag und Betrieb](Core_Benutzerimport.md). Kein Produktivimport; keine Übernahme alter Tokens/Sitzungen. |
 | 7 | Isolierte Betriebsprüfung und vollständige Core-Abnahme (X01–X07, alle Core-IDs) | Saubere Debian-/LXC-Installation, systemd, Update vom vorherigen Schema, Worker, Notfall-Reset sowie vollständige Sicherung/Wiederherstellung nachweisen. Browserprüfung in Hell/Dunkel und schmaler Ansicht; direkte HTTP-Rechteprüfungen. Alle zehn Abnahmekriterien einzeln mit Beleg abschließen. |
 
 ### Zusätzlich eingeplante Plugin-Pakete – nur Planung
@@ -44,7 +45,7 @@ P3 ist eine technische Voraussetzung für P4/P5, keine automatische Freigabe
 zur Paketinstallation oder Erweiterung der zehn ursprünglichen Abnahmekriterien.
 
 Paket 0 wurde in 0.1.10, Paket 1 in 0.1.12 und Paket 2 in 0.1.13 umgesetzt.
-Paket 3 wurde in 0.1.15 umgesetzt. Paket 4 wurde in 0.1.16 umgesetzt. Paket 5 ist im Basisumfang umgesetzt; P1–P5 bleiben bis zu ihrem ausdrücklichen Umsetzungsauftrag Planung. Vor Abschluss des erweiterten Pakets 5 ist die Umsetzung von P1/P2 zu beauftragen. Paket 6 (Benutzerimport) bleibt der nächste unabhängige Core-Ausbau.
+Paket 3 wurde in 0.1.15 umgesetzt. Paket 4 wurde in 0.1.16 umgesetzt. Paket 5 ist im Basisumfang umgesetzt; P1–P5 bleiben bis zu ihrem ausdrücklichen Umsetzungsauftrag Planung. Vor Abschluss des erweiterten Pakets 5 ist die Umsetzung von P1/P2 zu beauftragen. Paket 6 (Benutzerimport) ist in 0.1.18 umgesetzt. Nächster unabhängiger Schritt ist Paket 7: isolierte Betriebsprüfung und vollständige Core-Abnahme. P1/P2 bleiben zusätzlich offen; keine Abnahme allein aus den automatisierten Tests ableiten.
 Registrierungs- und Domain-Regeln sind vor einer betrieblichen Freischaltung
 festzulegen; beide Kontoverfahren bleiben standardmäßig aus. Paket 5 ergänzt im umgesetzten Basisumfang die weitergehenden
 Dienstverträge; die übrigen Core-Abnahmekriterien werden nicht übersprungen. Es wird dabei kein neues Fachmodul

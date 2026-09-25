@@ -1,5 +1,100 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.18 – 2026-09-25
+
+Bereich: Core-Paket 6 (U09/N04/U06, U01/U04/U05/U07/U08, S09/S12, X05–X07).
+Version auf Benutzerauftrag; Plugin-API bleibt 1, technische Testplugins 0.1.0.
+
+### Änderungen
+
+- Geschützter Benutzerexport aus einer eigenständigen NeoFab-SQLite-Kopie mit
+  stabilen Alt-IDs, Installationskennung, Rollen/Status, Profil, Sprache und Theme.
+  Quelle ausschließlich lesend; keine NeoFab-Codeimporte oder Tokenübernahme.
+- Benutzerimport mit Admin-Oberfläche und lokalem CLI: schreibfreie Vorschau,
+  Ergebnisbericht, explizite Bestätigung und atomare Speicherung mit Audit.
+  HMAC-gebundener Plan verhindert Import nach unbemerkten Quell-/Zieländerungen.
+- Feste Regeln: `worker` → `staff`, unbekannte Rollen und E-Mail-Kollisionen
+  blockieren; gelöschte neue Altbenutzer überspringen. Keine Kontozusammenführung
+  anhand der E-Mail. Inaktive Konten bleiben inaktiv.
+- Begrenzte Werkzeug-scrypt-/PBKDF2-Kompatibilität; unbrauchbare Hashes ergeben
+  gesperrte Konten mit ausstehender Aktivierung und unbekanntem Zufallspasswort.
+  Passwort/Freischaltung anschließend administrativ entscheiden; kein Versand.
+- Wiederholungen erzeugen keine Duplikate. Geänderte Quelle aktualisiert nur
+  unveränderte zugeordnete Zielkonten; lokale Änderungen bleiben geschützt.
+  Aktualisierte Konten verlieren Sitzungen und offene Kontocodes.
+- Deutsche Betriebsanleitung, EN/DE/FR-Oberfläche, Funktionsmatrix und Core-Plan
+  ergänzt. Paket 7 ist der nächste unabhängige Schritt; P1/P2 bleiben offen.
+
+### Betrieb und Migration
+
+**Neue explizite Migration `0012_user_import`**: `core_user_imports` speichert
+Quellkennung/Alt-ID, eindeutige Ziel-ID und Fingerabdrücke. Bestehende Konten
+bleiben erhalten, Schemaänderungen erfolgen nicht beim Webstart.
+Normalen Updateweg mit Sicherung, Migration und Neustart verwenden.
+Als **root**, ausgeführt durch **neofab2**, Standardpfade:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: **0.1.18**, Datenbank/Schema bereit. Der bisherige NeoFab-Webexport
+enthält keine stabilen IDs/Theme und ist kein direktes Importformat.
+[Vorbereitung, Vorschau, Bestätigung, Fehlerhilfe und Rückfall](Core_Benutzerimport.md).
+Exporte enthalten Passwort-Hashes; Werkzeug schreibt neue Dateien mit 0600.
+Berichte enthalten keine Hashes, können aber personenbezogene E-Mails enthalten.
+
+Backup und Restore müssen Konten und Importzuordnungen gemeinsam enthalten.
+Für einen Rückfall vor Migration passende vollständige Sicherung und Codeversion
+verwenden. Kein Produktivimport oder Produktivschema durch Codex ausgeführt.
+
+### Prüfungen
+
+- **365 Gesamttests bestanden**, Python 3.13; davon **59 neue Importtests**.
+- Rollen, Aktivstatus, gelöschte Konten, Profiloptionen, E-Mail-Kollisionen,
+  unbekannte Felder/Rollen, Format-/Größenlimits und Hash-Arbeitsgrenzen geprüft.
+- Echte Anmeldung mit synthetischen scrypt- und PBKDF2-Hashes; Sperre bei ungültigem
+  Hash, Letzter-Admin-Schutz sowie Sitzungs-/Kontocodewiderruf geprüft.
+- Schreibfreie Vorschau, Wiederholung/Neustart, lokale Zieländerungen, veraltete
+  oder ungültige Plan-Werte, parallele Bestätigung und vollständiger Rollback
+  bei Audit-/Datenbankfehler geprüft.
+- Admin-/Direktzugriff, CSRF, CLI-Abbruch/Bestätigung, geschützter Export ohne
+  Überschreiben und Geheimnisschutz in HTML/Session/CLI/Fehlerprotokoll geprüft.
+- Upgrade von 0011, Wiederholung und Datenerhalt, Readiness, Start ohne
+  Schemaanlage und SQLite-Sicherung/Restore einschließlich Importzuordnung geprüft.
+- Wheel und Quelldistribution gebaut; separat installiertes Wheel aus neutralem
+  Verzeichnis einschließlich Importvorschau, Ausführung und Wiederholung geprüft.
+- CLI meldet 0.1.18; relative Dokumentationslinks und `git diff --check` bestanden.
+
+Grenzen: ausschließlich synthetische Daten, keine produktive Benutzerübernahme,
+kein realer Altpasswortnachweis, keine interaktive Browser-/Debian-/LXC-Abnahme.
+Allgemeiner NeoFab2-Kontoexport und Konfliktzusammenführung nicht implementiert.
+P1/P2 und vollständige Core-Abnahme bleiben offen. Kein Commit oder Push.
+
+### Commit für GitHub Desktop
+
+Commit-Titel:
+
+```text
+feat: NeoFab2 0.1.18 – Benutzerimport mit Vorschau und Ergebnisbericht
+```
+
+Commit-Beschreibung:
+
+```text
+Core-Paket 6 mit lesendem Export aus einer NeoFab-SQLite-Kopie implementieren.
+Admin-/CLI-Vorschau und bestätigten atomaren Benutzerimport mit Audit ergänzen.
+Stabile Quellzuordnung, Wiederholung und Schutz lokaler Zieländerungen umsetzen.
+Rollen-, Status-, Kollisions- und begrenzte Hash-Kompatibilitätsregeln definieren.
+Keine alten Tokens übernehmen; Sitzungen und Kontocodes bei Updates widerrufen.
+Explizite Migration 0012_user_import und Readiness ergänzen.
+365 Tests einschließlich 59 Importtests, Paketierung und installiertes Wheel prüfen.
+Deutsche Anleitung, Funktionsmatrix, Core-Plan und Versionshistorie aktualisieren.
+Kein Produktivimport; P1/P2 und vollständige Core-Abnahme bleiben offen.
+```
+
+Der Commit wird manuell in GitHub Desktop erstellt.
+
 ## Version 0.1.17 – 2026-09-25
 
 Bereich: Basisumfang Core-Paket 5 (S10/N01, U06/S09, U05/N06 als

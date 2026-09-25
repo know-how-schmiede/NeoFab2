@@ -5,7 +5,7 @@ from sqlalchemy import BigInteger, Column, Integer, MetaData, String, Table, del
 
 EVENTS = {
     "login.succeeded", "login.failed", "logout", "user.created", "user.updated",
-    "password.changed", "password.emergency_reset", "account.activated", "account.reset",
+    "user.imported", "password.changed", "password.emergency_reset", "account.activated", "account.reset",
     "settings.changed", "smtp.changed", "accounts.changed", "plugins.changed",
     "plugins.recovered", "audit.pruned", "access.denied", "user.role_changed",
     "user.enabled", "user.disabled", "password.admin_reset",

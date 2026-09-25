@@ -1,5 +1,8 @@
 # Benutzer anlegen und bearbeiten – v0.1.13
 
+Seit 0.1.18: [Benutzerimport mit Vorschau und Ergebnisbericht](Core_Benutzerimport.md),
+Admin-Oberfläche und lokaler CLI-Betrieb. Keine automatische Produktivübernahme.
+
 Seit 0.1.13 unterscheidet die Liste **Wartet auf E-Mail-Aktivierung** von
 gesperrten Konten. Beim administrativen Speichern eines wartenden Kontos endet
 dessen E-Mail-Aktivierungsverfahren; der gewählte Aktivstatus gilt unmittelbar.

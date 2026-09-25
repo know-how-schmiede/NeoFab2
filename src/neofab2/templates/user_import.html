@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('User import') }} · NeoFab2{% endblock %}
+{% block content %}
+<h1>{{ _('User import') }}</h1>
+<p>{{ _('Upload the prepared NeoFab user export. Preview does not change accounts or send email.') }}</p>
+<form method="post" enctype="multipart/form-data" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="preview">
+  <label for="import-file">{{ _('Import file') }}</label>
+  <input id="import-file" name="file" type="file" accept=".json" required>
+  <button type="submit">{{ icon('shield') }} {{ _('Preview import') }}</button>
+</form>
+{% if report %}
+<h2>{{ _('Import result') if report.applied else _('Import preview') }}</h2>
+<p>{{ _('Source') }}: {{ report.source }}</p>
+<ul>{% for action, count in report.counts.items() %}<li>{{ _(labels[action]) }}: {{ count }}</li>{% endfor %}</ul>
+<div class="table-scroll"><table>
+<thead><tr><th>{{ _('Source ID') }}</th><th>{{ _('Email') }}</th><th>{{ _('Role') }}</th><th>{{ _('Active') }}</th><th>{{ _('Action') }}</th><th>{{ _('Reason') }}</th></tr></thead>
+<tbody>{% for row in report.rows %}<tr><td>{{ row.source_id or '' }}</td><td>{{ row.email|default('') }}</td><td>{{ _(row.role|default('')) }}</td><td>{{ _('Yes') if row.active|default(false) else _('No') }}</td><td>{{ _(labels[row.action]) }}</td><td>{{ _(labels[row.reason]) }}</td></tr>{% endfor %}</tbody>
+</table></div>
+{% if not report.applied and not report.counts.conflict and (report.counts.create or report.counts.update) %}
+<form method="post" enctype="multipart/form-data" class="card-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="apply">
+  <input type="hidden" name="plan" value="{{ report.plan }}">
+  <label for="confirm-file">{{ _('Select the same file again to confirm this preview.') }}</label>
+  <input id="confirm-file" name="file" type="file" accept=".json" required>
+  <label><input type="checkbox" name="confirm" value="yes" required> {{ _('Import exactly these accounts now. Existing sessions of updated accounts will end.') }}</label>
+  <button type="submit">{{ icon('upload') }} {{ _('Apply import') }}</button>
+</form>
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory() as folder:
         token = re.search(r'name="csrf_token" value="([^"]+)"', login_page.text).group(1)
         assert client.post("/login", data={"csrf_token": token, "email": "wheel@example.org", "password": "Synthetic wheel password!"}).status_code == 302
         from neofab2.version import __version__
-        assert __version__ == "0.1.17"
+        assert __version__ == "0.1.18"
         page = client.get("/plugins/core_test/")
         setting_token = re.search(r'name="csrf_token" value="([^"]+)"', page.text).group(1)
         assert client.post("/plugins/core_test/", data={"csrf_token": setting_token,
@@ -39,6 +39,22 @@ with tempfile.TemporaryDirectory() as folder:
         assert "Wheel synthetic setting" in client.get("/plugins/core_test/").text
         assert client.get("/profile").status_code == 200
         assert client.get("/admin/users").status_code == 200
+        assert client.get("/admin/users/import").status_code == 200
+        from neofab2.core.user_import import preview, apply_import
+        from neofab2.core.users import DETAIL_FIELDS
+        from werkzeug.security import generate_password_hash
+        import json
+        import_data = json.dumps({"format": 1, "source": "wheel-synthetic", "users": [{
+            "id": 10, "email": "import-wheel@example.org", "display_name": "Synthetic imported user",
+            "role": "worker", "active": False, "deleted": False,
+            "password_hash": generate_password_hash("Synthetic import password!"),
+            "locale": "de", "theme": "dark", "created_at": 1700000000,
+            "details": {name: "" for name in DETAIL_FIELDS}}]}).encode()
+        planned = preview(app, import_data, actor_id=1)
+        assert planned["counts"]["create"] == 1
+        assert apply_import(app, import_data, planned["plan"], actor_id=1)["applied"]
+        assert preview(app, import_data, actor_id=1)["counts"]["unchanged"] == 1
+
         assert client.get("/admin/settings/mail").status_code == 200
         assert client.get("/admin/audit").status_code == 200
         assert client.get("/admin/status").status_code == 200

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ _("User management") }} · NeoFab2{% endblock %}
 {% block content %}
+<p><a href="{{ url_for('user_import.index') }}">{{ _('User import') }}</a></p>
 <h1>{{ _("User management") }}</h1>
 <p><a class="button" href="{{ url_for('accounts.user_new') }}">{{ icon("user-plus") }} {{ _("Create user") }}</a></p>
 <div class="table-scroll"><table><caption>{{ _("User accounts · Page") }} {{ page }}</caption>
