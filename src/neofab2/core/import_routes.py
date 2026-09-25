@@ -35,7 +35,8 @@ def index():
             elif action == 'apply':
                 if request.form.get('confirm') != 'yes':
                     raise ImportFailure('Confirm the import explicitly.')
-                report = apply_import(current_app, raw, request.form.get('plan'), actor_id=g.current_user['id'])
+                report = apply_import(current_app, raw, request.form.get('plan'), actor_id=g.current_user['id'],
+                                      skip_conflicts=request.form.get('skip_conflicts') == 'yes')
             else:
                 raise ImportFailure('Invalid import action.')
         except ImportFailure as failure:

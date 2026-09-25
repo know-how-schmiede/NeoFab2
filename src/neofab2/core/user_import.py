@@ -153,6 +153,7 @@ def _plan(app, conn, payload):
             r['role'] == 'admin' and r['active'] and not r['activation_pending'] for r in after.values()):
         rows.append({'source_id': None, 'user_id': None, 'action': 'conflict', 'reason': 'last_admin'})
     report = {'source': payload['source'], 'plan': token, 'applied': False, 'rows': rows,
+              'blocked': any(r['reason'] == 'last_admin' for r in rows),
               'counts': {action: sum(r['action'] == action for r in rows) for action in ('create', 'update', 'unchanged', 'skip', 'conflict')}}
     return report, writes
 
@@ -168,7 +169,7 @@ def preview(app, raw, *, actor_id=None, operator=False):
         return report
 
 
-def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False):
+def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False, skip_conflicts=False):
     payload = parse_export(raw)
     with write_transaction(app) as conn:
         if not operator:
@@ -177,7 +178,7 @@ def apply_import(app, raw, expected_plan, *, actor_id=None, operator=False):
         if (not isinstance(expected_plan, str) or not re.fullmatch(r'[0-9a-f]{64}', expected_plan)
                 or not hmac.compare_digest(report['plan'], expected_plan)):
             raise ImportFailure('Import preview is stale. Create a new preview.')
-        if report['counts']['conflict']:
+        if report['blocked'] or (report['counts']['conflict'] and skip_conflicts is not True):
             raise ImportFailure('Import has conflicts. No accounts were changed.')
         for entry, value, source_digest in writes:
             if value['password_hash'] is None:

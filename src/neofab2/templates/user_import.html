@@ -18,11 +18,22 @@
 <thead><tr><th>{{ _('Source ID') }}</th><th>{{ _('Email') }}</th><th>{{ _('Role') }}</th><th>{{ _('Active') }}</th><th>{{ _('Action') }}</th><th>{{ _('Reason') }}</th></tr></thead>
 <tbody>{% for row in report.rows %}<tr><td>{{ row.source_id or '' }}</td><td>{{ row.email|default('') }}</td><td>{{ _(row.role|default('')) }}</td><td>{{ _('Yes') if row.active|default(false) else _('No') }}</td><td>{{ _(labels[row.action]) }}</td><td>{{ _(labels[row.reason]) }}</td></tr>{% endfor %}</tbody>
 </table></div>
-{% if not report.applied and not report.counts.conflict and (report.counts.create or report.counts.update) %}
+{% if report.counts.conflict %}
+<p role="status">{{ _('Conflicting rows remain unchanged. Only rows marked Create or Update can be imported.') }}</p>
+{% endif %}
+{% if report.blocked %}
+<p role="alert">{{ _('The last active administrator must be retained. Correct the file and preview it again.') }}</p>
+{% elif not report.applied and not (report.counts.create or report.counts['update']) %}
+<p>{{ _('No accounts are ready to import. Resolve conflicts in the file if necessary and preview it again.') }}</p>
+{% endif %}
+{% if not report.applied and not report.blocked and (report.counts.create or report.counts['update']) %}
 <form method="post" enctype="multipart/form-data" class="card-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="hidden" name="action" value="apply">
   <input type="hidden" name="plan" value="{{ report.plan }}">
+  {% if report.counts.conflict %}
+  <label><input type="checkbox" name="skip_conflicts" value="yes" required> {{ _('Skip conflicts and import only the ready accounts.') }}</label>
+  {% endif %}
   <label for="confirm-file">{{ _('Select the same file again to confirm this preview.') }}</label>
   <input id="confirm-file" name="file" type="file" accept=".json" required>
   <label><input type="checkbox" name="confirm" value="yes" required> {{ _('Import exactly these accounts now. Existing sessions of updated accounts will end.') }}</label>

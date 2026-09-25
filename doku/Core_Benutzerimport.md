@@ -1,5 +1,36 @@
 # Benutzerimport – Vertrag für 0.1.18
 
+## Korrektur 0.1.21: Import nach Vorschau abschließen
+
+Bei gemischten Ergebnissen wurde bislang die gesamte Bestätigung ausgeblendet.
+Nun können Administratoren die als „Neu anlegen“ oder „Aktualisieren“ markierten
+Konten importieren, auch wenn andere Zeilen Konflikte enthalten:
+
+1. Vorschau prüfen, insbesondere Anzahl und Gründe der Konflikte.
+2. „Konflikte überspringen und nur die bereiten Konten importieren“ ausdrücklich
+   ankreuzen. Bestehende Konfliktkonten werden weder überschrieben noch verknüpft.
+3. Dieselbe Datei erneut auswählen, Importbestätigung ankreuzen und Import ausführen.
+4. Ergebnisbericht prüfen: Konflikte bleiben sichtbar und wurden nicht importiert.
+
+Bei ausschließlich Konflikten oder unveränderten Konten erklärt die Seite, dass
+keine Konten zum Import bereit sind. Datei gegebenenfalls korrigieren und neu prüfen.
+Der Schutz des letzten aktiven Administrators blockiert weiterhin den gesamten
+Import. Veraltete Vorschauen, fehlende Bestätigung und Datenbankfehler führen zu
+keinen Änderungen. Löschmarkierungen werden nicht umgangen.
+Die CLI bleibt unverändert strikt: Konflikte verhindern dort die Übernahme.
+
+Keine neue Migration; Schema bleibt `0013_user_deletion`. Normalen
+[Updateablauf](../script/README.md) verwenden. Ergebnisprüfung als **root**, mit
+Standardpfaden und Ausführung durch **neofab2**:
+
+```bash
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 --version
+runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 check
+```
+
+Erwartet: **0.1.21**, Schema bereit. Bei alter Oberfläche Installation und
+Versionsanzeige prüfen. Keine produktive Importausführung durch Codex.
+
 Seit Schema `0013_user_deletion` darf `core_user_imports.user_id` leer sein: Nach bestätigter Kontolöschung bleibt die Quellzuordnung als Sperrmarkierung erhalten. Wiederimport derselben Quelle/Quell-ID liefert `target_deleted` und legt das Konto nicht erneut an. [Löschung und Wiederherstellung](Core_Benutzerloeschung.md).
 
 Ergänzung vom 25.09.2026, aktuelle Version auf Benutzerwunsch **0.1.9**:
@@ -40,8 +71,9 @@ Kein Produktivimport, keine Änderung an NeoFab und keine Core-Abnahme.
   geprüft; veraltete Vorschau wird abgewiesen.
 - Profil-Auswahllisten müssen vorher passende aktive Einträge enthalten. Der
   Import legt keine Stammdaten an. Letzter aktiver Admin bleibt geschützt.
-- Schreiben erfolgt atomar einschließlich Zuordnung und Audit. Bei einem
-  Konflikt wird nichts importiert. Vorschau schreibt nichts.
+- Schreiben erfolgt atomar einschließlich Zuordnung und Audit. Ohne ausdrückliche
+  Freigabe zum Überspringen blockiert jeder Konflikt. Bei bestätigtem Überspringen
+  werden nur bereite Zeilen gemeinsam atomar übernommen. Vorschau schreibt nichts.
 
 ## Umsetzung und Grenzen
 

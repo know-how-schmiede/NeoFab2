@@ -5,6 +5,10 @@ from flask import Blueprint, abort, g, has_request_context, redirect, request, s
 LANGUAGES = {"en": "English", "de": "Deutsch", "fr": "Français"}
 # English messages are stable lookup keys and the fallback. No HTML.
 MESSAGES = {
+    'Conflicting rows remain unchanged. Only rows marked Create or Update can be imported.': {'de': 'Zeilen mit Konflikten bleiben unverändert. Nur mit „Neu anlegen“ oder „Aktualisieren“ markierte Zeilen können importiert werden.', 'fr': 'Les lignes en conflit restent inchangées. Seules les lignes à créer ou à mettre à jour peuvent être importées.'},
+    'Skip conflicts and import only the ready accounts.': {'de': 'Konflikte überspringen und nur die bereiten Konten importieren.', 'fr': 'Ignorer les conflits et importer uniquement les comptes prêts.'},
+    'The last active administrator must be retained. Correct the file and preview it again.': {'de': 'Der letzte aktive Administrator muss erhalten bleiben. Datei korrigieren und erneut prüfen.', 'fr': 'Le dernier administrateur actif doit être conservé. Corrigez le fichier et relancez l’aperçu.'},
+    'No accounts are ready to import. Resolve conflicts in the file if necessary and preview it again.': {'de': 'Keine Konten zum Import bereit. Gegebenenfalls Konflikte in der Datei beheben und erneut prüfen.', 'fr': 'Aucun compte prêt à importer. Résolvez les conflits éventuels et relancez l’aperçu.'},
     "Cancel": {"de": "Abbrechen", "fr": "Annuler"},
     'User actions': {"de": 'Benutzeraktionen', "fr": 'Actions des utilisateurs'},
     'Import users': {"de": 'Benutzer importieren', "fr": 'Importer des utilisateurs'},

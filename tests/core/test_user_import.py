@@ -470,3 +470,51 @@ def test_invalid_plan_rejected_without_writes(app, plan):
     with pytest.raises(ImportFailure, match='stale'):
         apply_import(app, raw(), plan, actor_id=1)
     assert len(rows(app)) == 3
+
+
+def test_web_mixed_conflicts_require_explicit_skip_and_preserve_accounts(app):
+    data = raw(source(id=41, email='admin@example.org'), source(id=42, email='user@example.org'), source())
+    before = rows(app)
+    admin = login(app)
+    page = post_import(admin, data)
+    assert 'name="skip_conflicts"' in page.text and 'name="plan"' in page.text
+    plan = re.search(r'name="plan" value="([^"]+)"', page.text).group(1)
+    assert post_import(admin, data, action='apply', plan=plan, confirm='yes').status_code == 400
+    assert rows(app) == before
+    result = post_import(admin, data, action='apply', plan=plan, confirm='yes', skip_conflicts='yes')
+    assert result.status_code == 200 and 'Import result' in result.text
+    assert rows(app)[:3] == before and len(rows(app)) == 4
+    assert len(rows(app, links)) == 1
+    assert 'Email already in use' in result.text
+    assert post_import(admin, data, action='apply', plan=plan, confirm='yes', skip_conflicts='yes').status_code == 400
+
+
+def test_conflicts_only_explain_no_ready_accounts(app):
+    page = post_import(login(app), raw(source(email='admin@example.org')))
+    assert 'No accounts are ready to import' in page.text
+    assert 'name="plan"' not in page.text
+
+
+def test_skip_conflicts_never_bypasses_last_admin_guard(app):
+    apply(app, raw(source(role='admin')))
+    with app.extensions['neofab2_db'].begin() as conn:
+        conn.execute(update(users).where(users.c.id == 1).values(active=False))
+    data = raw(source(role='user'), source(id=41, email='new@example.org'))
+    report = preview(app, data, operator=True)
+    before = rows(app)
+    assert report['blocked']
+    with pytest.raises(ImportFailure, match='conflicts'):
+        apply_import(app, data, report['plan'], operator=True, skip_conflicts=True)
+    assert rows(app) == before
+
+
+def test_partial_import_rolls_back_all_ready_rows_on_failure(app, monkeypatch):
+    data = raw(source(email='admin@example.org'), source(id=41, email='new@example.org'))
+    report = preview(app, data, actor_id=1)
+    before = rows(app), rows(app, links), rows(app, events)
+    def fail(*args, **kwargs):
+        raise RuntimeError('synthetic audit failure')
+    monkeypatch.setattr('neofab2.core.user_import.record', fail)
+    with pytest.raises(RuntimeError):
+        apply_import(app, data, report['plan'], actor_id=1, skip_conflicts=True)
+    assert (rows(app), rows(app, links), rows(app, events)) == before

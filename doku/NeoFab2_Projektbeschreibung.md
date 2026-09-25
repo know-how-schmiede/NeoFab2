@@ -11,7 +11,7 @@ Komponenten und PrintFleet erst nach dem MVP. Sie ersetzt die frühere Prioritä
 
 ## 1. Ziel und verbindliche Rahmenbedingungen
 
-Umsetzungsstand 25.09.2026 / 0.1.20: Paket 1 mit SMTP/Outbox/Worker und
+Umsetzungsstand 25.09.2026 / 0.1.21: Paket 1 mit SMTP/Outbox/Worker und
 Paket 2 mit abschaltbarer Registrierung, E-Mail-Aktivierung und Passwort-Reset
 sind implementiert. [Versand](Core_SMTP_und_Versand.md) und
 [Kontoverfahren, Freigaberegeln und Prüfgrenzen](Core_Registrierung_und_Reset.md).
@@ -32,6 +32,9 @@ Der [Benutzerexport](Core_Benutzerexport.md) aus NeoFab2 ist über Web und CLI e
 In 0.1.20 ergänzt: einheitliche Benutzer-Buttonleiste und
 [bestätigte Löschung deaktivierter Konten](Core_Benutzerloeschung.md)
 (U05/U06/S01/S09, Migration 0013). Ungeklärte Referenzen sperren die Löschung.
+In 0.1.21 können in der Importvorschau Konfliktzeilen ausdrücklich übersprungen
+und bereite Konten bestätigt übernommen werden (U09/N04/U06); bestehende
+Konfliktkonten und der Letzter-Admin-Schutz bleiben erhalten.
 Core-Abnahme und produktive Fachplugins bleiben offen.
 
 NeoFab2 wird als neue modulare Webanwendung in einem eigenen Repository aufgebaut. Zuerst entsteht ein unabhängig lauffähiges Core-System. Fachfunktionen werden anschließend einzeln als Plugins ergänzt.

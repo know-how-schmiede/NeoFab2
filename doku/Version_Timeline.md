@@ -1,5 +1,52 @@
 # NeoFab2 – Versionshistorie
 
+## Version 0.1.21 – 2026-09-25
+
+Bereich U09/N04/U06, S01/S12/X05–X07: Import nach gemischter Vorschau abschließen.
+Benutzer bestätigt Löschung, Export und Vorschau aus 0.1.20.
+
+### Fehler und Korrektur
+
+Bei einer bereiten Zeile und zwei Konflikten blendete das Template die gesamte
+Importbestätigung aus. Zusätzlich wurde der Zähler `update` im Template als
+Dictionary-Methode statt als Anzahl ausgewertet; nun erfolgt ein eindeutiger
+Schlüsselzugriff. Die Bestätigung bleibt für bereite Zeilen verfügbar. Eine
+zusätzliche Pflicht-Checkbox erlaubt ausdrücklich, Konflikte zu überspringen.
+Nur „Neu anlegen“/„Aktualisieren“ werden gemeinsam atomar ausgeführt; Konflikte
+bleiben im Bericht sichtbar und ihre Konten unverändert. Ohne Freigabe gilt die
+bisherige Konfliktsperre. Keine bereiten Zeilen und der globale Letzter-Admin-Schutz
+werden erklärt. CSRF, Adminrechte, Quelldatei-/Zielstandsbindung und Löschmarkierungen
+bleiben wirksam. Die CLI bleibt strikt und überspringt keine Konflikte.
+
+### Betrieb und Prüfungen
+
+Keine neue Migration, Schema weiterhin `0013_user_deletion`. Normalen gesicherten
+Updateablauf verwenden; [Bedienung, Befehle und Fehlerhilfe](Core_Benutzerimport.md).
+Erwartete Version **0.1.21**, API 1/Testplugins 0.1.0 unverändert.
+
+- 409 automatisierte Tests bestanden, darunter vier neue Regressionstests.
+- Chromium: vollständiger bestätigter Import bei gemischten Konflikten sowie
+  bisherige Buttonleisten-/Löschprüfung erfolgreich; ausschließlich synthetische Daten.
+- Wheel/sdist gebaut und separat installiertes Wheel erfolgreich geprüft.
+- Versionsanzeige, relative Dokumentationslinks und `git diff --check` geprüft.
+
+Kein Produktivimport, Commit oder Push. Vollständige Core-/LXC-Abnahme bleibt offen.
+
+### Manueller Commit in GitHub Desktop
+
+```text
+fix: NeoFab2 0.1.21 – Import bereiter Konten trotz einzelner Konflikte ermöglichen
+```
+
+```text
+Importbestätigung bei gemischten Vorschauergebnissen anzeigen.
+Konflikte nur nach zusätzlicher ausdrücklicher Bestätigung überspringen.
+Konfliktkonten unverändert lassen und fehlende Importmöglichkeiten erklären.
+Letzter-Admin-Schutz, Zustandsbindung und atomaren Rollback beibehalten.
+Vier Regressionstests und vollständigen Chromium-Importablauf ergänzen.
+409 Tests und installierte Wheel-Prüfung erfolgreich; keine neue Migration.
+```
+
 ## Version 0.1.20 – 2026-09-25
 
 Benutzerauftrag: gemeinsame Buttonleiste und bestätigte Löschung deaktivierter

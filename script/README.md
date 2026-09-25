@@ -1,6 +1,6 @@
-# NeoFab2 – Installation und Wartung (v0.1.20)
+# NeoFab2 – Installation und Wartung (v0.1.21)
 
-Neu in 0.1.20: einheitliche Buttonleiste für Anlegen, Export und Import sowie bestätigte Löschung deaktivierter Konten. [Bedienung, Schutzregeln und Migration](../doku/Core_Benutzerloeschung.md). Neue explizite Schema-Revision: `0013_user_deletion`.
+Neu in 0.1.21: [Benutzerimport trotz einzelner Konflikte](../doku/Core_Benutzerimport.md) nach ausdrücklicher Bestätigung. Konfliktkonten bleiben unverändert; keine neue Migration, Schema weiterhin `0013_user_deletion`.
 
 Seit 0.1.15: [Audit-Protokoll und Betriebsstatus](../doku/Core_Audit_und_Betriebsstatus.md).
 Das normale Update führt die explizite Migration `0011_audit_status` aus.
@@ -83,7 +83,7 @@ bash /root/NeoFab2-setup/script/setupNeoFab
 bash /opt/neofab2/script/setupNeoFabService
 ```
 
-Voraussetzung: v0.1.20 wurde manuell auf den gewählten Remote-Branch gepusht.
+Voraussetzung: v0.1.21 wurde manuell auf den gewählten Remote-Branch gepusht.
 Netzwerkzugang zu Debian, GitHub und PyPI erforderlich.
 
 Die Installation fragt nach Bestätigung, Repository, Branch, Port, HTTPS-Nutzung,
@@ -186,7 +186,7 @@ ohne Änderungen an Daten oder Plugins erneut abrufen:
 runuser -u neofab2 -- env NEOFAB2_CONFIG=/etc/neofab2/config.toml /opt/neofab2/.venv/bin/neofab2 maintenance-info
 ```
 
-Erwartet: Version 0.1.20, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
+Erwartet: Version 0.1.21, HTTP-/HTTPS-Hinweis und vorhandene Admin-E-Mails. Falls
 Angaben fehlen: Konfigurationspfad, Installation und Datenbankschema mit `check`
 prüfen; keine Secrets zur Fehlersuche veröffentlichen. Betriebsbefehle in der
 Übersicht sind für **root im NeoFab2-Container**, nicht für den Proxmox-Host.
